@@ -13,7 +13,7 @@ public final class Preconditions {
 	/**
 	 * @param b (boolean) l'argument à vérifier
 	 * @throws IllegalArgumentException quand b vaut false
-	 */
+     */
 	public static void checkArgument(boolean b) throws IllegalArgumentException {
 		if (!b)
 			throw new IllegalArgumentException();
