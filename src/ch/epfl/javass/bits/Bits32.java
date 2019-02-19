@@ -30,7 +30,7 @@ public final class Bits32 {
     public static int mask(int start, int size)
             throws IllegalArgumentException {
         
-        Preconditions.checkArgument((start < 0 || size < 0 || start + size >= Integer.SIZE));
+        Preconditions.checkArgument((start < 0 || size < 0 || start + size > Integer.SIZE));
 
         int entier = 0;
         for (int i = start; i < start + size; ++i) {
@@ -82,7 +82,7 @@ public final class Bits32 {
     public static int pack(int v1, int s1, int v2, int s2)
             throws IllegalArgumentException {
         
-        Preconditions.checkArgument((s1 + s2) >= Integer.SIZE);
+        Preconditions.checkArgument((s1 + s2) > Integer.SIZE);
         check(v1, s1);
         check(v2, s2);
 
@@ -119,7 +119,7 @@ public final class Bits32 {
     public static int pack(int v1, int s1, int v2, int s2, int v3, int s3)
             throws IllegalArgumentException {
         
-        Preconditions.checkArgument( (s1 + s2 + s3) >= Integer.SIZE);
+        Preconditions.checkArgument( (s1 + s2 + s3) > Integer.SIZE);
 
         check(v3, s3);
 
@@ -143,7 +143,7 @@ public final class Bits32 {
             int v4, int s4, int v5, int s5, int v6, int s6, int v7, int s7)
                     throws IllegalArgumentException {
         
-        Preconditions.checkArgument( (s1 + s2 + s3 + s4 + s5 + s6 + s7) >= Integer.SIZE);
+        Preconditions.checkArgument( (s1 + s2 + s3 + s4 + s5 + s6 + s7) > Integer.SIZE);
 
         int entier1 = pack(v1, s1, v2, s2, v3, s3);
         int entier2 = pack(v4, s4, v5, s5);
@@ -163,7 +163,7 @@ public final class Bits32 {
      *             est de taille supérieure à s1
      */
     private static void check(int v1, int s1) throws IllegalArgumentException {
-        Preconditions.checkArgument((s1 >= Integer.SIZE) || (s1 < 0) || (v1 >= Math.pow(2, s1)));
+        Preconditions.checkArgument((s1 > Integer.SIZE) || (s1 < 0) || (v1 >= Math.pow(2, s1)));
     }
 
 }
