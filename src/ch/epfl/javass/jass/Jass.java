@@ -4,6 +4,9 @@
  */
 package ch.epfl.javass.jass;
 
+/**
+ * Jass une interface contenant diverses constantes utiles pour la suite du programme
+ */
 public interface Jass {
     public final static int HAND_SIZE = 9;
     public final static int TRICKS_PER_TURN = 9;
