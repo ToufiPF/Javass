@@ -20,7 +20,7 @@ public final class Bits32 {
      */
     public static int mask(int start, int size)
             throws IllegalArgumentException {
-        if (start < 0 || start + size >= Integer.SIZE || size < 0) {
+        if (start < 0 || start + size > Integer.SIZE || size < 0) {
             throw new IllegalArgumentException();
         }
 
@@ -78,7 +78,7 @@ public final class Bits32 {
      */
     public static int pack(int v1, int s1, int v2, int s2)
             throws IllegalArgumentException {
-        if ((s1 + s2) >= Integer.SIZE) {
+        if ((s1 + s2) > Integer.SIZE) {
             throw new IllegalArgumentException();
         }
         check(v1, s1);
@@ -102,7 +102,7 @@ public final class Bits32 {
      */
     public static int pack(int v1, int s1, int v2, int s2, int v3, int s3)
             throws IllegalArgumentException {
-        if ((s1 + s2 + s3) >= Integer.SIZE) {
+        if ((s1 + s2 + s3) > Integer.SIZE) {
             throw new IllegalArgumentException();
         }
 
@@ -126,7 +126,7 @@ public final class Bits32 {
     public static int pack(int v1, int s1, int v2, int s2, int v3, int s3,
             int v4, int s4, int v5, int s5, int v6, int s6, int v7, int s7)
             throws IllegalArgumentException {
-        if (s1 + s2 + s3 + s4 + s5 + s6 + s7 >= Integer.SIZE) {
+        if (s1 + s2 + s3 + s4 + s5 + s6 + s7 > Integer.SIZE) {
             throw new IllegalArgumentException();
         }
 
