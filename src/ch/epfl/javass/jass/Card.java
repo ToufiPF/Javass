@@ -10,7 +10,10 @@ import java.util.List;
 
 public final class Card {
     /**
-     * Classe imbriquée énumérant les couleurs des cartes
+     * Color
+     * Une classe imbriquée énumérant les couleurs des cartes
+     * 
+     * @author Amaury Pierre (296498)
      */
     public enum Color {
         SPADE("\u2660"), HEART("\u2661"), DIAMOND("\u2662"), CLUB("\u2663");
@@ -30,7 +33,10 @@ public final class Card {
     }
 
     /**
-     * Classe imbriquée énumérant les rangs des cartes
+     * Rank
+     * Une classe imbriquée énumérant les rangs des cartes
+     * 
+     * @author Amaury Pierre (296498)
      */
     public enum Rank {
         SIX("6"),
