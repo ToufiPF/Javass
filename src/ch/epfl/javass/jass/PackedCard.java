@@ -63,13 +63,13 @@ public final class PackedCard {
         return Card.Rank.ALL.get(Bits32.extract(pkCard, 0, 4));
     }
     /**
-     * Compare les deux cartes données et retourne true si celle de
-     * gauche est meilleure.
-     * Retourne faux si les deux cartes ne sont pas comparables
+     * Compare les deux cartes données et retourne true si et 
+     * seulement si celle de gauche est meilleure, en sachant
+     * que la couleur des atouts vaut trump.
      * @param trump (Card.Color) la couleur des atouts
      * @param pkCardL (int) la carte de gauche
      * @param pkCardR (int) la carte de droite
-     * @return (boolean) true si la carte de gauche est meilleure
+     * @return (boolean) true ssi la carte de gauche est meilleure
      */
     public boolean isBetter(Card.Color trump, int pkCardL, int pkCardR) {
         //Asserts are done in color()
@@ -95,7 +95,7 @@ public final class PackedCard {
         return lColor == trump;
     }
     /**
-     * Donne le nombre de points de la carte donnée
+     * Donne la valeur en points de la carte donnée
      * @param trump (Card.Color) la couleur des atouts
      * @param pkCard (int) la carte à évaluer
      * @return (int) la valeur de la carte en points
