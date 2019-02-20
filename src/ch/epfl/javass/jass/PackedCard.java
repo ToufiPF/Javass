@@ -63,28 +63,74 @@ public final class PackedCard {
         return Card.Rank.ALL.get(Bits32.extract(pkCard, 0, 4));
     }
     /**
-     * @param trump
-     * @param pkCardL
-     * @param pkCardR
-     * @return
+     * Compare les deux cartes données et retourne true si celle de
+     * gauche est meilleure.
+     * Retourne faux si les deux cartes ne sont pas comparables
+     * @param trump (Card.Color) la couleur des atouts
+     * @param pkCardL (int) la carte de gauche
+     * @param pkCardR (int) la carte de droite
+     * @return (boolean) true si la carte de gauche est meilleure
      */
     public boolean isBetter(Card.Color trump, int pkCardL, int pkCardR) {
-
-        return false;
+        //Asserts are done in color()
+        Card.Color lColor = color(pkCardL);
+        Card.Color rColor = color(pkCardR);
+        
+        
+        // Si les deux couleurs sont les mêmes
+        if (lColor == rColor) {
+            Card.Rank lRank = rank(pkCardL);
+            Card.Rank rRank = rank(pkCardR);
+            // Si ce sont des atouts 
+            if (lColor == trump)
+                return lRank.trumpOrdinal() > rRank.trumpOrdinal();
+            // Sinon
+            else 
+                return lRank.ordinal() > rRank.ordinal();
+        }
+        
+        // Si les deux couleurs sont différentes
+        // il faut que la carte de gauche soit
+        // un atout pour être meilleure
+        return lColor == trump;
     }
     /**
-     * @param trump
-     * @param pkCard
-     * @return
+     * Donne le nombre de points de la carte donnée
+     * @param trump (Card.Color) la couleur des atouts
+     * @param pkCard (int) la carte à évaluer
+     * @return (int) la valeur de la carte en points
      */
     public int points(Card.Color trump, int pkCard) {
-
-        return 0;
+        //Assert done in color()
+        // En cas d'atouts :
+        if (color(pkCard) == trump) {
+            switch (rank(pkCard)) {
+            case ACE: return 11;
+            case KING: return 4;
+            case QUEEN: return 3;
+            case JACK: return 20;
+            case TEN: return 10;
+            case NINE: return 14;
+            default: return 0;
+            }
+        }
+        // Sinon :
+        switch (rank(pkCard)) {
+        case ACE: return 11;
+        case KING: return 4;
+        case QUEEN: return 3;
+        case JACK: return 2;
+        case TEN: return 10;
+        default: return 0;
+        }
     }
 
     /**
-     * @param pkCard
-     * @return
+     * Donne la représentation d'une carte sous forme 
+     * d'une chaîne de caractères composée du symbole 
+     * de la couleur et du nom abrégé du rang
+     * @param pkCard (int) la carte à afficher 
+     * @return (String) représentation de la carte
      */
     public String toString(int pkCard) {
         return color(pkCard).toString() + rank(pkCard).toString();
