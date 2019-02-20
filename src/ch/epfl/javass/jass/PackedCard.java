@@ -22,7 +22,7 @@ public final class PackedCard {
      * @param packedCard (int) l'entier à vérifier
      * @return (boolean) true si l'entier est valide
      */
-    public boolean isValid(int packedCard) {
+    public static boolean isValid(int packedCard) {
         // Pour qu'un int soit valide en tant que carte, il faut
         // - que les bits d'index 6 à 31 valent 0
         // (ie. Bits32.extract(packedCard, 6, 32-6) == 0)
@@ -38,7 +38,7 @@ public final class PackedCard {
      * @param r (Card.Rank) le rang de la carte
      * @return (int) la representation en int de la carte
      */
-    public int pack(Card.Color c, Card.Rank r) {
+    public static int pack(Card.Color c, Card.Rank r) {
         return Bits32.pack(r.ordinal(), 4, c.ordinal(), 2);
     }
 
@@ -48,7 +48,7 @@ public final class PackedCard {
      * @param pkCard (int) la représentation de la carte
      * @return (Card.Color) la couleur de la carte
      */
-    public Card.Color color(int pkCard) {
+    public static Card.Color color(int pkCard) {
         assert isValid(pkCard);
         return Card.Color.ALL.get(Bits32.extract(pkCard, 4, 2));
     }
@@ -58,7 +58,7 @@ public final class PackedCard {
      * @param pkCard (int) la représentation de la carte
      * @return (Card.Rank) le rang de la carte
      */
-    public Card.Rank rank(int pkCard) {
+    public static Card.Rank rank(int pkCard) {
         assert isValid(pkCard);
         return Card.Rank.ALL.get(Bits32.extract(pkCard, 0, 4));
     }
@@ -71,7 +71,7 @@ public final class PackedCard {
      * @param pkCardR (int) la carte de droite
      * @return (boolean) true ssi la carte de gauche est meilleure
      */
-    public boolean isBetter(Card.Color trump, int pkCardL, int pkCardR) {
+    public static boolean isBetter(Card.Color trump, int pkCardL, int pkCardR) {
         //Asserts are done in color()
         Card.Color lColor = color(pkCardL);
         Card.Color rColor = color(pkCardR);
@@ -100,7 +100,7 @@ public final class PackedCard {
      * @param pkCard (int) la carte à évaluer
      * @return (int) la valeur de la carte en points
      */
-    public int points(Card.Color trump, int pkCard) {
+    public static int points(Card.Color trump, int pkCard) {
         //Assert done in color()
         // En cas d'atouts :
         if (color(pkCard) == trump) {
@@ -132,7 +132,7 @@ public final class PackedCard {
      * @param pkCard (int) la carte à afficher 
      * @return (String) représentation de la carte
      */
-    public String toString(int pkCard) {
+    public static String toString(int pkCard) {
         return color(pkCard).toString() + rank(pkCard).toString();
     }
 }
