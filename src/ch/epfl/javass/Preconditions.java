@@ -2,8 +2,8 @@ package ch.epfl.javass;
 
 /**
  * Preconditions 
- * Une classe non instanciable qui fournit des méthodes pour
- * vérifier la validité d'un argument
+ * Une classe non instanciable qui fournit des méthodes statiques
+ * pour vérifier la validité d'un argument
  * 
  * @author Aurélien Clergeot (302592)
  */
