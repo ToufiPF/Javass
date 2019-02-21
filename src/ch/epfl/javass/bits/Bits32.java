@@ -30,7 +30,7 @@ public final class Bits32 {
     public static int mask(int start, int size)
             throws IllegalArgumentException {
         
-        Preconditions.checkArgument(!(start < 0 || size < 0 || start + size > Integer.SIZE));
+        Preconditions.checkArgument(start >= 0 && size >= 0 && start + size <= Integer.SIZE);
 
         int entier = 0;
         for (int i = start; i < start + size; ++i) {
