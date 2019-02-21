@@ -181,7 +181,8 @@ public final class Card {
     public int points(Color trump) {
         return PackedCard.points(trump, pkCard);
     }
-
+    
+    @Override
     public boolean equals(Object that0) {
         if (that0 instanceof Card) {
             Card that0Card = (Card) that0;
@@ -190,10 +191,12 @@ public final class Card {
         return false;
     }
 
-    public int HashCode() {
+    @Override
+    public int hashCode() {
         return packed();
     }
 
+    @Override
     public String toString() {
         return PackedCard.toString(pkCard);
     }
