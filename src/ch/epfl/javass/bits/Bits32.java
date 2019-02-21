@@ -89,7 +89,6 @@ public final class Bits32 {
         int entier1 = v1 & mask(0, s1);
         int entier2 = v2 & mask(0, s2);
         return entier1 | (entier2 << s1);
-
     }
 
     /**
