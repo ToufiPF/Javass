@@ -169,4 +169,15 @@ public final class PackedCardTest {
             assertEquals(152, s);
         }
     }
+    
+    @Test
+    void toStringTest() throws Exception {
+        System.out.println("Test toString :");
+        for (Card.Color c : getAllColors()) {
+            for (Card.Rank r : getAllRanks()) {
+                System.out.print(PackedCard.toString(PackedCard.pack(c, r)) + " ");
+            }
+            System.out.println();
+        }
+    }
 }
