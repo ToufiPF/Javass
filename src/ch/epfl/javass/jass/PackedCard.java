@@ -12,7 +12,9 @@ import ch.epfl.javass.bits.Bits32;
 public final class PackedCard {
     private PackedCard() {
     }
-
+    /**
+     * Represente un empaquetage de carte invalide
+     */
     public static final int INVALID = 0b11_1111;
 
     /**
@@ -85,8 +87,7 @@ public final class PackedCard {
             if (lColor == trump)
                 return lRank.trumpOrdinal() > rRank.trumpOrdinal();
             // Sinon
-            else 
-                return lRank.ordinal() > rRank.ordinal();
+            return lRank.ordinal() > rRank.ordinal();
         }
         
         // Si les deux couleurs sont différentes
