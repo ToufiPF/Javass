@@ -8,6 +8,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Card Une classe immuable représentant une carte
+ * 
+ * @author Amaury Pierre (296498)
+ */
 public final class Card {
     /**
      * Color Une classe imbriquée énumérant les couleurs des cartes
@@ -85,11 +90,6 @@ public final class Card {
         }
     }
 
-    /**
-     * Color Une classe immuable représentant une carte
-     * 
-     * @author Amaury Pierre (296498)
-     */
     private final int pkCard;
 
     /**
