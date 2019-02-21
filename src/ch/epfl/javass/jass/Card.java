@@ -10,8 +10,7 @@ import java.util.List;
 
 public final class Card {
     /**
-     * Color
-     * Une classe imbriquée énumérant les couleurs des cartes
+     * Color Une classe imbriquée énumérant les couleurs des cartes
      * 
      * @author Amaury Pierre (296498)
      */
@@ -19,8 +18,12 @@ public final class Card {
         SPADE("\u2660"), HEART("\u2661"), DIAMOND("\u2662"), CLUB("\u2663");
 
         private String symbol;
+
+        // Liste immuable contenant toutes les valeurs du type énuméré Color
         public static final List<Color> ALL = Collections
                 .unmodifiableList(Arrays.asList(values()));
+
+        // Constante du nombre de valeur du type énuméré Color
         public static final int COUNT = 4;
 
         private Color(String symbol) {
@@ -33,48 +36,165 @@ public final class Card {
     }
 
     /**
-     * Rank
-     * Une classe imbriquée énumérant les rangs des cartes
+     * Rank Une classe imbriquée énumérant les rangs des cartes
      * 
      * @author Amaury Pierre (296498)
      */
     public enum Rank {
-        SIX("6"),
-        SEVEN("7"),
-        EIGHT("8"),
-        NINE("9"),
-        TEN("10"),
-        JACK("J"),
-        QUEEN("Q"),
-        KING("K"),
-        ACE("A");
+        SIX("6"), SEVEN("7"), EIGHT("8"), NINE("9"), TEN("10"), JACK(
+                "J"), QUEEN("Q"), KING("K"), ACE("A");
 
         private String rank;
+        
+        // Liste immuable contenant toutes les valeurs du type énuméré Rank
         public static final List<Rank> ALL = Collections
                 .unmodifiableList(Arrays.asList(values()));
-        public static final int COUNT = 9;
         
+        // Constante du nombre de valeur du type énuméré Rank
+        public static final int COUNT = 9;
+
         private Rank(String rank) {
             this.rank = rank;
         }
-        
+
         /**
-         * @return la position de la carte d'atout ayant ce rang dans l'ordre des cartes d'atout
+         * @return la position de la carte d'atout ayant ce rang dans l'ordre
+         *         des cartes d'atout
          */
         public int trumpOrdinal() {
             switch (rank) {
-            case "9": return 7;
-            case "J": return 8;
-            case "10": return 3;
-            case "Q": return 4;
-            case "K": return 5;
-            case "A": return 6;
-            default : return ordinal();
+            case "9":
+                return 7;
+            case "J":
+                return 8;
+            case "10":
+                return 3;
+            case "Q":
+                return 4;
+            case "K":
+                return 5;
+            case "A":
+                return 6;
+            default:
+                return ordinal();
             }
         }
-        
+
         public String toString() {
             return rank;
         }
+    }
+
+    /**
+     * Color Une classe immuable représentant une carte
+     * 
+     * @author Amaury Pierre (296498)
+     */
+    private final int pkCard;
+
+    /**
+     * Constructeur privé de Card
+     */
+    private Card(int pkCard) {
+        this.pkCard = pkCard;
+    }
+
+    /**
+     * Méthode statique permettant de construire une carte à partir d'un rang et
+     * d'une couleur
+     * 
+     * @param c
+     *            (Color)la couleur de la carte à construire
+     * @param r
+     *            (Rank) le rang de la classe à construire
+     * @return (Card) la carte de couleur c et de rang r
+     */
+    public static Card of(Color c, Rank r) {
+        Card card = new Card(PackedCard.pack(c, r));
+        return card;
+    }
+
+    /**
+     * Méthode statique construisant une carte à partir de sa version empaquetée
+     * 
+     * @param packed
+     *            (int) la valeur empaquetée de la carte à construire
+     * @return (Card) la carte créée correspondant à la valeur packed
+     * @throws IllegalArgumentException
+     *             si la valeur empaquetée n'est pas valide
+     */
+    public static Card ofPacked(int packed) throws IllegalArgumentException {
+        if (PackedCard.isValid(packed)) {
+            Card card = new Card(packed);
+            return card;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * @return (int) la valeur empaquetée de la carte
+     */
+    public int packed() {
+        return pkCard;
+    }
+
+    /**
+     * @return (Color) la couleur de la carte
+     */
+    public Color color() {
+        return PackedCard.color(pkCard);
+    }
+
+    /**
+     * @return (Rank) le rang de la carte
+     */
+    public Rank rank() {
+        return PackedCard.rank(pkCard);
+    }
+
+    /**
+     * Méthode renvoyant true si et seulement si la carte that est meilleure que
+     * le récepteur
+     * 
+     * @param trump
+     *            (Color) la couleur de l'atout
+     * @param that
+     *            (Card) la carte dont on veut tester la supériorité
+     * @return true (boolean) si et seulement si la carte that est meilleure que
+     *         le récepteur
+     */
+    public boolean isBetter(Color trump, Card that) {
+        int thatPacked = PackedCard.pack(that.color(), that.rank());
+        return PackedCard.isBetter(trump, pkCard, thatPacked);
+    }
+
+    /**
+     * Méthode renvoyant le nombre de points de la carte, en sachant que trump
+     * est la couleur de l'atout
+     * 
+     * @param trump
+     *            (Color) la couleur de l'atout
+     * @return (int) le nombre de points de la carte, en sachant que trump est
+     *         la couleur de l'atout
+     */
+    public int points(Color trump) {
+        return PackedCard.points(trump, pkCard);
+    }
+
+    public boolean equals(Object that0) {
+        if (that0 instanceof Card) {
+            Card that0Card = (Card) that0;
+            return pkCard == that0Card.packed();
+        }
+        return false;
+    }
+
+    public int HashCode() {
+        return packed();
+    }
+
+    public String toString() {
+        return PackedCard.toString(pkCard);
     }
 }
