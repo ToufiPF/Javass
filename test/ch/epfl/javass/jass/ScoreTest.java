@@ -42,17 +42,41 @@ class ScoreTest {
 
     @Test
     void testTurnPoints() {
-        fail("Not yet implemented");
+        Score score = Score.INITIAL;
+        SplittableRandom rng = newRandom();
+        for (int i = 0 ; i < RANDOM_ITERATIONS * 5; ++i) {
+            int turnPoints1 = rng.nextInt(257);
+            int turnPoints2 = rng.nextInt(257 - turnPoints1);
+            score = getRandomScoreWithTurnPoints(turnPoints1, turnPoints2, rng);
+            assertEquals(turnPoints1, score.turnPoints(TeamId.TEAM_1));
+            assertEquals(turnPoints2, score.turnPoints(TeamId.TEAM_2));
+        }
     }
 
     @Test
     void testGamePoints() {
-        fail("Not yet implemented");
+        Score score = Score.INITIAL;
+        SplittableRandom rng = newRandom();
+        for (int i = 0 ; i < RANDOM_ITERATIONS * 5; ++i) {
+            int gamePoints1 = rng.nextInt(2000);
+            int gamePoints2 = rng.nextInt(2000 - gamePoints1);
+            score = getRandomScoreWithGamePoints(gamePoints1, gamePoints2, rng);
+            assertEquals(gamePoints1, score.gamePoints(TeamId.TEAM_1));
+            assertEquals(gamePoints2, score.gamePoints(TeamId.TEAM_2));
+        }
     }
 
     @Test
     void testTotalPoints() {
-        fail("Not yet implemented");
+        Score score = Score.INITIAL;
+        SplittableRandom rng = newRandom();
+        for (int i = 0 ; i < RANDOM_ITERATIONS * 5; ++i) {
+            int gamePoints1 = rng.nextInt(2000);
+            int gamePoints2 = rng.nextInt(2000 - gamePoints1);
+            score = getRandomScoreWithGamePoints(gamePoints1, gamePoints2, rng);
+            assertEquals(gamePoints1, score.gamePoints(TeamId.TEAM_1));
+            assertEquals(gamePoints2, score.gamePoints(TeamId.TEAM_2));
+        }
     }
 
     @Test
@@ -91,33 +115,18 @@ class ScoreTest {
     }
     
     private static Score getRandomScore(SplittableRandom rng) {
-        int turnTricks1 = rng.nextInt(9);
-        int turnPoints1 = rng.nextInt(257);
-        int gamePoints1 = rng.nextInt(2000);
-        
-        int turnTricks2 = rng.nextInt(9 - turnTricks1);
-        int turnPoints2 = rng.nextInt(257 - turnPoints1);
-        int gamePoints2 = rng.nextInt(2000);
-        
-        return Score.ofPacked(
-                PackedScore.pack(turnTricks1, turnPoints1, gamePoints1, 
-                        turnTricks2, turnPoints2, gamePoints2));
+        return Score.ofPacked(PackedScoreTest.getRandomValidPackedScore(rng));
     }
     
     private static Score getRandomScoreWithTurnTricks(int turnTricks1, int turnTricks2, SplittableRandom rng) {
-        int turnPoints1 = rng.nextInt(257);
-        int gamePoints1 = rng.nextInt(2000);
-        int turnPoints2 = rng.nextInt(257 - turnPoints1);
-        int gamePoints2 = rng.nextInt(2000);
-        return Score.ofPacked(PackedScore.pack(turnTricks1, turnPoints1, gamePoints1, turnTricks2, turnPoints2, gamePoints2));
+        return Score.ofPacked(PackedScoreTest.getRandomPackedScoreWithTurnTricks(turnTricks1, turnTricks2, rng));
     }
     
     private static Score getRandomScoreWithTurnPoints(int turnPoints1, int turnPoints2, SplittableRandom rng) {
-        int turnTricks1 = rng.nextInt(9);
-        int gamePoints1 = rng.nextInt(2000);
-        int turnTricks2 = rng.nextInt(9 - turnTricks1);
-        int gamePoints2 = rng.nextInt(2000);
-        
-        return Score.ofPacked(PackedScore.pack(turnTricks1, turnPoints1, gamePoints1, turnTricks2, turnPoints2, gamePoints2));
+        return Score.ofPacked(PackedScoreTest.getRandomPackedScoreWithTurnPoints(turnPoints1, turnPoints2, rng));
+    }
+    
+    private static Score getRandomScoreWithGamePoints(int gamePoints1, int gamePoints2, SplittableRandom rng) {
+        return Score.ofPacked(PackedScoreTest.getRandomPackedScoreWithGamePoints(gamePoints1, gamePoints2, rng));
     }
 }
