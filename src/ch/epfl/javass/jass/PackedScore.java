@@ -153,7 +153,7 @@ public final class PackedScore {
      * @return les scores empaquetés mis à jour (ajout de trickPoints et de
      *         MATCH_ADDITIONAL_POINTS si winningTeam a remporté les 9 plis)
      */
-    public static long withAdditionnalTrick(long pkScore, TeamId winningTeam,
+    public static long withAdditionalTrick(long pkScore, TeamId winningTeam,
             int trickPoints) {
         assert (isValid(pkScore) && trickPoints >= 0);
 
