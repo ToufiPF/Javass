@@ -88,7 +88,7 @@ public final class Score {
      */
     public Score withAdditionalTrick(TeamId winner, int trickPoints) {
         Preconditions.checkArgument(trickPoints >= 0);
-        return new Score(PackedScore.withAdditionnalTrick(mPackedScore, winner, trickPoints));
+        return new Score(PackedScore.withAdditionalTrick(mPackedScore, winner, trickPoints));
     }
     /**
      * Retourne un Score mis à jour pour le tour prochain,
