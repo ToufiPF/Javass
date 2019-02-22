@@ -45,48 +45,48 @@ public final class Score {
     
     /**
      * Donne le nombre de plis remportés par la team t dans le tour courant
-     * @param t (TeamID) la team qui nous interesse
+     * @param t (TeamId) la team qui nous interesse
      * @return (int) le nombre de plis remportés
      */
-    public int turnTricks(TeamID t) {
+    public int turnTricks(TeamId t) {
         return PackedScore.turnTricks(mPackedScore, t);
     }
 
     /**
      * Donne le nombre de points de la team t dans le tour courant
-     * @param t (TeamID) la team qui nous interesse
+     * @param t (TeamId) la team qui nous interesse
      * @return (int) le nombre de points dans le tour courant
      */
-    public int turnPoints(TeamID t) {
+    public int turnPoints(TeamId t) {
         return PackedScore.turnPoints(mPackedScore, t);
     }
     
     /**
      * Donne le nombre de points de la partie (SANS compter le tour courant)
-     * @param t (TeamID) la team qui nous interesse
+     * @param t (TeamId) la team qui nous interesse
      * @return (int) le nombre de points de la partie
      */
-    public int gamePoints(TeamID t) {
+    public int gamePoints(TeamId t) {
         return PackedScore.gamePints(mPackedScore, t);
     }
 
     /**
      * Donne le nombre de points TOTAL de la partie courante
-     * @param t (TeamID) la team qui nous interesse
+     * @param t (TeamId) la team qui nous interesse
      * @return (int) le nombre de points TOTAL de la partie
      */
-    public int totalPoints(TeamID t) {
+    public int totalPoints(TeamId t) {
         return PackedScore.totalPoints(mPackedScore, t);
     }
     
     /**
      * Retourne un Score mis à jour pour le prochain pli,
      * càd avec trickPoints ajouté au nombre de points du tour
-     * @param winner (TeamID) la team qui a remporté le pli
+     * @param winner (TeamId) la team qui a remporté le pli
      * @param trickPoints (int) le nombre de points du pli
      * @return (Score) le score du prochain pli
      */
-    public Score withAdditionalTrick(TeamID winner, int trickPoints) {
+    public Score withAdditionalTrick(TeamId winner, int trickPoints) {
         Preconditions.checkArgument(trickPoints >= 0);
         return new Score(PackedScore.withAdditionnalTrick(mPackedScore, winner, trickPoints));
     }
