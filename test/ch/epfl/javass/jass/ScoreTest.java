@@ -1,6 +1,11 @@
 package ch.epfl.javass.jass;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static ch.epfl.test.TestRandomizer.RANDOM_ITERATIONS;
+import static ch.epfl.test.TestRandomizer.newRandom;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.util.SplittableRandom;
 
 import org.junit.jupiter.api.Test;
 
@@ -66,8 +71,28 @@ class ScoreTest {
     }
 
     @Test
-    void testEqualsObject() {
-        fail("Not yet implemented");
+    void equalsReturnsTrueOnSameScores() {
+        Score score = Score.INITIAL;
+        SplittableRandom rng = newRandom();
+        for (int i = 0 ; i < RANDOM_ITERATIONS * 5; ++i) {
+            score = getRandomValidScore(rng);
+            assertTrue(score.equals(Score.ofPacked(score.packed())));
+            assertTrue(Score.ofPacked(score.packed()).equals(score));
+        }
     }
-
+    
+    private Score getRandomValidScore(SplittableRandom generator) {
+        
+        int tricks1 = generator.nextInt(9);
+        int turnPoints1 = generator.nextInt(257);
+        int gamePoints1 = generator.nextInt(2000);
+        
+        int tricks2 = generator.nextInt(9);
+        int turnPoints2 = generator.nextInt(257);
+        int gamePoints2 = generator.nextInt(2000);
+        
+        return Score.ofPacked(
+                PackedScore.pack(tricks1, turnPoints1, gamePoints1, 
+                tricks2, turnPoints2, gamePoints2));
+    }
 }
