@@ -67,7 +67,7 @@ public final class Score {
      * @return (int) le nombre de points de la partie
      */
     public int gamePoints(TeamId t) {
-        return PackedScore.gamePints(mPackedScore, t);
+        return PackedScore.gamePoints(mPackedScore, t);
     }
 
     /**
