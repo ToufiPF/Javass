@@ -184,7 +184,7 @@ public final class Card {
     
     @Override
     public boolean equals(Object that0) {
-        if (that0 instanceof Card) {
+        if (that0.getClass() == Card.class) {
             Card that0Card = (Card) that0;
             return pkCard == that0Card.packed();
         }
