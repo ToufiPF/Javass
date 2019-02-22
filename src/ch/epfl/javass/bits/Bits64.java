@@ -80,10 +80,10 @@ public final class Bits64 {
         checkValidity(v1, s1);
         checkValidity(v2, s2);
         
-        long l1 = mask(0, s1) & v1;
-        long l2 = mask(0, s2) & v2;
+        long l1 = v1 & mask(0, s1);
+        long l2 = v2 & mask(0, s2);
         
-        return l2 | (l1 << s1);
+        return l1 | (l2 << s1);
     }
 
     private static void checkValidity(long v, int s) throws IllegalArgumentException {
