@@ -155,7 +155,7 @@ public final class PackedScore {
      */
     public static long withAdditionnalTrick(long pkScore, TeamId winningTeam,
             int trickPoints) {
-        assert (isValid(pkScore) && isValid(trickPoints));
+        assert (isValid(pkScore) && trickPoints >= 0);
 
         // ajout d'un pli gagné à l'équipe winningTeam
         int tricksWon = turnTricks(pkScore, winningTeam) + 1;
