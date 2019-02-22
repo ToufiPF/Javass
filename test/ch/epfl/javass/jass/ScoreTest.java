@@ -2,6 +2,7 @@ package ch.epfl.javass.jass;
 
 import static ch.epfl.test.TestRandomizer.RANDOM_ITERATIONS;
 import static ch.epfl.test.TestRandomizer.newRandom;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -28,7 +29,15 @@ class ScoreTest {
 
     @Test
     void testTurnTricks() {
-        fail("Not yet implemented");
+        Score score = Score.INITIAL;
+        SplittableRandom rng = newRandom();
+        for (int i = 0 ; i < RANDOM_ITERATIONS * 5; ++i) {
+            int turnTricks1 = rng.nextInt(9);
+            int turnTricks2 = rng.nextInt(9 - turnTricks1);
+            score = getRandomScoreWithTurnTricks(turnTricks1, turnTricks2, rng);
+            assertEquals(turnTricks1, score.turnTricks(TeamId.TEAM_1));
+            assertEquals(turnTricks2, score.turnTricks(TeamId.TEAM_2));
+        }
     }
 
     @Test
@@ -75,24 +84,40 @@ class ScoreTest {
         Score score = Score.INITIAL;
         SplittableRandom rng = newRandom();
         for (int i = 0 ; i < RANDOM_ITERATIONS * 5; ++i) {
-            score = getRandomValidScore(rng);
+            score = getRandomScore(rng);
             assertTrue(score.equals(Score.ofPacked(score.packed())));
             assertTrue(Score.ofPacked(score.packed()).equals(score));
         }
     }
     
-    private Score getRandomValidScore(SplittableRandom generator) {
+    private static Score getRandomScore(SplittableRandom rng) {
+        int turnTricks1 = rng.nextInt(9);
+        int turnPoints1 = rng.nextInt(257);
+        int gamePoints1 = rng.nextInt(2000);
         
-        int tricks1 = generator.nextInt(9);
-        int turnPoints1 = generator.nextInt(257);
-        int gamePoints1 = generator.nextInt(2000);
-        
-        int tricks2 = generator.nextInt(9);
-        int turnPoints2 = generator.nextInt(257);
-        int gamePoints2 = generator.nextInt(2000);
+        int turnTricks2 = rng.nextInt(9 - turnTricks1);
+        int turnPoints2 = rng.nextInt(257 - turnPoints1);
+        int gamePoints2 = rng.nextInt(2000);
         
         return Score.ofPacked(
-                PackedScore.pack(tricks1, turnPoints1, gamePoints1, 
-                tricks2, turnPoints2, gamePoints2));
+                PackedScore.pack(turnTricks1, turnPoints1, gamePoints1, 
+                        turnTricks2, turnPoints2, gamePoints2));
+    }
+    
+    private static Score getRandomScoreWithTurnTricks(int turnTricks1, int turnTricks2, SplittableRandom rng) {
+        int turnPoints1 = rng.nextInt(257);
+        int gamePoints1 = rng.nextInt(2000);
+        int turnPoints2 = rng.nextInt(257 - turnPoints1);
+        int gamePoints2 = rng.nextInt(2000);
+        return Score.ofPacked(PackedScore.pack(turnTricks1, turnPoints1, gamePoints1, turnTricks2, turnPoints2, gamePoints2));
+    }
+    
+    private static Score getRandomScoreWithTurnPoints(int turnPoints1, int turnPoints2, SplittableRandom rng) {
+        int turnTricks1 = rng.nextInt(9);
+        int gamePoints1 = rng.nextInt(2000);
+        int turnTricks2 = rng.nextInt(9 - turnTricks1);
+        int gamePoints2 = rng.nextInt(2000);
+        
+        return Score.ofPacked(PackedScore.pack(turnTricks1, turnPoints1, gamePoints1, turnTricks2, turnPoints2, gamePoints2));
     }
 }
