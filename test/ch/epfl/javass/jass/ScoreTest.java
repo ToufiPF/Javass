@@ -3,6 +3,7 @@ package ch.epfl.javass.jass;
 import static ch.epfl.test.TestRandomizer.RANDOM_ITERATIONS;
 import static ch.epfl.test.TestRandomizer.newRandom;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -13,18 +14,33 @@ import org.junit.jupiter.api.Test;
 class ScoreTest {
 
     @Test
-    void testHashCode() {
-        fail("Not yet implemented");
-    }
-
-    @Test
-    void testOfPacked() {
-        fail("Not yet implemented");
+    void testOfPackedLaunchExceptionWhenInvalidPacked() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            Score.ofPacked(-1L);
+        });
+        assertThrows(IllegalArgumentException.class, () -> {
+            Score.ofPacked(0xFF00_0000_0000_0000L);
+        });
+        assertThrows(IllegalArgumentException.class, () -> {
+            Score.ofPacked(0x0000_FF00_FF00_0000L);
+        });
     }
 
     @Test
     void testPacked() {
-        fail("Not yet implemented");
+        Score score = Score.INITIAL;
+        SplittableRandom rng = newRandom();
+        for (int i = 0 ; i < RANDOM_ITERATIONS * 5; ++i) {
+            int turnTricks1 = rng.nextInt(9);
+            int turnTricks2 = rng.nextInt(9 - turnTricks1);
+            int turnPoints1 = rng.nextInt(257);
+            int turnPoints2 = rng.nextInt(257 - turnPoints1);
+            int gamePoints1 = rng.nextInt(2000);
+            int gamePoints2 = rng.nextInt(2000);
+            
+            score = Score.ofPacked(PackedScore.pack(turnTricks1, turnPoints1, gamePoints1, turnTricks2, turnPoints2, gamePoints2));
+            assertEquals(PackedScore.pack(turnTricks1, turnPoints1, gamePoints1, turnTricks2, turnPoints2, gamePoints2), score.packed());
+        }
     }
 
     @Test
@@ -71,11 +87,16 @@ class ScoreTest {
         Score score = Score.INITIAL;
         SplittableRandom rng = newRandom();
         for (int i = 0 ; i < RANDOM_ITERATIONS * 5; ++i) {
+            int turnTricks1 = rng.nextInt(9);
+            int turnTricks2 = rng.nextInt(9 - turnTricks1);
+            int turnPoints1 = rng.nextInt(257);
+            int turnPoints2 = rng.nextInt(257 - turnPoints1);
             int gamePoints1 = rng.nextInt(2000);
-            int gamePoints2 = rng.nextInt(2000 - gamePoints1);
-            score = getRandomScoreWithGamePoints(gamePoints1, gamePoints2, rng);
-            assertEquals(gamePoints1, score.gamePoints(TeamId.TEAM_1));
-            assertEquals(gamePoints2, score.gamePoints(TeamId.TEAM_2));
+            int gamePoints2 = rng.nextInt(2000);
+            
+            score = Score.ofPacked(PackedScore.pack(turnTricks1, turnPoints1, gamePoints1, turnTricks2, turnPoints2, gamePoints2));
+            assertEquals(turnPoints1 + gamePoints1, score.totalPoints(TeamId.TEAM_1));
+            assertEquals(turnPoints2 + gamePoints2, score.totalPoints(TeamId.TEAM_2));
         }
     }
 
@@ -113,6 +134,7 @@ class ScoreTest {
             assertTrue(Score.ofPacked(score.packed()).equals(score));
         }
     }
+    
     
     private static Score getRandomScore(SplittableRandom rng) {
         return Score.ofPacked(PackedScoreTest.getRandomValidPackedScore(rng));
