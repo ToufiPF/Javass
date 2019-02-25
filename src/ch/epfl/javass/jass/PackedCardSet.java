@@ -1,5 +1,7 @@
 package ch.epfl.javass.jass;
 
+import java.util.ArrayList;
+
 import ch.epfl.javass.bits.Bits64;
 
 /**
@@ -17,9 +19,9 @@ public final class PackedCardSet {
     public static final long EMPTY = 0L;
     
     // (long) représente l'ensemble des 36 cartes du Jass
-    public static final long ALL_CARDS = 0b111111111000000011111111100000001111111110000000111111111L;
+    public static final long ALL_CARDS = 0b0000000111111111_0000000111111111_0000000111111111_0000000111111111L;
 
-    private PackedCard[][] trumpAboveTab = computeTrumpAbove();
+    private ArrayList< ArrayList<Integer> > trumpAboveTab = computeTrumpAbove();
 
     /**
      * Méthode publique vérifiant que le long pkCardSet est valide, càd qu0aucun des 28 bits inutilisés ne vaut 1
@@ -33,20 +35,17 @@ public final class PackedCardSet {
                 && Bits64.extract(pkCardSet, 57, 7) == 0;
     }
 
-    private PackedCard[][] computeTrumpAbove() {
-        PackedCard[][] trumpAboveRankTab = new PackedCard[Card.Rank.COUNT][Card.Rank.COUNT];
+    private ArrayList< ArrayList<Integer> > computeTrumpAbove() {
+        ArrayList< ArrayList<Integer> > trumpAboveRank = new ArrayList< ArrayList<Integer> >();
 
         for (int i = 0; i < Card.Rank.COUNT; ++i) {
-
             for (int j = 0; j < Card.Rank.COUNT; ++j) {
-                if (Card.Rank.ALL.get(i).trumpOrdinal() < Card.Rank.ALL.get(j)
-                        .trumpOrdinal()) {
-                    int cardRank = Card.Rank.ALL.get(j).hashCode();
+                if (Card.Rank.ALL.get(i).trumpOrdinal() < Card.Rank.ALL.get(j).trumpOrdinal()) {
+                    trumpAboveRank.get(i).add(j);
                 }
-
             }
         }
-        return trumpAboveRankTab;
+        return trumpAboveRank;
     }
     
     public long singleton(int pkCard) {
@@ -57,7 +56,7 @@ public final class PackedCardSet {
         return pkCardSet == EMPTY;
     }
     
-    public int size() {
-        
+    public int size(long pkCardSet) {
+        return Long.bitCount(pkCardSet);
     }
 }
