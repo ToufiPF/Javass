@@ -39,6 +39,7 @@ public final class PackedCardSet {
         ArrayList< ArrayList<Integer> > trumpAboveRank = new ArrayList< ArrayList<Integer> >();
 
         for (int i = 0; i < Card.Rank.COUNT; ++i) {
+            trumpAboveRank.add(new ArrayList<Integer>());
             for (int j = 0; j < Card.Rank.COUNT; ++j) {
                 if (Card.Rank.ALL.get(i).trumpOrdinal() < Card.Rank.ALL.get(j).trumpOrdinal()) {
                     trumpAboveRank.get(i).add(j);
