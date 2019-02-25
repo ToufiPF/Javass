@@ -77,17 +77,15 @@ class PackedScoreTest {
     void InitialWorks() {
         assertEquals(0, PackedScore.INITIAL);
     }
-
+    
+    @Test
     void isValidWorksWithValidRandomNumbers() {
         assertTrue(PackedScore.isValid(getRandomValidPackedScore(newRandom())));
     }
 
-    void isValidFailsWithInvalidRandomNumbers() {
-        assertFalse(
-                PackedScore.isValid(getRandomInvalidPackedScore(newRandom())));
-    }
-
+    @Test
     void turnTricksWorksWithRandomValidNumbers() {
+        SplittableRandom rngGen = new SplittableRandom();
         for (int i = 0; i < 9; ++i) {
             for (int j = 0; j < 9; ++j) {
                 for (int k = 0; k < 5000; ++k) {
@@ -95,13 +93,13 @@ class PackedScoreTest {
                             PackedScore
                                     .turnTricks(
                                             getRandomPackedScoreWithTurnTricks(
-                                                    i, j, newRandom()),
+                                                    i, j, rngGen),
                                             TeamId.TEAM_1));
                     assertEquals(j,
                             PackedScore
                                     .turnTricks(
                                             getRandomPackedScoreWithTurnTricks(
-                                                    i, j, newRandom()),
+                                                    i, j, rngGen),
                                             TeamId.TEAM_2));
 
                 }
@@ -109,7 +107,9 @@ class PackedScoreTest {
         }
     }
 
+    @Test
     void turnPointsWorksWithRandomValidNumbers() {
+        SplittableRandom rngGen = new SplittableRandom();
         for (int i = 0; i < 257; ++i) {
             for (int j = 0; j < 257; ++j) {
                 for (int k = 0; k < 100; ++k) {
@@ -117,13 +117,13 @@ class PackedScoreTest {
                             PackedScore
                                     .turnPoints(
                                             getRandomPackedScoreWithTurnPoints(
-                                                    i, j, newRandom()),
+                                                    i, j, rngGen),
                                             TeamId.TEAM_1));
                     assertEquals(j,
                             PackedScore
                                     .turnPoints(
                                             getRandomPackedScoreWithTurnPoints(
-                                                    i, j, newRandom()),
+                                                    i, j, rngGen),
                                             TeamId.TEAM_2));
 
                 }
@@ -131,7 +131,9 @@ class PackedScoreTest {
         }
     }
 
+    @Test
     void gamePointsWorksWithRandomValidNumbers() {
+        SplittableRandom rngGen = new SplittableRandom();
         for (int i = 0; i < 2000; ++i) {
             for (int j = 0; j < 2000; ++j) {
                 for (int k = 0; k < 10; ++k) {
@@ -139,13 +141,13 @@ class PackedScoreTest {
                             PackedScore
                                     .gamePoints(
                                             getRandomPackedScoreWithGamePoints(
-                                                    i, j, newRandom()),
+                                                    i, j, rngGen),
                                             TeamId.TEAM_1));
                     assertEquals(j,
                             PackedScore
                                     .gamePoints(
                                             getRandomPackedScoreWithGamePoints(
-                                                    i, j, newRandom()),
+                                                    i, j, rngGen),
                                             TeamId.TEAM_2));
 
                 }
