@@ -5,7 +5,6 @@ import static ch.epfl.test.TestRandomizer.newRandom;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.SplittableRandom;
 
@@ -102,12 +101,45 @@ class ScoreTest {
 
     @Test
     void testWithAdditionalTrick() {
-        fail("Not yet implemented");
+        Score score = Score.INITIAL;
+        SplittableRandom rng = newRandom();
+        for (int i = 0 ; i < RANDOM_ITERATIONS; ++i) {
+            int turnTricks1 = rng.nextInt(8);
+            int turnTricks2 = rng.nextInt(8 - turnTricks1);
+            int turnPoints1 = rng.nextInt(257);
+            int turnPoints2 = rng.nextInt(257 - turnPoints1);
+            
+            int pointsWon = rng.nextInt(256 - Math.max(turnPoints1, turnPoints2));
+            
+            score = Score.ofPacked(PackedScore.pack(turnTricks1, turnPoints1, 100, turnTricks2, turnPoints2, 100));
+            score = score.withAdditionalTrick(TeamId.ALL.get(i % 2), pointsWon);
+            assertEquals((i % 2 == 0 ? turnTricks1 : turnTricks2) + 1, score.turnTricks(TeamId.ALL.get(i % 2)));
+            assertEquals((i % 2 == 0 ? turnPoints1 : turnPoints2) + pointsWon, score.turnPoints(TeamId.ALL.get(i % 2)));
+        }
     }
 
     @Test
     void testNextTurn() {
-        fail("Not yet implemented");
+        Score score = Score.INITIAL;
+        SplittableRandom rng = newRandom();
+        for (int i = 0 ; i < RANDOM_ITERATIONS; ++i) {
+            int turnTricks1 = rng.nextInt(9);
+            int turnTricks2 = rng.nextInt(9 - turnTricks1);
+            int turnPoints1 = rng.nextInt(257);
+            int turnPoints2 = rng.nextInt(257 - turnPoints1);
+            int gamePoints1 = rng.nextInt(1000);
+            int gamePoints2 = rng.nextInt(1000);
+            
+            
+            score = Score.ofPacked(PackedScore.pack(turnTricks1, turnPoints1, gamePoints1, turnTricks2, turnPoints2, gamePoints2));
+            score = score.nextTurn();
+            assertEquals(0, score.turnTricks(TeamId.TEAM_1));
+            assertEquals(0, score.turnTricks(TeamId.TEAM_2));
+            assertEquals(0, score.turnPoints(TeamId.TEAM_1));
+            assertEquals(0, score.turnPoints(TeamId.TEAM_2));
+            assertEquals(turnPoints1 + gamePoints1, score.gamePoints(TeamId.TEAM_1));
+            assertEquals(turnPoints2 + gamePoints2, score.gamePoints(TeamId.TEAM_2));
+        }
     }
 
     @Test
