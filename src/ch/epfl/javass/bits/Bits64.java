@@ -87,6 +87,6 @@ public final class Bits64 {
     }
 
     private static void checkValidity(long v, int s) throws IllegalArgumentException {
-        Preconditions.checkArgument(s >= 0 && s <= Long.SIZE && v < Math.pow(2, s));
+        Preconditions.checkArgument(s >= 0 && s <= Long.SIZE && v < (Math.pow(2, s)));
     }
 }
