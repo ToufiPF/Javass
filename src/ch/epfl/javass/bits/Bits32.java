@@ -32,10 +32,12 @@ public final class Bits32 {
         
         Preconditions.checkArgument(start >= 0 && size >= 0 && start + size <= Integer.SIZE);
 
-        int entier = 0;
-        for (int i = start; i < start + size; ++i) {
-            entier |= 1 << i;
+        if(size == 32) {
+            return -1;
         }
+        
+        int entier = (1 << size) - 1;
+        entier = entier << start;
         return entier;
     }
 
@@ -162,7 +164,14 @@ public final class Bits32 {
      *             est de taille supérieure à s1
      */
     private static void check(int v1, int s1) throws IllegalArgumentException {
-        Preconditions.checkArgument(s1 <= Integer.SIZE && s1 >= 0 && v1 < Math.pow(2, s1));
+        
+        Preconditions.checkArgument(s1 <= Integer.SIZE && s1 >= 0);
+        if (s1 == 32) {
+            Preconditions.checkArgument(v1 <= -1);
+        }
+        else {
+            Preconditions.checkArgument(v1 <= ((1 << s1) -1));
+        }
     }
 
 }

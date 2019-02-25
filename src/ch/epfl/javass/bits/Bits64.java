@@ -29,10 +29,11 @@ public final class Bits64 {
     public static long mask(int start, int size) {
         Preconditions.checkArgument(start >= 0 && size >= 0 && start + size <= Long.SIZE);
 
-        long mask = 0;
-        for (int i = start; i < start + size; ++i) {
-            mask |= 1L << i;
+        if (size == 64) {
+            return -1L;
         }
+        long mask = (1L << size) - 1;
+        mask = mask << start;
         return mask;
     }
 
@@ -87,6 +88,12 @@ public final class Bits64 {
     }
 
     private static void checkValidity(long v, int s) throws IllegalArgumentException {
-        Preconditions.checkArgument(s >= 0 && s <= Long.SIZE && v < (Math.pow(2, s)));
+        Preconditions.checkArgument(s >= 0 && s <= Long.SIZE);
+        if(s == 64) {
+            Preconditions.checkArgument(v <= -1L);
+        }
+        else {
+            Preconditions.checkArgument(v <= ((1L << s) -1L));
+        }
     }
 }
