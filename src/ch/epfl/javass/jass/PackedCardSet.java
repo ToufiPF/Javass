@@ -31,7 +31,7 @@ public final class PackedCardSet {
         for (Card.Color color : Card.Color.ALL) {
             for (Card.Rank rankL : Card.Rank.ALL) {
                 for (Card.Rank rankR : Card.Rank.ALL) {
-                    if (rankL.trumpOrdinal() > rankR.trumpOrdinal()) {
+                    if (rankL.trumpOrdinal() < rankR.trumpOrdinal()) {
                         int pkCardLeft = PackedCard.pack(color, rankL);
                         trumpAboveRank.put(pkCardLeft, trumpAboveRank.get(pkCardLeft) | singleton(PackedCard.pack(color, rankR)));
                     }
