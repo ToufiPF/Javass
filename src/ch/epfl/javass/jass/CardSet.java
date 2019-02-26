@@ -140,7 +140,7 @@ public final class CardSet {
      * @return (CardSet) l'ensemble de cartes de couleur color
      */
     public CardSet subsetOfColor(Card.Color color) {
-        return new CardSet(PackedCardSet.subsetOfColor(color));
+        return new CardSet(PackedCardSet.subsetOfColor(this.mPkCardSet, color));
     }
     
     @Override

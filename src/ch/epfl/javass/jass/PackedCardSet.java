@@ -28,14 +28,15 @@ public final class PackedCardSet {
     private static long[] subsetOfColorTab = computeSubsetOfColor();
 
     private static long[][] computeTrumpAbove() {
-        long [][]trumpAboveRank = new long[Card.Color.COUNT][Card.Rank.COUNT];
+        long[][] trumpAboveRank = new long[Card.Color.COUNT][Card.Rank.COUNT];
 
         for (Card.Color color : Card.Color.ALL) {
             for (Card.Rank rankL : Card.Rank.ALL) {
                 for (Card.Rank rankR : Card.Rank.ALL) {
+
                     if (rankL.trumpOrdinal() < rankR.trumpOrdinal()) {
-                        int pkCardLeft = PackedCard.pack(color, rankL);
-                        trumpAboveRank[color.ordinal()][rankL.ordinal()] |= singleton(pkCardLeft);
+                        trumpAboveRank[color.ordinal()][rankL.ordinal()] 
+                                |= singleton(PackedCard.pack(color, rankR));
                     }
                 }
             }
@@ -55,8 +56,8 @@ public final class PackedCardSet {
     }
 
     /**
-     * Méthode publique et statique vérifiant que le long pkCardSet est valide, càd qu0aucun
-     * des 28 bits inutilisés ne vaut 1
+     * Méthode publique et statique vérifiant que le long pkCardSet est valide,
+     * càd qu0aucun des 28 bits inutilisés ne vaut 1
      * 
      * @param pkCardSet
      *            (long) l'ensemble des cartes à vérifier
@@ -70,8 +71,8 @@ public final class PackedCardSet {
     }
 
     /**
-     * Méthode publique et statique retournant un long contenant les cartes stictement plus
-     * fortes que la carte donnée, sachant qu'elle est un atout
+     * Méthode publique et statique retournant un long contenant les cartes
+     * stictement plus fortes que la carte donnée, sachant qu'elle est un atout
      * 
      * @param pkCard
      *            (int) la carte d'atout dont on veut conaitre les cartes plus
@@ -81,7 +82,8 @@ public final class PackedCardSet {
      */
     public static long trumpAbove(int pkCard) {
         assert PackedCard.isValid(pkCard);
-        return trumpAboveTab[PackedCard.color(pkCard).ordinal()][PackedCard.rank(pkCard).ordinal()];
+        return trumpAboveTab[PackedCard.color(pkCard).ordinal()][PackedCard
+                                                                 .rank(pkCard).ordinal()];
     }
 
     /**
