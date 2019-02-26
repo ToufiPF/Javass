@@ -32,7 +32,7 @@ public final class Bits32 {
         
         Preconditions.checkArgument(start >= 0 && size >= 0 && start + size <= Integer.SIZE);
 
-        if(size == 32) {
+        if(size == Integer.SIZE) {
             return -1;
         }
         
@@ -166,7 +166,7 @@ public final class Bits32 {
     private static void check(int v1, int s1) throws IllegalArgumentException {
         
         Preconditions.checkArgument(s1 <= Integer.SIZE && s1 >= 0);
-        if (s1 == 32) {
+        if (s1 == Integer.SIZE) {
             Preconditions.checkArgument(v1 <= -1);
         }
         else {
