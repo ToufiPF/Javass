@@ -1,6 +1,8 @@
 package ch.epfl.javass.jass;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import ch.epfl.javass.bits.Bits64;
 
@@ -21,8 +23,24 @@ public final class PackedCardSet {
     // (long) représente l'ensemble des 36 cartes du Jass
     public static final long ALL_CARDS = 0b0000000111111111_0000000111111111_0000000111111111_0000000111111111L;
 
-    private ArrayList< ArrayList<Integer> > trumpAboveTab = computeTrumpAbove();
+    private Map<Integer, Long> trumpAboveMap = computeTrumpAbove();
 
+    private Map<Integer, Long> computeTrumpAbove() {
+        Map<Integer, Long> trumpAboveRank = new HashMap<Integer, Long>();
+
+        for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rankL : Card.Rank.ALL) {
+                for (Card.Rank rankR : Card.Rank.ALL) {
+                    if (rankL.trumpOrdinal() > rankR.trumpOrdinal()) {
+                        int pkCardLeft = PackedCard.pack(color, rankL);
+                        trumpAboveRank.put(pkCardLeft, trumpAboveRank.get(pkCardLeft) | singleton(PackedCard.pack(color, rankR)));
+                    }
+                }
+            }
+        }
+        return trumpAboveRank;
+    }
+    
     /**
      * Méthode publique vérifiant que le long pkCardSet est valide, càd qu0aucun des 28 bits inutilisés ne vaut 1
      * @param pkCardSet (long) l'ensemble des cartes à vérifier
@@ -34,19 +52,9 @@ public final class PackedCardSet {
                 && Bits64.extract(pkCardSet, 41, 7) == 0
                 && Bits64.extract(pkCardSet, 57, 7) == 0;
     }
-
-    private ArrayList< ArrayList<Integer> > computeTrumpAbove() {
-        ArrayList< ArrayList<Integer> > trumpAboveRank = new ArrayList< ArrayList<Integer> >();
-
-        for (int i = 0; i < Card.Rank.COUNT; ++i) {
-            trumpAboveRank.add(new ArrayList<Integer>());
-            for (int j = 0; j < Card.Rank.COUNT; ++j) {
-                if (Card.Rank.ALL.get(i).trumpOrdinal() < Card.Rank.ALL.get(j).trumpOrdinal()) {
-                    trumpAboveRank.get(i).add(j);
-                }
-            }
-        }
-        return trumpAboveRank;
+    
+    public long trumpAbove(int pkCard) {
+        return trumpAboveMap.get(pkCard);
     }
     
     public long singleton(int pkCard) {
