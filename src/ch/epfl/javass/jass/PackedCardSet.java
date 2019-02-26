@@ -23,21 +23,19 @@ public final class PackedCardSet {
     // (long) représente l'ensemble des 36 cartes du Jass
     public static final long ALL_CARDS = 0b0000000111111111_0000000111111111_0000000111111111_0000000111111111L;
 
-    private static Map<Integer, Long> trumpAboveMap = computeTrumpAbove();
+    private static long[][] trumpAboveTab = computeTrumpAbove();
 
     private static long[] subsetOfColorTab = computeSubsetOfColor();
 
-    private static Map<Integer, Long> computeTrumpAbove() {
-        Map<Integer, Long> trumpAboveRank = new HashMap<Integer, Long>();
+    private static long[][] computeTrumpAbove() {
+        long [][]trumpAboveRank = new long[Card.Color.COUNT][Card.Rank.COUNT];
 
         for (Card.Color color : Card.Color.ALL) {
             for (Card.Rank rankL : Card.Rank.ALL) {
                 for (Card.Rank rankR : Card.Rank.ALL) {
                     if (rankL.trumpOrdinal() < rankR.trumpOrdinal()) {
                         int pkCardLeft = PackedCard.pack(color, rankL);
-                        trumpAboveRank.put(pkCardLeft,
-                                trumpAboveRank.get(pkCardLeft) | singleton(
-                                        PackedCard.pack(color, rankR)));
+                        trumpAboveRank[color.ordinal()][rankL.ordinal()] |= singleton(pkCardLeft);
                     }
                 }
             }
@@ -83,7 +81,7 @@ public final class PackedCardSet {
      */
     public static long trumpAbove(int pkCard) {
         assert PackedCard.isValid(pkCard);
-        return trumpAboveMap.get(pkCard);
+        return trumpAboveTab[PackedCard.color(pkCard).ordinal()][PackedCard.rank(pkCard).ordinal()];
     }
 
     /**
