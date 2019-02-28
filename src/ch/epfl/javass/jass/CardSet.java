@@ -5,7 +5,9 @@ import java.util.List;
 import ch.epfl.javass.Preconditions;
 
 /**
- * @author Toufi
+ * Card Set
+ * Une classe immuable représentant un ensemble de cartes
+ * @author Aurélien Clergeot (302592)
  */
 public final class CardSet {
     /**

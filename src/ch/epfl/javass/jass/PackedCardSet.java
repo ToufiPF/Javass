@@ -1,7 +1,5 @@
 package ch.epfl.javass.jass;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.StringJoiner;
 
 import ch.epfl.javass.bits.Bits64;
@@ -57,7 +55,7 @@ public final class PackedCardSet {
 
     /**
      * Méthode publique et statique vérifiant que le long pkCardSet est valide,
-     * càd qu0aucun des 28 bits inutilisés ne vaut 1
+     * càd qu'aucun des 28 bits inutilisés ne vaut 1
      * 
      * @param pkCardSet
      *            (long) l'ensemble des cartes à vérifier
@@ -160,7 +158,7 @@ public final class PackedCardSet {
     public static long add(long pkCardSet, int pkCard) {
         assert isValid(pkCardSet) && PackedCard.isValid(pkCard);
 
-        return pkCardSet |= singleton(pkCard);
+        return pkCardSet | singleton(pkCard);
     }
 
     /**
@@ -176,7 +174,7 @@ public final class PackedCardSet {
     public static long remove(long pkCardSet, int pkCard) {
         assert isValid(pkCardSet) && PackedCard.isValid(pkCard);
 
-        return pkCardSet &= ~singleton(pkCard);
+        return pkCardSet & ~singleton(pkCard);
     }
 
     /**
@@ -195,7 +193,7 @@ public final class PackedCardSet {
     public static boolean contains(long pkCardSet, int pkCard) {
         assert isValid(pkCardSet) && PackedCard.isValid(pkCard);
 
-        return (pkCardSet &= singleton(pkCard)) != 0;
+        return (pkCardSet & singleton(pkCard)) != 0;
     }
 
     /**
@@ -275,7 +273,12 @@ public final class PackedCardSet {
 
         return pkCardSet & subsetOfColorTab[color.ordinal()];
     }
-
+    
+    /**
+     * Represente l'ensemble de cartes donné sous forme de String
+     * @param pkCardSet (long) l'ensemble à représenter
+     * @return (String) la représentation de l'ensemble de cartes
+     */
     public static String toString(long pkCardSet) {
         assert isValid(pkCardSet);
 

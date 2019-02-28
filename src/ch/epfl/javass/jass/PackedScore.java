@@ -7,7 +7,8 @@ import ch.epfl.javass.bits.Bits64;
  * PackedScore Classe finale non instanciable permettant de manipuler les scores
  * d'une partie
  * 
- * @author Amaury Pierre (296498) et Aurélien Clergeot (302592)
+ * @author Amaury Pierre (296498) 
+ * @author Aurélien Clergeot (302592)
  */
 public final class PackedScore {
 
@@ -17,7 +18,7 @@ public final class PackedScore {
     // constante permettant d'initialiser les scores
     public static final long INITIAL = 0L;
 
-    private static boolean isValid(int pkScore32) {
+    private static boolean isValid32(int pkScore32) {
         return Bits32.extract(pkScore32, 0, 4) <= 9
                 && Bits32.extract(pkScore32, 4, 9) <= 257
                 && Bits32.extract(pkScore32, 13, 11) <= 2000
@@ -35,11 +36,11 @@ public final class PackedScore {
     public static boolean isValid(long pkScore) {
         int pkScore1 = (int) Bits64.extract(pkScore, 0, 32);
         int pkScore2 = (int) Bits64.extract(pkScore, 32, 32);
-        return isValid(pkScore1) && isValid(pkScore2);
+        return isValid32(pkScore1) && isValid32(pkScore2);
     }
 
-    private static int pack(int turnTricks, int turnPoints, int gamePoints) {
-        assert isValid(
+    private static int pack32(int turnTricks, int turnPoints, int gamePoints) {
+        assert isValid32(
                 Bits32.pack(turnTricks, 4, turnPoints, 9, gamePoints, 11));
         return Bits32.pack(turnTricks, 4, turnPoints, 9, gamePoints, 11);
     }
@@ -70,8 +71,8 @@ public final class PackedScore {
      */
     public static long pack(int turnTricks1, int turnPoints1, int gamePoints1,
             int turnTricks2, int turnPoints2, int gamePoints2) {
-        return Bits64.pack(pack(turnTricks1, turnPoints1, gamePoints1), 32,
-                pack(turnTricks2, turnPoints2, gamePoints2), 32);
+        return Bits64.pack(pack32(turnTricks1, turnPoints1, gamePoints1), 32,
+                pack32(turnTricks2, turnPoints2, gamePoints2), 32);
     }
 
     /**
@@ -163,21 +164,19 @@ public final class PackedScore {
         // ajout du score trickPoints au score du tour courant
         int scoreTurn = turnPoints(pkScore, winningTeam) + trickPoints;
 
-        // si le nombre de plis gagnés et de 9, le score du tour augment de 100
-        if (tricksWon == Jass.TRICKS_PER_TURN) {
+        // si le nombre de plis gagnés est de 9, le score du tour augment de 100
+        if (tricksWon == Jass.TRICKS_PER_TURN)
             scoreTurn += Jass.MATCH_ADDITIONAL_POINTS;
-        }
+        
 
         // on pack les nouveaux scores dans un long
         if (winningTeam == TeamId.TEAM_1) {
             return Bits64.pack(
-                    pack(tricksWon, scoreTurn,
-                            gamePoints(pkScore, TeamId.TEAM_1)),
-                    32, Bits64.extract(pkScore, 32, 32), 32);
+                    pack32(tricksWon, scoreTurn, gamePoints(pkScore, TeamId.TEAM_1)), 32, 
+                    Bits64.extract(pkScore, 32, 32), 32);
         }
         return Bits64.pack(Bits64.extract(pkScore, 0, 32), 32,
-                pack(tricksWon, scoreTurn, gamePoints(pkScore, TeamId.TEAM_2)),
-                32);
+                pack32(tricksWon, scoreTurn, gamePoints(pkScore, TeamId.TEAM_2)), 32);
     }
 
     /**
@@ -189,12 +188,14 @@ public final class PackedScore {
      * @return (long) les scores empaquetés mis à jour
      */
     public static long nextTurn(long pkScore) {
-        return pack(0, 0, totalPoints(pkScore, TeamId.TEAM_1), 0, 0,
-                totalPoints(pkScore, TeamId.TEAM_2));
+        return pack(0, 0, totalPoints(pkScore, TeamId.TEAM_1), 
+                0, 0, totalPoints(pkScore, TeamId.TEAM_2));
     }
 
     /**
      * Méthode retournant une représentation des scores
+     * sous la forme (Plis_remportés,Points_du_tour,Points_de_la_partie),
+     * et ce pour chaque équipe
      * @param pkScore (long) les scores à représenter 
      * @return (String) la représentation des scores
      */

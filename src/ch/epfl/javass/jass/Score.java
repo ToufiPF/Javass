@@ -44,7 +44,7 @@ public final class Score {
     }
     
     /**
-     * Donne le nombre de plis remportés par la team t dans le tour courant
+     * Donne le nombre de plis remportés par la team donnée dans le tour courant
      * @param t (TeamId) la team qui nous interesse
      * @return (int) le nombre de plis remportés
      */
@@ -53,7 +53,7 @@ public final class Score {
     }
 
     /**
-     * Donne le nombre de points de la team t dans le tour courant
+     * Donne le nombre de points de la team donnée dans le tour courant
      * @param t (TeamId) la team qui nous interesse
      * @return (int) le nombre de points dans le tour courant
      */
@@ -62,7 +62,8 @@ public final class Score {
     }
     
     /**
-     * Donne le nombre de points de la partie (SANS compter le tour courant)
+     * Donne le nombre de points de la team donnée pour cette partie 
+     * (SANS compter le tour courant)
      * @param t (TeamId) la team qui nous interesse
      * @return (int) le nombre de points de la partie
      */
@@ -71,7 +72,8 @@ public final class Score {
     }
 
     /**
-     * Donne le nombre de points TOTAL de la partie courante
+     * Donne le nombre de points TOTAL de la team donnée pour cette partie,
+     * càd le nombre de points du tour ajouté au nombre de points de la partie
      * @param t (TeamId) la team qui nous interesse
      * @return (int) le nombre de points TOTAL de la partie
      */
@@ -81,7 +83,8 @@ public final class Score {
     
     /**
      * Retourne un Score mis à jour pour le prochain pli,
-     * càd avec trickPoints ajouté au nombre de points du tour
+     * càd avec trickPoints ajouté au nombre de points du tour,
+     * et un incrément du nombre de plis remportés pour l'équipe gagnante
      * @param winner (TeamId) la team qui a remporté le pli
      * @param trickPoints (int) le nombre de points du pli
      * @return (Score) le score du prochain pli
