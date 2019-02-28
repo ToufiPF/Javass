@@ -145,9 +145,6 @@ class Bits64Test {
             long[] v = getValues(rng, s);
             long packed = Bits64.pack(v[0], s[0], v[1], s[1]);
 
-            System.out.println("Sizes : " + s[0] + ", " + s[1]);
-            System.out.println("Values : " + Long.toHexString(v[0]) + ", " + Long.toHexString(v[1]));
-            System.out.println("Packed : " + Long.toHexString(packed));
             for (int j = 0; j < s.length; ++j) {
               assertEquals(v[j], Bits64.extract(packed, 0, s[j]));
               packed >>>= s[j];

@@ -144,6 +144,8 @@ class ScoreTest {
 
     @Test
     void testToString() {
+        System.out.println("----------------------");
+        System.out.println("ScoreTest - toString :");
         Score score = Score.INITIAL;
         System.out.println(score);
         for (int i = 0; i < Jass.TRICKS_PER_TURN; ++i) {

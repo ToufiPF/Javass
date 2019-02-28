@@ -172,7 +172,8 @@ public final class PackedCardTest {
     
     @Test
     void toStringTest() throws Exception {
-        System.out.println("Test toString :");
+        System.out.println("---------------------");
+        System.out.println("CardTest - toString :");
         for (Card.Color c : getAllColors()) {
             for (Card.Rank r : getAllRanks()) {
                 System.out.print(PackedCard.toString(PackedCard.pack(c, r)) + " ");

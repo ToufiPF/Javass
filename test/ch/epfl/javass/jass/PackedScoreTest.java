@@ -2,7 +2,6 @@ package ch.epfl.javass.jass;
 
 import static ch.epfl.test.TestRandomizer.newRandom;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.SplittableRandom;
@@ -53,21 +52,6 @@ class PackedScoreTest {
 
         int tricks2 = rng.nextInt(9 - tricks1);
         int turnPoints2 = rng.nextInt(257 - turnPoints1);
-
-        return PackedScore.pack(tricks1, turnPoints1, gamePoints1, tricks2,
-                turnPoints2, gamePoints2);
-    }
-
-    private static long getRandomInvalidPackedScore(
-            SplittableRandom generator) {
-
-        int tricks1 = generator.nextInt(6) + 10;
-        int turnPoints1 = generator.nextInt(255) + 258;
-        int gamePoints1 = generator.nextInt(48) + 2001;
-
-        int tricks2 = generator.nextInt(6) + 10;
-        int turnPoints2 = generator.nextInt(255) + 258;
-        int gamePoints2 = generator.nextInt(48) + 2001;
 
         return PackedScore.pack(tricks1, turnPoints1, gamePoints1, tricks2,
                 turnPoints2, gamePoints2);
@@ -137,25 +121,20 @@ class PackedScoreTest {
         for (int i = 0; i < 2000; ++i) {
             for (int j = 0; j < 2000; ++j) {
                 for (int k = 0; k < 10; ++k) {
-                    assertEquals(i,
-                            PackedScore
-                                    .gamePoints(
-                                            getRandomPackedScoreWithGamePoints(
-                                                    i, j, rngGen),
-                                            TeamId.TEAM_1));
-                    assertEquals(j,
-                            PackedScore
-                                    .gamePoints(
-                                            getRandomPackedScoreWithGamePoints(
-                                                    i, j, rngGen),
-                                            TeamId.TEAM_2));
+                    assertEquals(i, PackedScore.gamePoints(
+                            getRandomPackedScoreWithGamePoints(i, j, rngGen), TeamId.TEAM_1));
+                    assertEquals(j, PackedScore.gamePoints(
+                            getRandomPackedScoreWithGamePoints(i, j, rngGen), TeamId.TEAM_2));
 
                 }
             }
         }
     }
 
-    public static void main(String[] args) {
+    @Test
+    void testToString() {
+        System.out.println("--------------------------");
+        System.out.println("PackedScoreTest - toString");
         long s = PackedScore.INITIAL;
         System.out.println(PackedScore.toString(s));
         for (int i = 0; i < Jass.TRICKS_PER_TURN; ++i) {
