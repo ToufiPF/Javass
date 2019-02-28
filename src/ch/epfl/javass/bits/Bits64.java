@@ -7,6 +7,7 @@ import ch.epfl.javass.Preconditions;
  * Une classe non instanciable, homologue à Bits32, contenant
  * des méthodes permettant de travailler sur des vecteurs de 64 bits
  * 
+ * @author Amaury Pierre (296498) 
  * @author Aurélien Clergeot (302592)
  */
 public final class Bits64 {

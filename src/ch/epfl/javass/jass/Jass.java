@@ -7,6 +7,9 @@ package ch.epfl.javass.jass;
 /**
  * Jass 
  * Une interface contenant diverses constantes utiles pour la suite du programme
+ * 
+ * @author Amaury Pierre (296498) 
+ * @author Aurélien Clergeot (302592)
  */
 public interface Jass {
     public final static int HAND_SIZE = 9;

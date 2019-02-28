@@ -11,7 +11,8 @@ import java.util.List;
 /**
  * Card Une classe immuable représentant une carte
  * 
- * @author Amaury Pierre (296498)
+ * @author Amaury Pierre (296498) 
+ * @author Aurélien Clergeot (302592)
  */
 public final class Card {
     /**

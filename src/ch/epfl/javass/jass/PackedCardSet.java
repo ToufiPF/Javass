@@ -8,7 +8,8 @@ import ch.epfl.javass.bits.Bits64;
  * PackedCardSet Une classe publique, finale et non instanciable permettant de
  * manipuler des ensembles de cartes empaquetés dans des valeurs de type long
  * 
- * @author Amaury Pierre (296498)
+ * @author Amaury Pierre (296498) 
+ * @author Aurélien Clergeot (302592)
  */
 public final class PackedCardSet {
 

@@ -7,7 +7,8 @@ import java.util.List;
 /**
  * Type énuméré permettant d'identifier les 2 équipes
  * 
- * @author Amaury Pierre (296498)
+ * @author Amaury Pierre (296498) 
+ * @author Aurélien Clergeot (302592)
  */
 public enum TeamId {
     TEAM_1, TEAM_2;

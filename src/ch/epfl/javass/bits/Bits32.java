@@ -7,7 +7,8 @@ import ch.epfl.javass.Preconditions;
  * Une classe non instanciable contenant des méthodes permettant de
  * travailler sur des vecteurs de 32 bits
  * 
- * @author Amaury Pierre (296498)
+ * @author Amaury Pierre (296498) 
+ * @author Aurélien Clergeot (302592)
  */
 public final class Bits32 {
 
@@ -32,13 +33,11 @@ public final class Bits32 {
         
         Preconditions.checkArgument(start >= 0 && size >= 0 && start + size <= Integer.SIZE);
 
-        if(size == Integer.SIZE) {
+        if(size == Integer.SIZE)
             return -1;
-        }
         
-        int entier = (1 << size) - 1;
-        entier = entier << start;
-        return entier;
+        int mask = (1 << size) - 1;
+        return mask << start;
     }
 
     /**
@@ -166,12 +165,10 @@ public final class Bits32 {
     private static void check(int v1, int s1) throws IllegalArgumentException {
         
         Preconditions.checkArgument(s1 <= Integer.SIZE && s1 >= 0);
-        if (s1 == Integer.SIZE) {
+        if (s1 == Integer.SIZE) 
             Preconditions.checkArgument(v1 <= -1);
-        }
-        else {
+        else 
             Preconditions.checkArgument(v1 <= ((1 << s1) -1));
-        }
     }
 
 }

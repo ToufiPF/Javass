@@ -7,6 +7,7 @@ import ch.epfl.javass.bits.Bits32;
  * Une classe non instanciable qui fournit des méthodes statiques
  * pour convertir des cartes en int et vice-versa
  * 
+ * @author Amaury Pierre (296498) 
  * @author Aurélien Clergeot (302592)
  */
 public final class PackedCard {

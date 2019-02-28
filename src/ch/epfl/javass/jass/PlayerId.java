@@ -7,7 +7,8 @@ import java.util.List;
 /**
  * Type énuméré permettant d'identifier les différents joueurs
  * 
- * @author Amaury Pierre (296498)
+ * @author Amaury Pierre (296498) 
+ * @author Aurélien Clergeot (302592)
  */
 public enum PlayerId {
     PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4;

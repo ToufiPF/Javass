@@ -6,6 +6,7 @@ import ch.epfl.javass.Preconditions;
  * Score
  * Une classe immuable représentant un score
  * 
+ * @author Amaury Pierre (296498) 
  * @author Aurélien Clergeot (302592)
  */
 public final class Score {

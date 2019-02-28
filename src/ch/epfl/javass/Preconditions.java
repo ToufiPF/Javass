@@ -5,6 +5,7 @@ package ch.epfl.javass;
  * Une classe non instanciable qui fournit des méthodes statiques
  * pour vérifier la validité d'un argument
  * 
+ * @author Amaury Pierre (296498) 
  * @author Aurélien Clergeot (302592)
  */
 public final class Preconditions {
