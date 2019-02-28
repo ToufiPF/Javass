@@ -194,7 +194,7 @@ public final class PackedScore {
 
     /**
      * Méthode retournant une représentation des scores
-     * sous la forme (Plis_remportés,Points_du_tour,Points_de_la_partie),
+     * sous la forme (Plis_remportés,Points_du_tour,Points_de_la_partie,Points_totaux),
      * et ce pour chaque équipe
      * @param pkScore (long) les scores à représenter 
      * @return (String) la représentation des scores
@@ -202,9 +202,11 @@ public final class PackedScore {
     public static String toString(long pkScore) {
         return "(" + turnTricks(pkScore, TeamId.TEAM_1) + ","
                 + turnPoints(pkScore, TeamId.TEAM_1) + ","
-                + gamePoints(pkScore, TeamId.TEAM_1) + ")/("
+                + gamePoints(pkScore, TeamId.TEAM_1) + ","
+                + totalPoints(pkScore, TeamId.TEAM_1) + ")/("
                 + turnTricks(pkScore, TeamId.TEAM_2) + ","
                 + turnPoints(pkScore, TeamId.TEAM_2) + ","
-                + gamePoints(pkScore, TeamId.TEAM_2) + ")";
+                + gamePoints(pkScore, TeamId.TEAM_2) + ","
+                + totalPoints(pkScore, TeamId.TEAM_2) + ")";
     }
 }
