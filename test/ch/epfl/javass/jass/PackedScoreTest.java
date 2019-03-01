@@ -1,5 +1,6 @@
 package ch.epfl.javass.jass;
 
+import static ch.epfl.test.TestRandomizer.RANDOM_ITERATIONS;
 import static ch.epfl.test.TestRandomizer.newRandom;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -64,7 +65,9 @@ class PackedScoreTest {
     
     @Test
     void isValidWorksWithValidRandomNumbers() {
-        assertTrue(PackedScore.isValid(getRandomValidPackedScore(newRandom())));
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i)
+            assertTrue(PackedScore.isValid(getRandomValidPackedScore(rng)));
     }
 
     @Test
@@ -73,18 +76,10 @@ class PackedScoreTest {
         for (int i = 0; i < 9; ++i) {
             for (int j = 0; j < 9; ++j) {
                 for (int k = 0; k < 5000; ++k) {
-                    assertEquals(i,
-                            PackedScore
-                                    .turnTricks(
-                                            getRandomPackedScoreWithTurnTricks(
-                                                    i, j, rngGen),
-                                            TeamId.TEAM_1));
-                    assertEquals(j,
-                            PackedScore
-                                    .turnTricks(
-                                            getRandomPackedScoreWithTurnTricks(
-                                                    i, j, rngGen),
-                                            TeamId.TEAM_2));
+                    assertEquals(i, PackedScore.turnTricks(
+                            getRandomPackedScoreWithTurnTricks(i, j, rngGen), TeamId.TEAM_1));
+                    assertEquals(j, PackedScore.turnTricks(
+                            getRandomPackedScoreWithTurnTricks(i, j, rngGen), TeamId.TEAM_2));
 
                 }
             }
@@ -97,18 +92,10 @@ class PackedScoreTest {
         for (int i = 0; i < 257; ++i) {
             for (int j = 0; j < 257; ++j) {
                 for (int k = 0; k < 100; ++k) {
-                    assertEquals(i,
-                            PackedScore
-                                    .turnPoints(
-                                            getRandomPackedScoreWithTurnPoints(
-                                                    i, j, rngGen),
-                                            TeamId.TEAM_1));
-                    assertEquals(j,
-                            PackedScore
-                                    .turnPoints(
-                                            getRandomPackedScoreWithTurnPoints(
-                                                    i, j, rngGen),
-                                            TeamId.TEAM_2));
+                    assertEquals(i, PackedScore.turnPoints(
+                            getRandomPackedScoreWithTurnPoints(i, j, rngGen), TeamId.TEAM_1));
+                    assertEquals(j, PackedScore.turnPoints(
+                            getRandomPackedScoreWithTurnPoints(i, j, rngGen), TeamId.TEAM_2));
 
                 }
             }

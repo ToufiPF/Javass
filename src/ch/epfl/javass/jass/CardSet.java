@@ -163,7 +163,7 @@ public final class CardSet {
     public boolean equals(Object obj) {
         if (obj.getClass() == CardSet.class) {
             CardSet otherCardSet = (CardSet) obj;
-            return mPkCardSet == otherCardSet.packed();
+            return this.packed() == otherCardSet.packed();
         }
         return false;
     }

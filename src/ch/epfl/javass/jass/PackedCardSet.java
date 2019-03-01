@@ -23,7 +23,6 @@ public final class PackedCardSet {
     public static final long ALL_CARDS = 0b0000000111111111_0000000111111111_0000000111111111_0000000111111111L;
 
     private static long[][] trumpAboveTab = computeTrumpAbove();
-
     private static long[] subsetOfColorTab = computeSubsetOfColor();
 
     private static long[][] computeTrumpAbove() {
@@ -81,8 +80,8 @@ public final class PackedCardSet {
      */
     public static long trumpAbove(int pkCard) {
         assert PackedCard.isValid(pkCard);
-        return trumpAboveTab[PackedCard.color(pkCard).ordinal()][PackedCard
-                                                                 .rank(pkCard).ordinal()];
+        return trumpAboveTab[PackedCard.color(pkCard).ordinal()]
+                [PackedCard.rank(pkCard).ordinal()];
     }
 
     /**
@@ -192,7 +191,8 @@ public final class PackedCardSet {
      *         carte empaquetée pkCard
      */
     public static boolean contains(long pkCardSet, int pkCard) {
-        assert isValid(pkCardSet) && PackedCard.isValid(pkCard);
+        assert isValid(pkCardSet);
+        assert PackedCard.isValid(pkCard);
 
         return (pkCardSet & singleton(pkCard)) != 0L;
     }
@@ -284,10 +284,8 @@ public final class PackedCardSet {
         assert isValid(pkCardSet);
 
         StringJoiner j = new StringJoiner(",", "{", "}");
-        for (int i = 0; i < Long.SIZE; ++i) {
-            if (contains(pkCardSet, i)) {
-                j.add(PackedCard.toString(i));
-            }
+        for (int i = 0; i < size(pkCardSet); ++i) {
+            j.add(PackedCard.toString(get(pkCardSet, i)));
         }
         return j.toString();
     }
