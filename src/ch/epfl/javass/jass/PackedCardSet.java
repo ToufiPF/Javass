@@ -175,7 +175,7 @@ public final class PackedCardSet {
     public static long remove(long pkCardSet, int pkCard) {
         assert isValid(pkCardSet) && PackedCard.isValid(pkCard);
 
-        return pkCardSet & ~singleton(pkCard);
+        return pkCardSet & (~singleton(pkCard));
     }
 
     /**
@@ -194,7 +194,7 @@ public final class PackedCardSet {
     public static boolean contains(long pkCardSet, int pkCard) {
         assert isValid(pkCardSet) && PackedCard.isValid(pkCard);
 
-        return (pkCardSet & singleton(pkCard)) != 0;
+        return (pkCardSet & singleton(pkCard)) != 0L;
     }
 
     /**
@@ -254,7 +254,7 @@ public final class PackedCardSet {
     public static long difference(long pkCardSet1, long pkCardSet2) {
         assert isValid(pkCardSet1) && isValid(pkCardSet2);
 
-        return pkCardSet1 & ~pkCardSet2;
+        return pkCardSet1 & (~pkCardSet2);
     }
 
     /**

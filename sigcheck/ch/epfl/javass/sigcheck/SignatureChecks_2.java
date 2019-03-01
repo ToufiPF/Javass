@@ -82,4 +82,5 @@ public final class SignatureChecks_2 {
         s = s.withAdditionalTrick(t, i);
         s = s.nextTurn();
     }
+
 }

@@ -57,6 +57,14 @@ public final class CardSet {
     public long packed() {
         return mPkCardSet;
     }
+    
+    /**
+     * Retourne vrai si l'ensemble de cartes est vide
+     * @return true (boolean) ssi l'ensemble de cartes est vide
+     */
+    public boolean isEmpty() {
+        return PackedCardSet.isEmpty(mPkCardSet);
+    }
     /**
      * Donne le nombre de cartes de ce CardSet
      * @return (int) nombre de cartes dans ce CardSet
