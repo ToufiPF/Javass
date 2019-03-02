@@ -207,7 +207,7 @@ public final class PackedCardSet {
     public static long complement(long pkCardSet) {
         assert isValid(pkCardSet);
 
-        return ~pkCardSet;
+        return (~pkCardSet) & ALL_CARDS;
     }
 
     /**
