@@ -2,8 +2,6 @@ package ch.epfl.javass.jass;
 
 import java.util.StringJoiner;
 
-import ch.epfl.javass.bits.Bits64;
-
 /**
  * PackedCardSet Une classe publique, finale et non instanciable permettant de
  * manipuler des ensembles de cartes empaquetés dans des valeurs de type long
@@ -62,10 +60,7 @@ public final class PackedCardSet {
      * @return true (boolean) si l'ensemble est valide
      */
     public static boolean isValid(long pkCardSet) {
-        return Bits64.extract(pkCardSet, 9, 7) == 0
-                && Bits64.extract(pkCardSet, 25, 7) == 0
-                && Bits64.extract(pkCardSet, 41, 7) == 0
-                && Bits64.extract(pkCardSet, 57, 7) == 0;
+        return difference(pkCardSet, ALL_CARDS) == EMPTY;
     }
 
     /**
@@ -158,7 +153,7 @@ public final class PackedCardSet {
     public static long add(long pkCardSet, int pkCard) {
         assert isValid(pkCardSet) && PackedCard.isValid(pkCard);
 
-        return pkCardSet | singleton(pkCard);
+        return union(pkCardSet, singleton(pkCard));
     }
 
     /**
@@ -174,7 +169,7 @@ public final class PackedCardSet {
     public static long remove(long pkCardSet, int pkCard) {
         assert isValid(pkCardSet) && PackedCard.isValid(pkCard);
 
-        return pkCardSet & (~singleton(pkCard));
+        return difference(pkCardSet, singleton(pkCard));
     }
 
     /**
@@ -194,7 +189,7 @@ public final class PackedCardSet {
         assert isValid(pkCardSet);
         assert PackedCard.isValid(pkCard);
 
-        return (pkCardSet & singleton(pkCard)) != 0L;
+        return intersection(pkCardSet, singleton(pkCard)) != EMPTY;
     }
 
     /**
@@ -207,7 +202,7 @@ public final class PackedCardSet {
     public static long complement(long pkCardSet) {
         assert isValid(pkCardSet);
 
-        return ~pkCardSet;
+        return difference(ALL_CARDS, pkCardSet);
     }
 
     /**
