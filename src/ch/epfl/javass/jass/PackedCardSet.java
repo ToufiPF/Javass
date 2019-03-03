@@ -45,7 +45,7 @@ public final class PackedCardSet {
 
         for (int i = 0; i < Card.Color.COUNT; ++i) {
             long allCardsOfOneColor = (1L << 9) - 1L;
-            allCardsOfOneColor = allCardsOfOneColor << (i * 16);
+            allCardsOfOneColor <<= (i * 16);
             subsetOfColorTab[i] = allCardsOfOneColor;
         }
         return subsetOfColorTab;
@@ -151,7 +151,8 @@ public final class PackedCardSet {
      * @return (long) le long pkCardSet auquel on a ajouté la carte pkCard
      */
     public static long add(long pkCardSet, int pkCard) {
-        assert isValid(pkCardSet) && PackedCard.isValid(pkCard);
+        assert isValid(pkCardSet);
+        assert PackedCard.isValid(pkCard);
 
         return union(pkCardSet, singleton(pkCard));
     }
@@ -167,7 +168,8 @@ public final class PackedCardSet {
      * @return (long) le long pkCardSet auquel on a retiré la carte pkCard
      */
     public static long remove(long pkCardSet, int pkCard) {
-        assert isValid(pkCardSet) && PackedCard.isValid(pkCard);
+        assert isValid(pkCardSet);
+        assert PackedCard.isValid(pkCard);
 
         return difference(pkCardSet, singleton(pkCard));
     }
@@ -193,7 +195,8 @@ public final class PackedCardSet {
     }
 
     /**
-     * Méthode publique retournant le complément du long pkCardSet
+     * Méthode publique retournant le complément de l'ensemble pkCardSet
+     * càd l'ensemble des cartes qui ne sont pas dans pkCardSet
      * 
      * @param pkCardSet
      *            (long) l'ensemble de cartes dont on veut le complément
@@ -215,7 +218,8 @@ public final class PackedCardSet {
      * @return (long) l'union de pkCardSet1 et pkCardSet2
      */
     public static long union(long pkCardSet1, long pkCardSet2) {
-        assert isValid(pkCardSet1) && isValid(pkCardSet2);
+        assert isValid(pkCardSet1);
+        assert isValid(pkCardSet2);
 
         return pkCardSet1 | pkCardSet2;
     }
@@ -230,7 +234,8 @@ public final class PackedCardSet {
      * @return (long) l'intersection de pkCardSet1 et pkCardSet2
      */
     public static long intersection(long pkCardSet1, long pkCardSet2) {
-        assert isValid(pkCardSet1) && isValid(pkCardSet2);
+        assert isValid(pkCardSet1);
+        assert isValid(pkCardSet2);
 
         return pkCardSet1 & pkCardSet2;
     }
@@ -247,7 +252,8 @@ public final class PackedCardSet {
      *         cartes appartenant à pkCardSet1 mais pas à pkCardSet2
      */
     public static long difference(long pkCardSet1, long pkCardSet2) {
-        assert isValid(pkCardSet1) && isValid(pkCardSet2);
+        assert isValid(pkCardSet1);
+        assert isValid(pkCardSet2);
 
         return pkCardSet1 & (~pkCardSet2);
     }
