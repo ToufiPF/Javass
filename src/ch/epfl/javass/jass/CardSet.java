@@ -35,6 +35,7 @@ public final class CardSet {
      */
     public static CardSet of(List<Card> cards) {
         long pkSet = PackedCardSet.EMPTY;
+        
         for (Card c : cards)
             pkSet = PackedCardSet.add(pkSet, c.packed());
         return ofPacked(pkSet);
