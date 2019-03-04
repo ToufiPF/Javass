@@ -47,7 +47,7 @@ public final class Trick {
      *         firstPlayer
      */
     public static Trick firstEmpty(Color trump, PlayerId firstPlayer) {
-        return PackedTrick.firstEmpty(trump, firstPlayer);
+        return new Trick(PackedTrick.firstEmpty(trump, firstPlayer));
     }
 
     /**
@@ -171,7 +171,7 @@ public final class Trick {
      */
     public Trick withAddedCard(Card c) {
         checkIfFull();
-        return ofPacked(PackedTrick.withAddedCard(pkTrick, c));
+        return ofPacked(PackedTrick.withAddedCard(pkTrick, c.packed()));
     }
 
     /**
