@@ -2,6 +2,8 @@ package ch.epfl.javass.jass;
 
 import java.util.StringJoiner;
 
+import ch.epfl.javass.bits.Bits64;
+
 /**
  * PackedCardSet Une classe publique, finale et non instanciable permettant de
  * manipuler des ensembles de cartes empaquetés dans des valeurs de type long
@@ -60,7 +62,10 @@ public final class PackedCardSet {
      * @return true (boolean) si l'ensemble est valide
      */
     public static boolean isValid(long pkCardSet) {
-        return difference(pkCardSet, ALL_CARDS) == EMPTY;
+        return Bits64.extract(pkCardSet, 9, 7) == 0
+                && Bits64.extract(pkCardSet, 25, 7) == 0
+                && Bits64.extract(pkCardSet, 41, 7) == 0
+                && Bits64.extract(pkCardSet, 57, 7) == 0;
     }
 
     /**
@@ -252,7 +257,9 @@ public final class PackedCardSet {
      *         cartes appartenant à pkCardSet1 mais pas à pkCardSet2
      */
     public static long difference(long pkCardSet1, long pkCardSet2) {
-
+        assert isValid(pkCardSet1);
+        assert isValid(pkCardSet2);
+        
         return pkCardSet1 & (~pkCardSet2);
     }
 
