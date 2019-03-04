@@ -23,7 +23,7 @@ public final class Card {
     public enum Color {
         SPADE("\u2660"), HEART("\u2661"), DIAMOND("\u2662"), CLUB("\u2663");
 
-        private String symbol;
+        private final String symbol;
 
         // Liste immuable contenant toutes les valeurs du type énuméré Color
         public static final List<Color> ALL = Collections

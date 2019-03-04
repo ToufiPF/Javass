@@ -252,8 +252,6 @@ public final class PackedCardSet {
      *         cartes appartenant à pkCardSet1 mais pas à pkCardSet2
      */
     public static long difference(long pkCardSet1, long pkCardSet2) {
-        //assert isValid(pkCardSet1);
-        //assert isValid(pkCardSet2);
 
         return pkCardSet1 & (~pkCardSet2);
     }
