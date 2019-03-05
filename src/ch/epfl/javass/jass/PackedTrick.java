@@ -226,9 +226,10 @@ public final class PackedTrick {
         final Card.Color bc = baseColor(pkTrick);
         final Card.Color tc = trump(pkTrick);
 
-        long betterTrumpsInHand = PackedCardSet.intersection(pkHand, PackedCardSet.trumpAbove(bestCard(pkTrick)));
         // La couleur de base est atout
         if (bc.equals(tc)) {
+            // on récupere l'ensemble de cartes meilleures que le meilleur atout posé
+            final long betterTrumpsInHand = PackedCardSet.intersection(pkHand, PackedCardSet.trumpAbove(bestCard(pkTrick)));
             // si on n'a pas de meilleurs atouts dans la main
             if (PackedCardSet.isEmpty(betterTrumpsInHand)) {
                 final long allTrumpsInHand = PackedCardSet.subsetOfColor(pkHand, tc);
@@ -238,12 +239,32 @@ public final class PackedTrick {
                 // on retourne les atouts dans la main
                 return allTrumpsInHand;
             }
+            // si la seule meilleure carte d'atout est le Valet d'atout
+            if (betterTrumpsInHand == PackedCardSet.singleton(PackedCard.pack(tc, Card.Rank.JACK)))
+                return pkHand;
+            
+            return betterTrumpsInHand;
         }
+        
         // Sinon, on peut jouer toutes les cartes de la couleur de base
+        long nonTrumpPlayableCards = PackedCardSet.subsetOfColor(pkHand, bc);
+        // si on n'a pas de cartes de la bonne couleur
+        if (PackedCardSet.isEmpty(nonTrumpPlayableCards)) {
+            for (Card.Color c : Card.Color.ALL)
+                if (!c.equals(tc))
+                    nonTrumpPlayableCards = PackedCardSet.union(nonTrumpPlayableCards, PackedCardSet.subsetOfColor(pkHand, c));
+        }
+
         // ou un meilleur atout que celui posé
-        final long baseColorInHand = PackedCardSet.subsetOfColor(pkHand, bc);
+        final int bestTrump = bestTrump(pkTrick);
+        long betterTrumpsInHand = PackedCardSet.subsetOfColor(pkHand, tc);
+        if (bestTrump != PackedCard.INVALID)
+            betterTrumpsInHand = PackedCardSet.intersection(betterTrumpsInHand, PackedCardSet.trumpAbove(bestTrump));
         
+        if (betterTrumpsInHand == PackedCardSet.singleton(PackedCard.pack(tc, Card.Rank.JACK)))
+            betterTrumpsInHand = PackedCardSet.subsetOfColor(pkHand, tc);
         
+        return PackedCardSet.union(nonTrumpPlayableCards, betterTrumpsInHand);
     }
     /**
      * Donne le nombre de points du pli,
@@ -307,6 +328,25 @@ public final class PackedTrick {
     }
     private static int bestCard(int pkTrick) {
         return card(pkTrick, bestCardIndex(pkTrick));
+    }
+    
+    private static int bestTrump(int pkTrick) {
+        assert !isEmpty(pkTrick);
+        
+        final int sizeTrick = size(pkTrick);
+        final Card.Color trump = trump(pkTrick);
+        
+        int bestTrumpCard = PackedCard.INVALID;
+        for (int i = 0 ; i < sizeTrick ; ++i) {
+            int card_i = card(pkTrick, i);
+            if (PackedCard.color(card_i) == trump) {
+                if (bestTrumpCard == PackedCard.INVALID)
+                    bestTrumpCard = card_i;
+                if (PackedCard.isBetter(trump, card_i, bestTrumpCard))
+                    bestTrumpCard = card_i;
+            }
+        }
+        return bestTrumpCard;
     }
     
     private static int packTrick(int card0, int card1, int card2, int card3, int indexTrick, PlayerId player, Card.Color trump) {
