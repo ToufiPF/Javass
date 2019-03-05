@@ -222,10 +222,27 @@ public final class PackedTrick {
         //si le pli est vide, on peut tout jouer au choix
         if (isEmpty(pkTrick))
             return pkHand;
-        if (!baseColor(pkTrick).equals(trump(pkTrick))) {
-            long playableBaseColor = PackedCardSet.subsetOfColor(pkHand, baseColor(pkTrick));
-            long playableTrumpColor = PackedCardSet.subsetOfColor(pkHand, trump(pkTrick));
+
+        final Card.Color bc = baseColor(pkTrick);
+        final Card.Color tc = trump(pkTrick);
+
+        long betterTrumpsInHand = PackedCardSet.intersection(pkHand, PackedCardSet.trumpAbove(bestCard(pkTrick)));
+        // La couleur de base est atout
+        if (bc.equals(tc)) {
+            // si on n'a pas de meilleurs atouts dans la main
+            if (PackedCardSet.isEmpty(betterTrumpsInHand)) {
+                final long allTrumpsInHand = PackedCardSet.subsetOfColor(pkHand, tc);
+                // Dans le cas où on n'a pas d'atout tout court
+                if (PackedCardSet.isEmpty(allTrumpsInHand))
+                    return pkHand;
+                // on retourne les atouts dans la main
+                return allTrumpsInHand;
+            }
         }
+        // Sinon, on peut jouer toutes les cartes de la couleur de base
+        // ou un meilleur atout que celui posé
+        final long baseColorInHand = PackedCardSet.subsetOfColor(pkHand, bc);
+        
         
     }
     /**
@@ -252,21 +269,8 @@ public final class PackedTrick {
      */
     public static PlayerId winningPlayer(int pkTrick) {
         assert isValid(pkTrick);
-        assert !isEmpty(pkTrick);
         
-        final int sizeTrick = size(pkTrick);
-        final Card.Color trump = trump(pkTrick);
-        
-        int bestCard = card(pkTrick, 0);
-        int bestCardID = 0;
-        for (int i = 1 ; i < sizeTrick ; ++i) {
-            int card_i = card(pkTrick, i);
-            if (PackedCard.isBetter(trump, card_i, bestCard)) {
-                bestCard = card_i;
-                bestCardID = i;
-            }
-        }
-        return player(pkTrick, bestCardID);
+        return player(pkTrick, bestCardIndex(pkTrick));
     }
     /**
      * Represente le pli donné dans un String de la forme
@@ -282,6 +286,27 @@ public final class PackedTrick {
             j.add(PackedCard.toString(PackedTrick.card(pkTrick, i)));
         
         return j.toString() + "/" + index(pkTrick) + "/" + points(pkTrick);
+    }
+    
+    private static int bestCardIndex(int pkTrick) {
+        assert !isEmpty(pkTrick);
+        
+        final int sizeTrick = size(pkTrick);
+        final Card.Color trump = trump(pkTrick);
+        
+        int bestCard = card(pkTrick, 0);
+        int bestCardID = 0;
+        for (int i = 1 ; i < sizeTrick ; ++i) {
+            int card_i = card(pkTrick, i);
+            if (PackedCard.isBetter(trump, card_i, bestCard)) {
+                bestCard = card_i;
+                bestCardID = i;
+            }
+        }
+        return bestCardID;
+    }
+    private static int bestCard(int pkTrick) {
+        return card(pkTrick, bestCardIndex(pkTrick));
     }
     
     private static int packTrick(int card0, int card1, int card2, int card3, int indexTrick, PlayerId player, Card.Color trump) {

@@ -30,7 +30,7 @@ public final class CardSet {
     /**
      * Methode statique pour créer un nouveau CardSet à partir
      * d'une liste de Card
-     * @param cards (List<Card>) la liste de cartes comprises dans l'ensemble
+     * @param cards (List<Card>) non null, la liste de cartes comprises dans l'ensemble
      * @return (CardSet) l'ensemble comprenant les cartes de cards 
      */
     public static CardSet of(List<Card> cards) {
