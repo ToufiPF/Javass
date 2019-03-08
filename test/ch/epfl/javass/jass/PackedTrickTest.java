@@ -17,10 +17,12 @@ class PackedTrickTest {
     void testToString() {
         System.out.println("--------------------------");
         System.out.println("PackedTrickTest - toString");
-        int pkTrick = PackedTrick.firstEmpty(Card.Color.DIAMOND, PlayerId.PLAYER_3);
+        int pkTrick = PackedTrick.firstEmpty(Card.Color.DIAMOND,
+                PlayerId.PLAYER_3);
         while (true) {
             while (!PackedTrick.isFull(pkTrick)) {
-                pkTrick = PackedTrick.withAddedCard(pkTrick, generateRandomPackedCard());
+                pkTrick = PackedTrick.withAddedCard(pkTrick,
+                        generateRandomPackedCard());
                 System.out.println(PackedTrick.toString(pkTrick));
             }
 
@@ -32,10 +34,10 @@ class PackedTrickTest {
     }
 
     private int generateRandomPackedCard() {
-        return PackedCard.pack(Card.Color.ALL.get(rng.nextInt(Card.Color.COUNT)), Card.Rank.ALL.get(rng.nextInt(Card.Rank.COUNT)));
+        return PackedCard.pack(
+                Card.Color.ALL.get(rng.nextInt(Card.Color.COUNT)),
+                Card.Rank.ALL.get(rng.nextInt(Card.Rank.COUNT)));
     }
-
-
 
     @Test
     void playableCardTestUnit() {
@@ -78,7 +80,7 @@ class PackedTrickTest {
         int pkTrick11 = Bits32.pack(0b10_0100, 6, 0b0100, 6, PackedCard.INVALID,
                 6, PackedCard.INVALID, 6, 0, 4, 0, 2, 0, 2);
         long pkHand11 = 0b0000_0000_0000_0000_0000_0000_1010_0000_0000_0000_0000_0001_0000_0000_0000_0100L;
-        assertEquals(true,true);
+        assertEquals(true, true);
         System.out.println("{\u266110 \u2663J} expected\n" + PackedCardSet
                 .toString(PackedTrick.playableCards(pkTrick1, pkHand1)));
         System.out.println();
@@ -92,8 +94,8 @@ class PackedTrickTest {
         System.out.println("{\u26607 \u266210} expected\n" + PackedCardSet
                 .toString(PackedTrick.playableCards(pkTrick4, pkHand4)));
         System.out.println();
-        System.out.println("{\u26606 \u2660K \u2662K} expected\n"
-                + PackedCardSet.toString(
+        System.out.println(
+                "{\u26606 \u2660K \u2662K} expected\n" + PackedCardSet.toString(
                         PackedTrick.playableCards(pkTrick5, pkHand5)));
         System.out.println();
         System.out.println("{\u26609 \u2661K} expected\n" + PackedCardSet
@@ -115,5 +117,80 @@ class PackedTrickTest {
         System.out.println();
         System.out.println("{\u2662J \u2662K} expected\n" + PackedCardSet
                 .toString(PackedTrick.playableCards(pkTrick11, pkHand11)));
+    }
+
+    @Test
+    void isValidWorksWithAllValid() {
+        for (int i = 0; i <= 8; ++i) {
+            for (int j = 0; j < 56; ++j) {
+                for (int k = 0; k < 56; ++k) {
+                    for (int l = 0; l < 56; ++l) {
+                        for (int m = 0; m < 56; ++m) {
+                            if (((PackedCard.isValid(j) && PackedCard.isValid(k) && PackedCard.isValid(l) && PackedCard.isValid(m))) 
+                                    || (PackedCard.isValid(j) && PackedCard.isValid(k) && PackedCard.isValid(l) && !PackedCard.isValid(m))
+                                    || (PackedCard.isValid(j) && PackedCard.isValid(k) && !PackedCard.isValid(l) && !PackedCard.isValid(m))
+                                    || (PackedCard.isValid(j) && !PackedCard.isValid(k) && !PackedCard.isValid(l) && !PackedCard.isValid(m))
+                                    || (!PackedCard.isValid(j) && !PackedCard.isValid(k) && !PackedCard.isValid(l) && !PackedCard.isValid(m)))
+                            {
+                                assertEquals(true, PackedTrick.isValid(Bits32.pack(j, 6, k, 6, l, 6, m, 6, i, 4, 1, 2, 1, 2)));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test 
+    void isValidDontWorkWithInvalidIndex(){
+        for(int i = 9; i < 1<<4; ++i) {
+            for (int j = 0; j < 56; ++j) {
+                for (int k = 0; k < 56; ++k) {
+                    for (int l = 0; l < 56; ++l) {
+                        for (int m = 0; m < 56; ++m) {
+                            if (PackedCard.isValid(j) && PackedCard.isValid(k)
+                                    && PackedCard.isValid(l)
+                                    && PackedCard.isValid(m)) {
+                                assertEquals(false, PackedTrick.isValid(Bits32.pack(j, 6, k, 6, l, 6, m, 6, i, 4, 1, 2, 1, 2)));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void isValidDontWorkWithInvalidCardsInTheWrongOrder() {
+        for (int i = 0; i <= 8; ++i) {
+            for (int j = 0; j < 56; ++j) {
+                for (int k = 0; k < 56; ++k) {
+                    for (int l = 0; l < 56; ++l) {
+                        for (int m = 0; m < 56; ++m) {
+                            if (((!PackedCard.isValid(j) && PackedCard.isValid(k) && PackedCard.isValid(l) && PackedCard.isValid(m))) 
+                                    || (!PackedCard.isValid(j) && !PackedCard.isValid(k) && PackedCard.isValid(l) && PackedCard.isValid(m))
+                                    || (!PackedCard.isValid(j) && !PackedCard.isValid(k) && !PackedCard.isValid(l) && PackedCard.isValid(m))
+                                    || (PackedCard.isValid(j) && !PackedCard.isValid(k) && PackedCard.isValid(l) && !PackedCard.isValid(m))
+                                    || (!PackedCard.isValid(j) && PackedCard.isValid(k) && !PackedCard.isValid(l) && PackedCard.isValid(m))
+                                    || (!PackedCard.isValid(j) && PackedCard.isValid(k) && PackedCard.isValid(l) && !PackedCard.isValid(m)))
+
+                                    
+                            {
+                                assertEquals(false, PackedTrick.isValid(Bits32.pack(j, 6, k, 6, l, 6, m, 6, i, 4, 1, 2, 1, 2)));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    @Test
+    void firstEmptyWorks() {
+        for(int i = 0; i < 4; ++i) {
+            for(int j = 0; j < 4; ++j) {
+                assertEquals(Bits32.pack(63, 6, 63, 6, 63, 6, 63, 6, 0, 4, j, 2, i, 2), PackedTrick.firstEmpty(Card.Color.ALL.get(i),PlayerId.ALL.get(j)));
+            }
+        }
     }
 }
