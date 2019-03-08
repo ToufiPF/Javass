@@ -1,6 +1,7 @@
 package ch.epfl.javass.jass;
 
 import static ch.epfl.test.TestRandomizer.newRandom;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.SplittableRandom;
 
@@ -75,7 +76,7 @@ class PackedTrickTest {
         int pkTrick11 = Bits32.pack(0b10_0100, 6, 0b0100, 6, PackedCard.INVALID,
                 6, PackedCard.INVALID, 6, 0, 4, 0, 2, 0, 2);
         long pkHand11 = 0b0000_0000_0000_0000_0000_0000_1010_0000_0000_0000_0000_0001_0000_0000_0000_0100L;
-
+        assertEquals(true,true);
         System.out.println("{\u266110 \u2663J} expected\n" + PackedCardSet
                 .toString(PackedTrick.playableCards(pkTrick1, pkHand1)));
         System.out.println();
@@ -89,7 +90,7 @@ class PackedTrickTest {
         System.out.println("{\u26607 \u266210} expected\n" + PackedCardSet
                 .toString(PackedTrick.playableCards(pkTrick4, pkHand4)));
         System.out.println();
-        System.out.println("{\u26606 \u2660K \u26618 \u2662K} expected\n"
+        System.out.println("{\u26606 \u2660K \u2662K} expected\n"
                 + PackedCardSet.toString(
                         PackedTrick.playableCards(pkTrick5, pkHand5)));
         System.out.println();
