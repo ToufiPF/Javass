@@ -219,16 +219,20 @@ public final class PackedTrick {
         assert !isFull(pkTrick);
         assert PackedCardSet.isValid(pkHand);
         
-        //si le pli est vide, on peut tout jouer au choix
+        // Si le pli est vide, on peut tout jouer au choix
         if (isEmpty(pkTrick))
             return pkHand;
-
+        
+        // On a fait le choix de ne pas traiter séparément
+        // le cas où couleurBase == couleurTrump 
+        // ce n'est pas un problème, car les atouts qu'on aurait ignoré
+        // dans playableTrumps sont alors dans playableCards
         final Card.Color bc = baseColor(pkTrick);
         final Card.Color tc = trump(pkTrick);
         
         // On peut jouer toutes les cartes de la couleur de base
         long playableCards = PackedCardSet.subsetOfColor(pkHand, bc);
-        // Si le joueur n'en a pas, il peut jouer toutes les cartes non-atout qu'il veut
+        // Si le joueur n'en a pas (ou si il n'y a que le Bour), il peut jouer toutes les cartes non-atout qu'il veut
         if (PackedCardSet.isEmpty(playableCards) || playableCards == PackedCardSet.singleton(PackedCard.pack(tc, Card.Rank.JACK))) {
             for (Card.Color c : Card.Color.ALL)
                 if (!c.equals(tc))
@@ -245,7 +249,11 @@ public final class PackedTrick {
         else
             playableTrumps = PackedCardSet.subsetOfColor(pkHand, tc);
         
-        return PackedCardSet.union(playableCards, playableTrumps);
+        final long totalPlayable = PackedCardSet.union(playableCards, playableTrumps);
+        if (PackedCardSet.isEmpty(totalPlayable))
+            return pkHand;
+        
+        return totalPlayable;
     }
     /**
      * Donne le nombre de points du pli,
@@ -306,6 +314,7 @@ public final class PackedTrick {
         }
         return bestCardID;
     }
+    @SuppressWarnings("unused")
     private static int bestCard(int pkTrick) {
         return card(pkTrick, bestCardIndex(pkTrick));
     }
@@ -326,9 +335,7 @@ public final class PackedTrick {
         for (int i = 0 ; i < sizeTrick ; ++i) {
             int card_i = card(pkTrick, i);
             if (PackedCard.color(card_i) == trump) {
-                if (bestTrumpCard == PackedCard.INVALID)
-                    bestTrumpCard = card_i;
-                if (PackedCard.isBetter(trump, card_i, bestTrumpCard))
+                if (bestTrumpCard == PackedCard.INVALID || PackedCard.isBetter(trump, card_i, bestTrumpCard))
                     bestTrumpCard = card_i;
             }
         }

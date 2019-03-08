@@ -39,6 +39,8 @@ class PackedTrickTest {
 
     @Test
     void playableCardTestUnit() {
+        System.out.println("--------------------------");
+        System.out.println("PackedTrickTest - playableCardTestUnit");
         int pkTrick1 = PackedTrick.firstEmpty(Card.Color.SPADE,
                 PlayerId.PLAYER_1);
         long pkHand1 = 0b0000_0000_0010_0000_0000_0000_0000_0000_0000_0000_0001_0000_0000_0000_0000_0000L;
