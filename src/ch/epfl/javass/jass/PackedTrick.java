@@ -225,46 +225,27 @@ public final class PackedTrick {
 
         final Card.Color bc = baseColor(pkTrick);
         final Card.Color tc = trump(pkTrick);
-
-        // La couleur de base est atout
-        if (bc.equals(tc)) {
-            // on récupere l'ensemble de cartes meilleures que le meilleur atout posé
-            final long betterTrumpsInHand = PackedCardSet.intersection(pkHand, PackedCardSet.trumpAbove(bestCard(pkTrick)));
-            // si on n'a pas de meilleurs atouts dans la main
-            if (PackedCardSet.isEmpty(betterTrumpsInHand)) {
-                final long allTrumpsInHand = PackedCardSet.subsetOfColor(pkHand, tc);
-                // Dans le cas où on n'a pas d'atout tout court
-                if (PackedCardSet.isEmpty(allTrumpsInHand))
-                    return pkHand;
-                // on retourne les atouts dans la main
-                return allTrumpsInHand;
-            }
-            // si la seule meilleure carte d'atout est le Valet d'atout
-            if (betterTrumpsInHand == PackedCardSet.singleton(PackedCard.pack(tc, Card.Rank.JACK)))
-                return pkHand;
-            
-            return betterTrumpsInHand;
-        }
         
-        // Sinon, on peut jouer toutes les cartes de la couleur de base
-        long nonTrumpPlayableCards = PackedCardSet.subsetOfColor(pkHand, bc);
-        // si on n'a pas de cartes de la bonne couleur
-        if (PackedCardSet.isEmpty(nonTrumpPlayableCards)) {
+        // On peut jouer toutes les cartes de la couleur de base
+        long playableCards = PackedCardSet.subsetOfColor(pkHand, bc);
+        // Si le joueur n'en a pas, il peut jouer toutes les cartes non-atout qu'il veut
+        if (PackedCardSet.isEmpty(playableCards) || playableCards == PackedCardSet.singleton(PackedCard.pack(tc, Card.Rank.JACK))) {
             for (Card.Color c : Card.Color.ALL)
                 if (!c.equals(tc))
-                    nonTrumpPlayableCards = PackedCardSet.union(nonTrumpPlayableCards, PackedCardSet.subsetOfColor(pkHand, c));
+                    playableCards |= PackedCardSet.subsetOfColor(pkHand, c);
         }
-
-        // ou un meilleur atout que celui posé
+        
+        // Et des atouts :
+        long playableTrumps = PackedCardSet.EMPTY;
+        // Si il y a déjà un atout sur dans le pli, on peut jouer seulement un meilleur
         final int bestTrump = bestTrump(pkTrick);
-        long betterTrumpsInHand = PackedCardSet.subsetOfColor(pkHand, tc);
         if (bestTrump != PackedCard.INVALID)
-            betterTrumpsInHand = PackedCardSet.intersection(betterTrumpsInHand, PackedCardSet.trumpAbove(bestTrump));
+            playableTrumps = PackedCardSet.intersection(PackedCardSet.subsetOfColor(pkHand, tc), PackedCardSet.trumpAbove(bestTrump));
+        // Sinon, on peut jouer tous les atouts
+        else
+            playableTrumps = PackedCardSet.subsetOfColor(pkHand, tc);
         
-        if (betterTrumpsInHand == PackedCardSet.singleton(PackedCard.pack(tc, Card.Rank.JACK)))
-            betterTrumpsInHand = PackedCardSet.subsetOfColor(pkHand, tc);
-        
-        return PackedCardSet.union(nonTrumpPlayableCards, betterTrumpsInHand);
+        return PackedCardSet.union(playableCards, playableTrumps);
     }
     /**
      * Donne le nombre de points du pli,
@@ -275,11 +256,10 @@ public final class PackedTrick {
     public static int points(int pkTrick) {
         assert isValid(pkTrick);
         
-        final int sizeTrick = size(pkTrick);
         final Card.Color trump = trump(pkTrick);
         
         int nbPoints = isLast(pkTrick) ? 5 : 0;
-        for (int i = 0 ; i < sizeTrick ; ++i)
+        for (int i = 0 ; i < size(pkTrick) ; ++i)
             nbPoints += PackedCard.points(trump, card(pkTrick, i));
         return nbPoints;
     }
@@ -330,6 +310,12 @@ public final class PackedTrick {
         return card(pkTrick, bestCardIndex(pkTrick));
     }
     
+    /**
+     * Donne le meilleur atout dans le pli,
+     * Retourne PackedCard.INVALID si il n'y a pas d'atout
+     * @param pkTrick (int) le pli
+     * @return (int) la version paquetée du meilleur atout
+     */
     private static int bestTrump(int pkTrick) {
         assert !isEmpty(pkTrick);
         
