@@ -21,6 +21,7 @@ public final class PackedTrick {
      * (ce n'est pas le seul pli invalide possible)
      */
     public static final int INVALID = 0xFFFF_FFFF; // -1, tous les bits à 1
+    private static final int MAX_VALID_INDEX_TRICK = 8;
     
     /**
      * Vérifie si le pli empaqueté donné est valide,
@@ -32,7 +33,7 @@ public final class PackedTrick {
      */
     public static boolean isValid(int pkTrick) {
         int index = Bits32.extract(pkTrick, 24, 4);
-        if (index < 0 || index >= 9)
+        if (index < 0 || index > MAX_VALID_INDEX_TRICK)
             return false;
         
         // Pour chaque carte, de 0 à 3 :
@@ -73,6 +74,8 @@ public final class PackedTrick {
      * le dernier pli)
      */
     public static int nextEmpty(int pkTrick) {
+        assert isValid(pkTrick);
+        
         if (isLast(pkTrick))
             return INVALID;
         
@@ -87,7 +90,7 @@ public final class PackedTrick {
      */
     public static boolean isLast(int pkTrick) {
         assert isValid(pkTrick);
-        return index(pkTrick) == 8;
+        return index(pkTrick) == MAX_VALID_INDEX_TRICK;
     }
     /**
      * Vérifie si le pli donné est vide,
@@ -231,10 +234,12 @@ public final class PackedTrick {
         final Card.Color bc = baseColor(pkTrick);
         final Card.Color tc = trump(pkTrick);
         
+        final long SINGLETON_BOUR = PackedCardSet.singleton(PackedCard.pack(tc, Card.Rank.JACK));
+        
         // On peut jouer toutes les cartes de la couleur de base
         long playableCards = PackedCardSet.subsetOfColor(pkHand, bc);
         // Si le joueur n'en a pas (ou si il n'y a que le Bour), il peut jouer toutes les cartes non-atout qu'il veut
-        if (PackedCardSet.isEmpty(playableCards) || playableCards == PackedCardSet.singleton(PackedCard.pack(tc, Card.Rank.JACK))) {
+        if (PackedCardSet.isEmpty(playableCards) || playableCards == SINGLETON_BOUR) {
             for (Card.Color c : Card.Color.ALL)
                 if (!c.equals(tc))
                     playableCards |= PackedCardSet.subsetOfColor(pkHand, c);
@@ -251,7 +256,7 @@ public final class PackedTrick {
             playableTrumps = PackedCardSet.subsetOfColor(pkHand, tc);
         
         final long totalPlayable = PackedCardSet.union(playableCards, playableTrumps);
-        if (PackedCardSet.isEmpty(totalPlayable))
+        if (PackedCardSet.isEmpty(totalPlayable) || totalPlayable == SINGLETON_BOUR)
             return pkHand;
         
         return totalPlayable;
@@ -284,7 +289,7 @@ public final class PackedTrick {
     }
     /**
      * Represente le pli donné dans un String de la forme
-     * {cartes_jouées}, (index_pli/8), points_pli
+     * {cartes_jouées}, trump:, (index_pli/8), points_pli
      * @param pkTrick (int) le pli à représenter
      * @return (String) une représentation de pkTrick
      */
@@ -295,9 +300,14 @@ public final class PackedTrick {
         for (int i = 0; i < size(pkTrick); ++i)
             j.add(PackedCard.toString(PackedTrick.card(pkTrick, i)));
         
-        return j.toString() + ", (" + index(pkTrick) + "/8), " + points(pkTrick) + "pts";
+        return j.toString() + ", trump:" + trump(pkTrick) + ", (" + index(pkTrick) + "/" + MAX_VALID_INDEX_TRICK + "), " + points(pkTrick) + "pts";
     }
     
+    /**
+     * Donne l'index de la meilleur carte du pli
+     * @param pkTrick (int) le pli
+     * @return (int) l'index dans le pli de la meilleure carte
+     */
     private static int bestCardIndex(int pkTrick) {
         assert !isEmpty(pkTrick);
         
@@ -343,10 +353,28 @@ public final class PackedTrick {
         return bestTrumpCard;
     }
     
+    /**
+     * Pack un pli avec les arguments donnés
+     * @param card0 (int) la carte 0
+     * @param card1 (int) la carte 1
+     * @param card2 (int) la carte 2
+     * @param card3 (int) la carte 3
+     * @param indexTrick (int) l'index du pli
+     * @param player (PlayerId) le joueur commençant le pli
+     * @param trump (Card.Color) la couleur des atouts
+     * @return (int) un pli avec les arguments donnés
+     */
     private static int packTrick(int card0, int card1, int card2, int card3, int indexTrick, PlayerId player, Card.Color trump) {
         return Bits32.pack(card0, 6, card1, 6, card2, 6, card3, 6,
                 indexTrick, 4, player.ordinal(), 2, trump.ordinal(), 2);
     }
+    /**
+     * Pack un pli vide selon les arguments donnés
+     * @param indexTrick (int) l'index du pli
+     * @param player (PlayerId) le joueur commençant le pli
+     * @param trump (Card.Color) la couleur des atouts
+     * @return (int) un pli vide avec les arguments donnés
+     */
     private static int packEmptyTrick(int indexTrick, PlayerId player, Card.Color trump) {
         return packTrick(PackedCard.INVALID, PackedCard.INVALID, PackedCard.INVALID, PackedCard.INVALID,
                 indexTrick, player, trump);

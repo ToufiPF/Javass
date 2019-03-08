@@ -10,8 +10,14 @@ import org.junit.jupiter.api.Test;
 import ch.epfl.javass.bits.Bits32;
 
 class PackedTrickTest {
+    private SplittableRandom mRng = newRandom();
 
-    private SplittableRandom rng = newRandom();
+    private int generateRandomPackedCard() {
+        return PackedCard.pack(
+                Card.Color.ALL.get(mRng.nextInt(Card.Color.COUNT)),
+                Card.Rank.ALL.get(mRng.nextInt(Card.Rank.COUNT)));
+    }
+
 
     @Test
     void testToString() {
@@ -31,12 +37,6 @@ class PackedTrickTest {
 
             pkTrick = PackedTrick.nextEmpty(pkTrick);
         }
-    }
-
-    private int generateRandomPackedCard() {
-        return PackedCard.pack(
-                Card.Color.ALL.get(rng.nextInt(Card.Color.COUNT)),
-                Card.Rank.ALL.get(rng.nextInt(Card.Rank.COUNT)));
     }
 
     @Test
@@ -120,6 +120,42 @@ class PackedTrickTest {
     }
 
     @Test
+    void playableCardTestUnit2() {
+        System.out.println("--------------------------");
+        System.out.println("PackedTrickTest - playableCardTestUnit2");
+
+        SplittableRandom rng = newRandom();
+        final int ITERATIONS = 10;
+        
+        for (int n = 0 ; n < ITERATIONS ; ++n) {
+            int trick = PackedTrick.firstEmpty(Card.Color.ALL.get(rng.nextInt(Card.Color.COUNT)), PlayerId.ALL.get(rng.nextInt(PlayerId.COUNT)));
+            System.out.println("--- playableCardTestUnit2 : iteration " + (n+1) + "/" + ITERATIONS);
+            do {
+                final int sizeTrick = rng.nextInt(PlayerId.COUNT - 1) + 1;
+                long LIST_CARDS = PackedCardSet.ALL_CARDS;
+
+                for (int i = 0 ; i < sizeTrick ; ++i) {
+                    final int card = PackedCardSet.get(LIST_CARDS, rng.nextInt(PackedCardSet.size(LIST_CARDS)));
+                    LIST_CARDS = PackedCardSet.remove(LIST_CARDS, card);
+                    trick = PackedTrick.withAddedCard(trick, card);
+                }
+                final int sizeHand = rng.nextInt(10);
+                long hand = PackedCardSet.EMPTY;
+                for (int j = 0 ; j < sizeHand ; ++j) {
+                    final int card = PackedCardSet.get(LIST_CARDS, rng.nextInt(PackedCardSet.size(LIST_CARDS)));
+                    LIST_CARDS = PackedCardSet.remove(LIST_CARDS, card);
+                    hand = PackedCardSet.add(hand, card);
+                }
+                System.out.println("In the trick : " + PackedTrick.toString(trick));
+                System.out.println("With the hand : " + PackedCardSet.toString(hand));
+                System.out.println("Playable : " + PackedCardSet.toString(PackedTrick.playableCards(trick, hand)));
+                System.out.println("");
+
+            } while ((trick = PackedTrick.nextEmpty(trick)) != PackedTrick.INVALID);
+        }
+    }
+
+    @Test
     void isValidWorksWithAllValid() {
         for (int i = 0; i <= 8; ++i) {
             for (int j = 0; j < 56; ++j) {
@@ -172,9 +208,7 @@ class PackedTrickTest {
                                     || (!PackedCard.isValid(j) && !PackedCard.isValid(k) && !PackedCard.isValid(l) && PackedCard.isValid(m))
                                     || (PackedCard.isValid(j) && !PackedCard.isValid(k) && PackedCard.isValid(l) && !PackedCard.isValid(m))
                                     || (!PackedCard.isValid(j) && PackedCard.isValid(k) && !PackedCard.isValid(l) && PackedCard.isValid(m))
-                                    || (!PackedCard.isValid(j) && PackedCard.isValid(k) && PackedCard.isValid(l) && !PackedCard.isValid(m)))
-
-                                    
+                                    || (!PackedCard.isValid(j) && PackedCard.isValid(k) && PackedCard.isValid(l) && !PackedCard.isValid(m)))   
                             {
                                 assertEquals(false, PackedTrick.isValid(Bits32.pack(j, 6, k, 6, l, 6, m, 6, i, 4, 1, 2, 1, 2)));
                             }
@@ -184,13 +218,17 @@ class PackedTrickTest {
             }
         }
     }
-    
+
     @Test
     void firstEmptyWorks() {
         for(int i = 0; i < 4; ++i) {
             for(int j = 0; j < 4; ++j) {
-                assertEquals(Bits32.pack(63, 6, 63, 6, 63, 6, 63, 6, 0, 4, j, 2, i, 2), PackedTrick.firstEmpty(Card.Color.ALL.get(i),PlayerId.ALL.get(j)));
+                assertEquals(Bits32.pack(63, 6, 63, 6, 63, 6, 63, 6, 0, 4, j, 2, i, 2), 
+                        PackedTrick.firstEmpty(Card.Color.ALL.get(i),PlayerId.ALL.get(j)));
             }
         }
     }
+
+
+
 }
