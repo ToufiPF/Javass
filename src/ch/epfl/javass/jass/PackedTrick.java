@@ -247,10 +247,10 @@ public final class PackedTrick {
         
         // Et des atouts :
         long playableTrumps = PackedCardSet.EMPTY;
-        final int bestTrump = bestTrump(pkTrick);
+        final int bestCard = bestCard(pkTrick);
         // Si il y a déjà un atout sur dans le pli, on peut jouer seulement un meilleur
-        if (bestTrump != PackedCard.INVALID)
-            playableTrumps = PackedCardSet.intersection(PackedCardSet.subsetOfColor(pkHand, tc), PackedCardSet.trumpAbove(bestTrump));
+        if (PackedCard.color(bestCard) == tc)
+            playableTrumps = PackedCardSet.intersection(PackedCardSet.subsetOfColor(pkHand, tc), PackedCardSet.trumpAbove(bestCard));
         // Sinon, on peut jouer tous les atouts
         else
             playableTrumps = PackedCardSet.subsetOfColor(pkHand, tc);
@@ -325,33 +325,11 @@ public final class PackedTrick {
         }
         return bestCardID;
     }
-    @SuppressWarnings("unused")
     private static int bestCard(int pkTrick) {
         return card(pkTrick, bestCardIndex(pkTrick));
     }
     
-    /**
-     * Donne le meilleur atout dans le pli,
-     * Retourne PackedCard.INVALID si il n'y a pas d'atout
-     * @param pkTrick (int) le pli
-     * @return (int) la version paquetée du meilleur atout
-     */
-    private static int bestTrump(int pkTrick) {
-        assert !isEmpty(pkTrick);
-        
-        final int sizeTrick = size(pkTrick);
-        final Card.Color trump = trump(pkTrick);
-        
-        int bestTrumpCard = PackedCard.INVALID;
-        for (int i = 0 ; i < sizeTrick ; ++i) {
-            int card_i = card(pkTrick, i);
-            if (PackedCard.color(card_i) == trump) {
-                if (bestTrumpCard == PackedCard.INVALID || PackedCard.isBetter(trump, card_i, bestTrumpCard))
-                    bestTrumpCard = card_i;
-            }
-        }
-        return bestTrumpCard;
-    }
+   
     
     /**
      * Pack un pli avec les arguments donnés
