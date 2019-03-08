@@ -118,6 +118,7 @@ public final class PackedTrick {
      * @return (int) la taille du pli
      */
     public static int size(int pkTrick) {
+        assert isValid(pkTrick);
         //On retourne l'index de la 1ere carte invalide trouvée
         for (int i = 0 ; i < PlayerId.COUNT ; ++i)
             if (!PackedCard.isValid(card(pkTrick, i)))
@@ -283,7 +284,7 @@ public final class PackedTrick {
     }
     /**
      * Represente le pli donné dans un String de la forme
-     * {cartes_jouées}/index_pli/points_pli
+     * {cartes_jouées}, (index_pli/8), points_pli
      * @param pkTrick (int) le pli à représenter
      * @return (String) une représentation de pkTrick
      */
@@ -294,7 +295,7 @@ public final class PackedTrick {
         for (int i = 0; i < size(pkTrick); ++i)
             j.add(PackedCard.toString(PackedTrick.card(pkTrick, i)));
         
-        return j.toString() + "/" + index(pkTrick) + "/" + points(pkTrick);
+        return j.toString() + ", (" + index(pkTrick) + "/8), " + points(pkTrick) + "pts";
     }
     
     private static int bestCardIndex(int pkTrick) {

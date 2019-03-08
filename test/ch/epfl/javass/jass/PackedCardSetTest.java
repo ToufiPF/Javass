@@ -233,7 +233,7 @@ class PackedCardSetTest {
     }
 
     @Test
-    void complementWorks() {
+    void complementWorksWithEmptyFullSet() {
         assertEquals(PackedCardSet.EMPTY,
                 PackedCardSet.complement(PackedCardSet.ALL_CARDS));
         assertEquals(PackedCardSet.ALL_CARDS,
