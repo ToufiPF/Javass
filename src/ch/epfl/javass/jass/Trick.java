@@ -4,13 +4,10 @@ import ch.epfl.javass.Preconditions;
 import ch.epfl.javass.jass.Card.Color;
 
 /**
- * Trick Une classe publique, finale et immuable représenant un pli
+ * Trick 
+ * Une classe publique, finale et immuable représenant un pli
  * 
  * @author Amaury Pierre (296498)
- */
-/**
- * @author amaur
- *
  */
 public final class Trick {
 
@@ -197,40 +194,43 @@ public final class Trick {
      */
     public CardSet playableCards(CardSet hand) {
         checkIfFull();
-        return CardSet.ofPacked(PackedTrick.playableCards(pkTrick, hand.packed()));
+        return CardSet
+                .ofPacked(PackedTrick.playableCards(pkTrick, hand.packed()));
     }
 
     /**
      * Méthode publique retournant la valeur du pli
+     * 
      * @return (int) la valeur du pli, en comptant les "5 de der"
      */
     public int points() {
         return PackedTrick.points(pkTrick);
     }
-    
+
     /**
      * Méthode publique retournant le joueur menant le pli
+     * 
      * @return (PlayerId) le joueur menant le pli
      */
     public PlayerId winningPlayer() {
         checkIfEmpty();
         return PackedTrick.winningPlayer(pkTrick);
     }
-    
+
     @Override
     public String toString() {
         return PackedTrick.toString(pkTrick);
     }
-    
+
     @Override
     public boolean equals(Object obj) {
-        if(obj.getClass() == Trick.class) {
+        if (obj.getClass() == Trick.class) {
             Trick otherTrick = (Trick) obj;
             return this.packed() == otherTrick.packed();
         }
         return false;
     }
-    
+
     @Override
     public int hashCode() {
         return this.packed();
