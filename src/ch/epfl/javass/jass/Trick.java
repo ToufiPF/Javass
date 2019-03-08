@@ -26,6 +26,12 @@ public final class Trick {
         }
     }
 
+    private void checkIfNotFull() throws IllegalStateException {
+        if(!isFull()) {
+            throw new IllegalStateException();
+        }
+    }
+    
     private void checkIfEmpty() throws IllegalStateException {
         if (isEmpty()) {
             throw new IllegalStateException();
@@ -56,7 +62,7 @@ public final class Trick {
      * @return (Trick) le pli correspondant à la version empaquetée packed
      */
     public static Trick ofPacked(int packed) {
-        Preconditions.checkArgument(!PackedTrick.isValid(packed));
+        Preconditions.checkArgument(PackedTrick.isValid(packed));
         return new Trick(packed);
     }
 
@@ -75,7 +81,7 @@ public final class Trick {
      * @return (int) le pli empaqueté vide suivant ce pli
      */
     public Trick nextEmpty() {
-        checkIfFull();
+        checkIfNotFull();
         return ofPacked(PackedTrick.nextEmpty(pkTrick));
     }
 

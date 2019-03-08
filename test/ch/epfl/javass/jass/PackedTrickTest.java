@@ -228,7 +228,11 @@ class PackedTrickTest {
             }
         }
     }
-
-
-
+    
+    @Test
+    void withAddedCardWorks() {
+        assertEquals(0b00000000_111111_111111_111111_010111, PackedTrick.withAddedCard(0b00000000_111111_111111_111111_111111, 0b010111));
+        assertEquals(0b00000000_111111_101000_110000_010111, PackedTrick.withAddedCard(0b00000000_111111_111111_110000_010111, 0b101000));
+        assertEquals(0b00000000_000101_101000_110000_010111, PackedTrick.withAddedCard(0b00000000_111111_101000_110000_010111, 0b000101));
+    }
 }
