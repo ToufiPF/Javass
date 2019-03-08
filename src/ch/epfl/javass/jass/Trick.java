@@ -20,19 +20,19 @@ public final class Trick {
         this.pkTrick = pkTrick;
     }
 
-    private void checkIfFull() throws IllegalStateException {
+    private void exceptionIfFull() throws IllegalStateException {
         if (isFull()) {
             throw new IllegalStateException();
         }
     }
 
-    private void checkIfNotFull() throws IllegalStateException {
+    private void exceptionIfNotFull() throws IllegalStateException {
         if(!isFull()) {
             throw new IllegalStateException();
         }
     }
     
-    private void checkIfEmpty() throws IllegalStateException {
+    private void exceptionIfEmpty() throws IllegalStateException {
         if (isEmpty()) {
             throw new IllegalStateException();
         }
@@ -81,7 +81,7 @@ public final class Trick {
      * @return (int) le pli empaqueté vide suivant ce pli
      */
     public Trick nextEmpty() {
-        checkIfNotFull();
+        exceptionIfNotFull();
         return ofPacked(PackedTrick.nextEmpty(pkTrick));
     }
 
@@ -173,7 +173,7 @@ public final class Trick {
      * @return (Trick) le pli auquel on a ajouté la carte c
      */
     public Trick withAddedCard(Card c) {
-        checkIfFull();
+        exceptionIfFull();
         return ofPacked(PackedTrick.withAddedCard(pkTrick, c.packed()));
     }
 
@@ -184,7 +184,7 @@ public final class Trick {
      *         carte jouée
      */
     public Color baseColor() {
-        checkIfEmpty();
+        exceptionIfEmpty();
         return PackedTrick.baseColor(pkTrick);
     }
 
@@ -199,7 +199,7 @@ public final class Trick {
      *         comme prochaine carte du pli
      */
     public CardSet playableCards(CardSet hand) {
-        checkIfFull();
+        exceptionIfFull();
         return CardSet
                 .ofPacked(PackedTrick.playableCards(pkTrick, hand.packed()));
     }
@@ -219,7 +219,7 @@ public final class Trick {
      * @return (PlayerId) le joueur menant le pli
      */
     public PlayerId winningPlayer() {
-        checkIfEmpty();
+        exceptionIfEmpty();
         return PackedTrick.winningPlayer(pkTrick);
     }
 
