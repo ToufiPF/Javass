@@ -238,7 +238,7 @@ public final class PackedTrick {
         
         // On peut jouer toutes les cartes de la couleur de base
         long playableCards = PackedCardSet.subsetOfColor(pkHand, bc);
-        // Si le joueur n'en a pas (ou si il n'y a que le Bour), il peut jouer toutes les cartes non-atout qu'il veut
+        // Si le joueur n'en a pas (ou si il ne peut jouer que le Bour), il peut jouer toutes les cartes non-atout qu'il veut
         if (PackedCardSet.isEmpty(playableCards) || playableCards == SINGLETON_BOUR) {
             for (Card.Color c : Card.Color.ALL)
                 if (!c.equals(tc))
@@ -247,8 +247,8 @@ public final class PackedTrick {
         
         // Et des atouts :
         long playableTrumps = PackedCardSet.EMPTY;
-        // Si il y a déjà un atout sur dans le pli, on peut jouer seulement un meilleur
         final int bestTrump = bestTrump(pkTrick);
+        // Si il y a déjà un atout sur dans le pli, on peut jouer seulement un meilleur
         if (bestTrump != PackedCard.INVALID)
             playableTrumps = PackedCardSet.intersection(PackedCardSet.subsetOfColor(pkHand, tc), PackedCardSet.trumpAbove(bestTrump));
         // Sinon, on peut jouer tous les atouts

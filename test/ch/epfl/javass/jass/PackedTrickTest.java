@@ -139,6 +139,7 @@ class PackedTrickTest {
                     LIST_CARDS = PackedCardSet.remove(LIST_CARDS, card);
                     trick = PackedTrick.withAddedCard(trick, card);
                 }
+                
                 final int sizeHand = rng.nextInt(10);
                 long hand = PackedCardSet.EMPTY;
                 for (int j = 0 ; j < sizeHand ; ++j) {
@@ -146,6 +147,7 @@ class PackedTrickTest {
                     LIST_CARDS = PackedCardSet.remove(LIST_CARDS, card);
                     hand = PackedCardSet.add(hand, card);
                 }
+                
                 System.out.println("In the trick : " + PackedTrick.toString(trick));
                 System.out.println("With the hand : " + PackedCardSet.toString(hand));
                 System.out.println("Playable : " + PackedCardSet.toString(PackedTrick.playableCards(trick, hand)));
@@ -234,5 +236,24 @@ class PackedTrickTest {
         assertEquals(0b00000000_111111_111111_111111_010111, PackedTrick.withAddedCard(0b00000000_111111_111111_111111_111111, 0b010111));
         assertEquals(0b00000000_111111_101000_110000_010111, PackedTrick.withAddedCard(0b00000000_111111_111111_110000_010111, 0b101000));
         assertEquals(0b00000000_000101_101000_110000_010111, PackedTrick.withAddedCard(0b00000000_111111_101000_110000_010111, 0b000101));
+    }
+
+    @Test
+    void winningPlayerWorksOnATrivialTrick() {
+        int trick = PackedTrick.firstEmpty(Card.Color.SPADE, PlayerId.PLAYER_3);
+        trick = PackedTrick.withAddedCard(trick, generateRandomPackedCard());
+        assertEquals(PlayerId.PLAYER_3, PackedTrick.winningPlayer(trick));
+    }
+
+    @Test
+    void winningPlayerWorksOnAComplexTrick() {
+        int trick = PackedTrick.firstEmpty(Card.Color.SPADE, PlayerId.PLAYER_3);
+        trick = PackedTrick.withAddedCard(trick, generateRandomPackedCard());
+        
+        trick = PackedTrick.nextEmpty(trick);
+        trick = PackedTrick.withAddedCard(trick, PackedCard.pack(Card.Color.HEART, Card.Rank.EIGHT));
+        trick = PackedTrick.withAddedCard(trick, PackedCard.pack(Card.Color.SPADE, Card.Rank.NINE));
+        trick = PackedTrick.withAddedCard(trick, PackedCard.pack(Card.Color.SPADE, Card.Rank.JACK));
+        assertEquals(PlayerId.PLAYER_1, PackedTrick.winningPlayer(trick));
     }
 }
