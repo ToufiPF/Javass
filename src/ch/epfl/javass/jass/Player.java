@@ -62,7 +62,7 @@ public interface Player {
     }
     
     /**
-     * Informe le joueur du score de la partie
+     * Informe le joueur du score de la partie.
      * A appeler chaque fois que le score change
      * (quand le pli est ramassé)
      * @param newScore (Score) le nouveau Score
