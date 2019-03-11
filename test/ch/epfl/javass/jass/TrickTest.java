@@ -9,7 +9,7 @@ import ch.epfl.javass.bits.Bits32;
 class TrickTest {
 
 
-    //@Test
+    @Test
     void ofPackedThrowsExceptionWhenUnvalid() {
         for (int i = 0; i <= 8; ++i) {
             for (int j = 0; j < 56; ++j) {

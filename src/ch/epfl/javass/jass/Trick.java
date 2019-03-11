@@ -15,7 +15,7 @@ public final class Trick {
     // représente un pli invalide
     public final static Trick INVALID = new Trick(PackedTrick.INVALID);
 
-    private int pkTrick;
+    private final int pkTrick;
 
     private Trick(int pkTrick) {
         this.pkTrick = pkTrick;
