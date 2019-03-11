@@ -7,7 +7,8 @@ import ch.epfl.javass.jass.Card.Color;
  * Trick 
  * Une classe publique, finale et immuable représenant un pli
  * 
- * @author Amaury Pierre (296498)
+ * @author Amaury Pierre (296498) 
+ * @author Aurélien Clergeot (302592)
  */
 public final class Trick {
 
