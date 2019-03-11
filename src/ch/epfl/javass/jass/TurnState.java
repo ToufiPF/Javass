@@ -6,8 +6,9 @@ import ch.epfl.javass.jass.Card.Color;
 /**
  * TurnState Une classe publique, finale et immuable représentant l'état d'un
  * tour
- * 
- * @author Amaury Pierre (296498)
+ * *
+ * @author Amaury Pierre (296498) 
+ * @author Aurélien Clergeot (302592)
  */
 public final class TurnState {
 
