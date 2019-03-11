@@ -48,8 +48,8 @@ public final class PacedPlayer implements Player {
     }
 
     @Override
-    public void setPlayer(PlayerId ownId, Map<PlayerId,String> mapNames) {
-        mUnderPlayer.setPlayer(ownId, mapNames);
+    public void setPlayers(PlayerId ownId, Map<PlayerId,String> mapNames) {
+        mUnderPlayer.setPlayers(ownId, mapNames);
     }
 
     @Override

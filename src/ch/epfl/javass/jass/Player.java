@@ -26,7 +26,7 @@ public interface Player {
      * @param ownId (PlayerId) l'id du joueur
      * @param mapNames (Map<PlayerId, String>) la map de noms des joueurs
      */
-    public default void setPlayer(PlayerId ownId, Map<PlayerId, String> mapNames) {
+    public default void setPlayers(PlayerId ownId, Map<PlayerId, String> mapNames) {
         System.out.println("Player.setPlayer(PlayerId, Map<PlayerId,String>) default");
     }
     
