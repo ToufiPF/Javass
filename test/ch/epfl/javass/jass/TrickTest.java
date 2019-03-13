@@ -2,6 +2,7 @@ package ch.epfl.javass.jass;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import ch.epfl.javass.bits.Bits32;
@@ -10,6 +11,8 @@ class TrickTest {
 
 
     @Test
+    @Disabled
+    //BEAUCOUUUUP trop long
     void ofPackedThrowsExceptionWhenUnvalid() {
         for (int i = 0; i <= 8; ++i) {
             for (int j = 0; j < 56; ++j) {

@@ -80,6 +80,7 @@ public final class CardSet {
      * @return (Card) la carte à l'index donné
      */
     public Card get(int index) {
+        Preconditions.checkIndex(index, size());
         return Card.ofPacked(PackedCardSet.get(mPkCardSet, index));
     }
 
