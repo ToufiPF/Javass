@@ -157,6 +157,25 @@ class PackedTrickTest {
         }
     }
 
+
+    @Test
+    void playableCardTestUnit3() {
+        System.out.println("--------------------------");
+        System.out.println("PackedTrickTest - playableCardTestUnit3");
+
+        int trick = PackedTrick.firstEmpty(Card.Color.CLUB, PlayerId.PLAYER_2);
+        trick = PackedTrick.withAddedCard(trick, PackedCard.pack(Card.Color.DIAMOND, Card.Rank.ACE));
+        trick = PackedTrick.withAddedCard(trick, PackedCard.pack(Card.Color.CLUB, Card.Rank.ACE));
+        long hand = PackedCardSet.EMPTY;
+        hand = PackedCardSet.add(hand, PackedCard.pack(Card.Color.CLUB, Card.Rank.JACK));
+        hand = PackedCardSet.add(hand, PackedCard.pack(Card.Color.CLUB, Card.Rank.SEVEN));
+
+        System.out.println("In the trick : " + PackedTrick.toString(trick));
+        System.out.println("With the hand : " + PackedCardSet.toString(hand));
+        System.out.println("Playable : " + PackedCardSet.toString(PackedTrick.playableCards(trick, hand)));
+        System.out.println("");
+    }
+    
     @Test
     void isValidWorksWithAllValid() {
         for (int i = 0; i <= 8; ++i) {

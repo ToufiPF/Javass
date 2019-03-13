@@ -256,7 +256,7 @@ public final class PackedTrick {
             playableTrumps = PackedCardSet.subsetOfColor(pkHand, tc);
         
         final long totalPlayable = PackedCardSet.union(playableCards, playableTrumps);
-        if (PackedCardSet.isEmpty(totalPlayable) || totalPlayable == SINGLETON_BOUR)
+        if (PackedCardSet.isEmpty(totalPlayable))
             return pkHand;
         
         return totalPlayable;
