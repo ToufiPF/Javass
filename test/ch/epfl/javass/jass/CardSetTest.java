@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.SplittableRandom;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import ch.epfl.javass.jass.Card.Color;
@@ -122,7 +121,6 @@ public final class CardSetTest {
     }
 
     @Test
-    @Disabled  // This was unfortunately not specified.
     void getFailsWithInvalidIndex() {
         SplittableRandom rng = newRandom();
         List<Card> cs = new ArrayList<>(listOfAllCards());

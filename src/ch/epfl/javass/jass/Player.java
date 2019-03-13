@@ -27,7 +27,7 @@ public interface Player {
      * @param mapNames (Map<PlayerId, String>) la map de noms des joueurs
      */
     public default void setPlayers(PlayerId ownId, Map<PlayerId, String> mapNames) {
-        System.out.println("Player.setPlayer(PlayerId, Map<PlayerId,String>) default");
+        //System.out.println("Player.setPlayer(PlayerId, Map<PlayerId,String>) default");
     }
     
     /**
@@ -37,7 +37,7 @@ public interface Player {
      * @param newHand
      */
     public default void updateHand(CardSet newHand) {
-        System.out.println("Player.updateHand(CardSet) default");
+        //System.out.println("Player.updateHand(CardSet) default");
     }
     
     /**
@@ -47,7 +47,7 @@ public interface Player {
      * @param trump (Card.Color) la nouvelle couleur atout
      */
     public default void setTrump(Card.Color trump) {
-        System.out.println("Player.setTrump(Card.Color) default");
+        //System.out.println("Player.setTrump(Card.Color) default");
     }
     
     /**
@@ -58,7 +58,7 @@ public interface Player {
      * @param newTrick (Trick) le nouveau pli
      */
     public default void updateTrick(Trick newTrick) {
-        System.out.println("Player.updateTrick(Trick) default");
+        //System.out.println("Player.updateTrick(Trick) default");
     }
     
     /**
@@ -68,7 +68,7 @@ public interface Player {
      * @param newScore (Score) le nouveau Score
      */
     public default void updateScore(Score newScore) {
-        System.out.println("Player.updateScore(Score) default");
+        //System.out.println("Player.updateScore(Score) default");
     }
     
     /**
@@ -78,6 +78,6 @@ public interface Player {
      * @param winningTeam (TeamId) l'équipe gagnante
      */
     public default void setWinningTeam(TeamId winningTeam) {
-        System.out.println("Player.setWinningTeam(TeamId) default");
+        //System.out.println("Player.setWinningTeam(TeamId) default");
     }
 }
