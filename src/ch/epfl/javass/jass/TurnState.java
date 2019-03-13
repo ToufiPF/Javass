@@ -140,8 +140,7 @@ public final class TurnState {
      *         le dernier et est plein
      */
     public boolean isTerminal() {
-        return PackedTrick.isLast(actualTrick)
-                && PackedTrick.isFull(actualTrick);
+        return actualTrick == PackedTrick.INVALID;
     }
 
     /**
