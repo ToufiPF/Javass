@@ -9,8 +9,7 @@ import java.util.SplittableRandom;
 
 import org.junit.jupiter.api.Test;
 
-class Bits64Test {
-
+public final class Bits64Test {
     @Test
     void maskProducesCorrectMasks() {
         for (int size = 0; size <= Long.SIZE; ++size) {
@@ -23,12 +22,13 @@ class Bits64Test {
             }
         }
     }
+
     @Test
     void maskFailsWithNegativeStart() {
         SplittableRandom rng = newRandom();
         for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
             int start = -(i + 1);
-            int size = rng.nextInt(Integer.SIZE + 1);
+            int size = rng.nextInt(Long.SIZE + 1);
             assertThrows(IllegalArgumentException.class, () -> {
                 Bits64.mask(start, size);
             });
@@ -39,7 +39,7 @@ class Bits64Test {
     void maskFailsWithNegativeSize() {
         SplittableRandom rng = newRandom();
         for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
-            int start = rng.nextInt(Integer.SIZE + 1);
+            int start = rng.nextInt(Long.SIZE + 1);
             int size = -(i + 1);
             assertThrows(IllegalArgumentException.class, () -> {
                 Bits64.mask(start, size);
@@ -58,7 +58,6 @@ class Bits64Test {
             });
         }
     }
-    
 
     @Test
     void extractCanExtractAllBitsInOneGo() {
@@ -68,7 +67,6 @@ class Bits64Test {
             assertEquals(bits, Bits64.extract(bits, 0, Long.SIZE));
         }
     }
-    
 
     @Test
     void extractCanExtractSubgroupsOfBits() {
@@ -89,7 +87,7 @@ class Bits64Test {
         SplittableRandom rng = newRandom();
         for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
             int start = -(i + 1);
-            int size = rng.nextInt(Long.SIZE + 1);
+            int size = rng.nextInt(Integer.SIZE + 1);
             assertThrows(IllegalArgumentException.class, () -> {
                 Bits64.extract(rng.nextLong(), start, size);
             });
@@ -132,8 +130,10 @@ class Bits64Test {
 
     private long[] getValues(SplittableRandom rng, int[] sizes) {
         long[] values = new long[sizes.length];
-        for (int i = 0; i < sizes.length; ++i)
-            values[i] = rng.nextLong((1L << sizes[i] < 0) ? Long.MAX_VALUE : 1L << sizes[i]);
+        for (int i = 0; i < sizes.length; ++i) {
+            long maxSize = 1L << sizes[i];
+            values[i] = rng.nextLong(maxSize == Long.MIN_VALUE ? Long.MAX_VALUE : maxSize);
+        }
         return values;
     }
 
@@ -144,9 +144,8 @@ class Bits64Test {
             int[] s = getSizes(rng, 2);
             long[] v = getValues(rng, s);
             long packed = Bits64.pack(v[0], s[0], v[1], s[1]);
-
             for (int j = 0; j < s.length; ++j) {
-              assertEquals(v[j], Bits64.extract(packed, 0, s[j]));
+              assertEquals(v[j], packed & ((1L << s[j]) - 1));
               packed >>>= s[j];
             }
             assertEquals(0, packed);

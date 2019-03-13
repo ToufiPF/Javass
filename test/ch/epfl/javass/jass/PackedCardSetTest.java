@@ -4,241 +4,492 @@ import static ch.epfl.test.TestRandomizer.RANDOM_ITERATIONS;
 import static ch.epfl.test.TestRandomizer.newRandom;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.SplittableRandom;
 
 import org.junit.jupiter.api.Test;
 
-import ch.epfl.javass.bits.Bits32;
-import ch.epfl.javass.bits.Bits64;
 import ch.epfl.javass.jass.Card.Color;
 import ch.epfl.javass.jass.Card.Rank;
 
-class PackedCardSetTest {
+public class PackedCardSetTest {
+    private static final long EMPTY_SET = 0L;
+    private static final long FULL_SET = 0x01FF_01FF_01FF_01FFL;
 
-    @Test
-    void testToString() {
-        long s = PackedCardSet.EMPTY;
-        int c1 = PackedCard.pack(Color.HEART, Rank.SIX);
-        int c2 = PackedCard.pack(Color.SPADE, Rank.ACE);
-        int c3 = PackedCard.pack(Color.SPADE, Rank.SIX);
-        s = PackedCardSet.add(s, c1);
-        s = PackedCardSet.add(s, c2);
-        s = PackedCardSet.add(s, c3);
-        System.out.println(PackedCardSet.toString(s));
+    static final long[] ALL_SINGLETONS = new long[] {
+            0x0000000000000001L,
+            0x0000000000000002L,
+            0x0000000000000004L,
+            0x0000000000000008L,
+            0x0000000000000010L,
+            0x0000000000000020L,
+            0x0000000000000040L,
+            0x0000000000000080L,
+            0x0000000000000100L,
+            0x0000000000010000L,
+            0x0000000000020000L,
+            0x0000000000040000L,
+            0x0000000000080000L,
+            0x0000000000100000L,
+            0x0000000000200000L,
+            0x0000000000400000L,
+            0x0000000000800000L,
+            0x0000000001000000L,
+            0x0000000100000000L,
+            0x0000000200000000L,
+            0x0000000400000000L,
+            0x0000000800000000L,
+            0x0000001000000000L,
+            0x0000002000000000L,
+            0x0000004000000000L,
+            0x0000008000000000L,
+            0x0000010000000000L,
+            0x0001000000000000L,
+            0x0002000000000000L,
+            0x0004000000000000L,
+            0x0008000000000000L,
+            0x0010000000000000L,
+            0x0020000000000000L,
+            0x0040000000000000L,
+            0x0080000000000000L,
+            0x0100000000000000L,
+    };
+
+    static final int[] ALL_PACKED_CARDS = new int[] {
+            0b00_0000,
+            0b00_0001,
+            0b00_0010,
+            0b00_0011,
+            0b00_0100,
+            0b00_0101,
+            0b00_0110,
+            0b00_0111,
+            0b00_1000,
+            0b01_0000,
+            0b01_0001,
+            0b01_0010,
+            0b01_0011,
+            0b01_0100,
+            0b01_0101,
+            0b01_0110,
+            0b01_0111,
+            0b01_1000,
+            0b10_0000,
+            0b10_0001,
+            0b10_0010,
+            0b10_0011,
+            0b10_0100,
+            0b10_0101,
+            0b10_0110,
+            0b10_0111,
+            0b10_1000,
+            0b11_0000,
+            0b11_0001,
+            0b11_0010,
+            0b11_0011,
+            0b11_0100,
+            0b11_0101,
+            0b11_0110,
+            0b11_0111,
+            0b11_1000,
+    };
+
+    static long nextSet(SplittableRandom rng) {
+        return rng.nextLong() & FULL_SET;
+    }
+
+    private static int nextCard(SplittableRandom rng) {
+        Color c = Color.ALL.get(rng.nextInt(Color.COUNT));
+        Rank r = Rank.ALL.get(rng.nextInt(Rank.COUNT));
+        return PackedCard.pack(c, r);
     }
 
     @Test
-    void testGetFailsOnInvalidIndex() {
-        assertThrows(AssertionError.class, () -> {
-            PackedCardSet.get(0L, 0);
-        });
-        assertThrows(AssertionError.class, () -> {
-            PackedCardSet.get(0b01000L, 1);
-        });
-        assertThrows(AssertionError.class, () -> {
-            PackedCardSet.get(0b01000L, 1);
-        });
-        assertThrows(AssertionError.class, () -> {
-            PackedCardSet.get(0b01110L, -1);
-        });
+    void emptyHasTheRightValue() {
+        assertEquals(EMPTY_SET, PackedCardSet.EMPTY);
     }
 
     @Test
-    void testGetWorksOnSingletons() {
-        for (Card.Color c : Card.Color.ALL)
-            for (Card.Rank r : Card.Rank.ALL)
-                assertEquals(PackedCard.pack(c, r), PackedCardSet.get(
-                        PackedCardSet.singleton(PackedCard.pack(c, r)), 0));
+    void allCardsHasTheRightValue() {
+        assertEquals(FULL_SET, PackedCardSet.ALL_CARDS);
     }
 
     @Test
-    void testGetWorksOnComplexSets() {
-        SplittableRandom rng = newRandom();
-        ArrayList<Integer> cards = new ArrayList<>();
-
-        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
-            long cardSet = 0L;
-            int nbCardsInSet = rng.nextInt(Long.SIZE);
-            cards.clear();
-            for (int j = 0; j < nbCardsInSet; ++j) {
-                int packedCard = PackedCard.pack(
-                        Card.Color.ALL.get(rng.nextInt(Card.Color.COUNT)),
-                        Card.Rank.ALL.get(rng.nextInt(Card.Rank.COUNT)));
-                if (!cards.contains(packedCard))
-                    cards.add(packedCard);
-                cardSet = PackedCardSet.add(cardSet, packedCard);
-            }
-            Collections.sort(cards);
-            for (int j = 0; j < PackedCardSet.size(cardSet); ++j)
-                assertEquals(cards.get(j).intValue(),
-                        PackedCardSet.get(cardSet, j));
-        }
+    void isValidAcceptsAllSingletons() {
+        for (long s: ALL_SINGLETONS)
+            assertTrue(PackedCardSet.isValid(s));
     }
 
     @Test
-    void testTrumpAboveReturnsEmptySetForJack() {
-        for (Card.Color c : Card.Color.ALL)
-            assertEquals(0L, PackedCardSet
-                    .trumpAbove(PackedCard.pack(c, Card.Rank.JACK)));
-    }
-
-    @Test
-    void testTrumpAboveWorks() {
-        for (Card.Color c : Card.Color.ALL) {
-            for (Card.Rank r : Card.Rank.ALL) {
-                assertTrue(() -> {
-                    long setAbove = PackedCardSet
-                            .trumpAbove(PackedCard.pack(c, r));
-                    for (Card.Rank r2 : Card.Rank.ALL) {
-                        if (r.trumpOrdinal() >= r2.trumpOrdinal()
-                                && PackedCardSet.contains(setAbove,
-                                        PackedCard.pack(c, r2)))
-                            return false;
-                        if (r.trumpOrdinal() < r2.trumpOrdinal()
-                                && !PackedCardSet.contains(setAbove,
-                                        PackedCard.pack(c, r2)))
-                            return false;
-                    }
-                    return true;
-                });
-            }
-        }
-    }
-
-    @Test
-    void testSubsetOfColorWorksOnComplexSets() {
-        SplittableRandom rng = newRandom();
-
-        long cardSet = 0L;
-        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
-            int nbCardsInSet = rng.nextInt(Long.SIZE);
-            cardSet = PackedCardSet.EMPTY;
-
-            for (int j = 0; j < nbCardsInSet; ++j) {
-                int packedCard = PackedCard.pack(
-                        Card.Color.ALL.get(rng.nextInt(Card.Color.COUNT)),
-                        Card.Rank.ALL.get(rng.nextInt(Card.Rank.COUNT)));
-                cardSet = PackedCardSet.add(cardSet, packedCard);
-            }
-            final long cardSet2 = cardSet;
-            assertTrue(() -> {
-                for (int j = 0; j < PackedCardSet.size(cardSet2); ++j) {
-                    long subSet = PackedCardSet.subsetOfColor(cardSet2,
-                            PackedCard.color(PackedCardSet.get(cardSet2, j)));
-                    for (int h = 0; h < PackedCardSet.size(subSet); ++h)
-                        if (!PackedCard.color(PackedCardSet.get(subSet, h))
-                                .equals(PackedCard
-                                        .color(PackedCardSet.get(cardSet2, j))))
-                            return false;
-                }
-                return true;
-            });
-        }
-    }
-
-    @Test
-    void isValidWorksWithAllValidNumbers() {
-        for (int i = 0; i < (1L << 9); ++i) {
-            for (int j = 0; j < (1L << 9); ++j) {
-                for (int k = 0; k < (1L << 9); ++k) {
-                    for (int l = 0; l < (1L << 9); ++l) {
-                        int m = Bits32.pack(i, 16, j, 16);
-                        int n = Bits32.pack(k, 16, l, 16);
-                        long o = Bits64.pack(m, 32, n, 32);
-                        assertTrue(PackedCardSet.isValid(o));
-                    }
-                }
+    void isValidRejectsAllInvalidBits() {
+        for (int c = 0; c < 4; ++c) {
+            for (int r = 9; r < 16; ++r) {
+                long invalidS = (1L << r) << (c << 4);
+                assertFalse(PackedCardSet.isValid(invalidS));
             }
         }
     }
 
     @Test
-    void isValidFailsWithAllUnvalidNumbers() {
-        for (int i = 1; i < (1L << 7); ++i) {
-            for (int j = 1; j < (1L << 7); ++j) {
-                for (int k = 1; k < (1L << 7); ++k) {
-                    for (int l = 1; l < (1L << 7); ++l) {
-                        long m = (l << 57 | k << 41 | j << 25 | i << 9);
-                        assertFalse(PackedCardSet.isValid(m));
-                    }
-                }
-            }
-        }
-    }
-
-    private static Card.Color[] getAllColors() {
-        return new Card.Color[] { Card.Color.SPADE, Card.Color.HEART,
-                Card.Color.DIAMOND, Card.Color.CLUB };
-    }
-
-    private static Card.Rank[] getAllRanks() {
-        return new Card.Rank[] { Card.Rank.SIX, Card.Rank.SEVEN,
-                Card.Rank.EIGHT, Card.Rank.NINE, Card.Rank.TEN, Card.Rank.JACK,
-                Card.Rank.QUEEN, Card.Rank.KING, Card.Rank.ACE, };
-    }
-
-    private static Card[] getAllCards() {
-        Card[] allCards = new Card[36];
+    void trumpAboveIsCorrect() {
+        long[] expSets = new long[] {
+                0x00000000000001feL,
+                0x00000000000001fcL,
+                0x00000000000001f8L,
+                0x0000000000000020L,
+                0x00000000000001e8L,
+                0x0000000000000000L,
+                0x00000000000001a8L,
+                0x0000000000000128L,
+                0x0000000000000028L,
+                0x0000000001fe0000L,
+                0x0000000001fc0000L,
+                0x0000000001f80000L,
+                0x0000000000200000L,
+                0x0000000001e80000L,
+                0x0000000000000000L,
+                0x0000000001a80000L,
+                0x0000000001280000L,
+                0x0000000000280000L,
+                0x000001fe00000000L,
+                0x000001fc00000000L,
+                0x000001f800000000L,
+                0x0000002000000000L,
+                0x000001e800000000L,
+                0x0000000000000000L,
+                0x000001a800000000L,
+                0x0000012800000000L,
+                0x0000002800000000L,
+                0x01fe000000000000L,
+                0x01fc000000000000L,
+                0x01f8000000000000L,
+                0x0020000000000000L,
+                0x01e8000000000000L,
+                0x0000000000000000L,
+                0x01a8000000000000L,
+                0x0128000000000000L,
+                0x0028000000000000L,
+        };
         int i = 0;
-        for (Card.Color c : getAllColors()) {
-            for (Card.Rank r : getAllRanks()) {
-                allCards[i++] = Card.of(c, r);
+        for (int c: ALL_PACKED_CARDS) {
+            assertEquals(expSets[i++], PackedCardSet.trumpAbove(c));
+        }
+    }
+
+    @Test
+    void singletonIsCorrect() {
+        int i = 0;
+        for (int c: ALL_PACKED_CARDS) {
+            assertEquals(ALL_SINGLETONS[i++], PackedCardSet.singleton(c));
+        }
+    }
+
+    @Test
+    void isEmptyIsCorrect() {
+        assertTrue(PackedCardSet.isEmpty(EMPTY_SET));
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s = nextSet(rng);
+            boolean expEmpty = s == 0;
+            assertEquals(expEmpty, PackedCardSet.isEmpty(s));
+        }
+    }
+
+    @Test
+    void sizeIsCorrect() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s = nextSet(rng);
+            assertEquals(Long.bitCount(s), PackedCardSet.size(s));
+        }
+    }
+
+    @Test
+    void getWorksOnFullSet() {
+        int i = 0;
+        for (int c: ALL_PACKED_CARDS) {
+            assertEquals(c, PackedCardSet.get(FULL_SET, i++));
+        }
+    }
+
+    @Test
+    void getWorksOnSingletons() {
+        int i = 0;
+        for (int c: ALL_PACKED_CARDS) {
+            assertEquals(c, PackedCardSet.get(ALL_SINGLETONS[i++], 0));
+        }
+    }
+
+    @Test
+    void addCanBuildFullSet() {
+        long s = PackedCardSet.EMPTY;
+        int expectedSize = 0;
+        for (int c: ALL_PACKED_CARDS) {
+            s = PackedCardSet.add(s, c);
+            expectedSize += 1;
+            assertEquals(expectedSize, PackedCardSet.size(s));
+        }
+        assertEquals(FULL_SET, s);
+    }
+
+    @Test
+    void addIsIdempotent() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s = nextSet(rng);
+            int c = nextCard(rng);
+            s = PackedCardSet.add(s, c);
+            assertEquals(s, PackedCardSet.add(s, c));
+        }
+    }
+
+    @Test
+    void addDoesAdd() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s = nextSet(rng);
+            int c = nextCard(rng);
+            s = PackedCardSet.add(s, c);
+            assertTrue(PackedCardSet.contains(s, c));
+        }
+    }
+
+    @Test
+    void removeCanEmptyFullSet() {
+        long s = PackedCardSet.ALL_CARDS;
+        int expectedSize = 36;
+        for (int c: ALL_PACKED_CARDS) {
+            s = PackedCardSet.remove(s, c);
+            expectedSize -= 1;
+            assertEquals(expectedSize, PackedCardSet.size(s));
+        }
+        assertEquals(EMPTY_SET, s);
+    }
+
+    @Test
+    void removeIsIdempotent() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s = nextSet(rng);
+            int c = nextCard(rng);
+            s = PackedCardSet.remove(s, c);
+            assertEquals(s, PackedCardSet.remove(s, c));
+        }
+    }
+
+    @Test
+    void containsWorksOnEmptySet() {
+        long s = PackedCardSet.EMPTY;
+        for (int c: ALL_PACKED_CARDS) {
+            assertFalse(PackedCardSet.contains(s, c));
+        }
+    }
+
+    @Test
+    void containsWorksOnFullSet() {
+        long s = PackedCardSet.ALL_CARDS;
+        for (int c: ALL_PACKED_CARDS) {
+            assertTrue(PackedCardSet.contains(s, c));
+        }
+    }
+
+    @Test
+    void complementWorksOnEmptyAndFullSets() {
+        assertEquals(PackedCardSet.ALL_CARDS, PackedCardSet.complement(PackedCardSet.EMPTY));
+        assertEquals(PackedCardSet.EMPTY, PackedCardSet.complement(PackedCardSet.ALL_CARDS));
+    }
+
+    @Test
+    void complementIsItsOwnInverse() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s = nextSet(rng);
+            long sC = PackedCardSet.complement(s);
+            assertNotEquals(s, sC);
+            assertEquals(s, PackedCardSet.complement(sC));
+        }
+    }
+
+    @Test
+    void sizeOfComplementIsComplementOfSize() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s = nextSet(rng);
+            long sC = PackedCardSet.complement(s);
+            assertEquals(36 - PackedCardSet.size(s), PackedCardSet.size(sC));
+        }
+    }
+
+    @Test
+    void unionWorksOnEmptyAndFullSets() {
+        assertEquals(PackedCardSet.EMPTY, PackedCardSet.union(PackedCardSet.EMPTY, PackedCardSet.EMPTY));
+        assertEquals(PackedCardSet.ALL_CARDS, PackedCardSet.union(PackedCardSet.ALL_CARDS, PackedCardSet.ALL_CARDS));
+    }
+
+    @Test
+    void unionWithItselfIsItself() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s = nextSet(rng);
+            assertEquals(s, PackedCardSet.union(s, s));
+        }
+    }
+
+    @Test
+    void unionWithComplementProducesFullSet() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s = nextSet(rng);
+            long sC = PackedCardSet.complement(s);
+            assertEquals(PackedCardSet.ALL_CARDS, PackedCardSet.union(s, sC));
+        }
+    }
+
+    @Test
+    void unionIsAssociative() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s1 = nextSet(rng);
+            long s2 = nextSet(rng);
+            long s3 = nextSet(rng);
+
+            long u1 = PackedCardSet.union(PackedCardSet.union(s1, s2), s3);
+            long u2 = PackedCardSet.union(s1, PackedCardSet.union(s2, s3));
+
+            assertEquals(u1, u2);
+        }
+    }
+
+    @Test
+    void unionIsCommutative() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s1 = nextSet(rng);
+            long s2 = nextSet(rng);
+
+            long u1 = PackedCardSet.union(s1, s2);
+            long u2 = PackedCardSet.union(s2, s1);
+
+            assertEquals(u1, u2);
+        }
+    }
+
+    @Test
+    void intersectionWorksOnEmptyAndFullSets() {
+        assertEquals(PackedCardSet.EMPTY, PackedCardSet.intersection(PackedCardSet.EMPTY, PackedCardSet.EMPTY));
+        assertEquals(PackedCardSet.ALL_CARDS, PackedCardSet.intersection(PackedCardSet.ALL_CARDS, PackedCardSet.ALL_CARDS));
+    }
+
+    @Test
+    void intersectionWithItselfIsItself() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s = nextSet(rng);
+            assertEquals(s, PackedCardSet.intersection(s, s));
+        }
+    }
+
+    @Test
+    void intersectionWithComplementProducesEmptySet() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s = nextSet(rng);
+            long sC = PackedCardSet.complement(s);
+            assertEquals(PackedCardSet.EMPTY, PackedCardSet.intersection(s, sC));
+        }
+    }
+
+    @Test
+    void intersectionIsAssociative() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s1 = nextSet(rng);
+            long s2 = nextSet(rng);
+            long s3 = nextSet(rng);
+
+            long u1 = PackedCardSet.intersection(PackedCardSet.intersection(s1, s2), s3);
+            long u2 = PackedCardSet.intersection(s1, PackedCardSet.intersection(s2, s3));
+
+            assertEquals(u1, u2);
+        }
+    }
+
+    @Test
+    void intersectionIsCommutative() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s1 = nextSet(rng);
+            long s2 = nextSet(rng);
+
+            long u1 = PackedCardSet.intersection(s1, s2);
+            long u2 = PackedCardSet.intersection(s2, s1);
+
+            assertEquals(u1, u2);
+        }
+    }
+
+    @Test
+    void differenceWorksOnEmptyAndFullSets() {
+        assertEquals(PackedCardSet.EMPTY, PackedCardSet.difference(PackedCardSet.EMPTY, PackedCardSet.EMPTY));
+        assertEquals(PackedCardSet.EMPTY, PackedCardSet.difference(PackedCardSet.ALL_CARDS, PackedCardSet.ALL_CARDS));
+    }
+
+    @Test
+    void differenceWithItselfIsEmpty() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s = nextSet(rng);
+            assertEquals(PackedCardSet.EMPTY, PackedCardSet.difference(s, s));
+        }
+    }
+
+    @Test
+    void differenceWithComplementIsItself() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s = nextSet(rng);
+            long sC = PackedCardSet.complement(s);
+            assertEquals(s, PackedCardSet.difference(s, sC));
+        }
+    }
+
+    @Test
+    void differenceDoesNotMakeSetGrow() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s1 = nextSet(rng);
+            long s2 = nextSet(rng);
+            long d12 = PackedCardSet.difference(s1, s2);
+            assertTrue(PackedCardSet.size(d12) <= PackedCardSet.size(s1));
+            long d21 = PackedCardSet.difference(s2, s1);
+            assertTrue(PackedCardSet.size(d21) <= PackedCardSet.size(s2));
+        }
+    }
+
+    @Test
+    void subsetOfColorHasRightSize() {
+        for (Color c: Color.ALL) {
+            assertEquals(9, PackedCardSet.size(PackedCardSet.subsetOfColor(PackedCardSet.ALL_CARDS, c)));
+        }
+    }
+
+    @Test
+    void subsetOfColorWorks() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long s = nextSet(rng);
+            Color c = Color.ALL.get(rng.nextInt(Color.COUNT));
+
+            long expectedS = PackedCardSet.EMPTY;
+            for (int j = 0; j < PackedCardSet.size(s); ++j) {
+                int pkCard = PackedCardSet.get(s, j);
+                if (PackedCard.color(pkCard) == c)
+                    expectedS = PackedCardSet.add(expectedS, pkCard);
             }
-        }
-        return allCards;
-    }
 
-    @Test
-    void singletonAndGetWork() {
-        for (Card c : getAllCards()) {
-            long singleton = PackedCardSet.singleton(c.packed());
-            assertEquals(1, Long.bitCount(singleton));
-            assertEquals(c.packed(), PackedCardSet.get(singleton, 0));
+            assertEquals(expectedS, PackedCardSet.subsetOfColor(s, c));
         }
     }
-
-    @Test
-    void isEmptyWorks() {
-        assertTrue(PackedCardSet.isEmpty(PackedCardSet.EMPTY));
-        assertTrue(PackedCardSet.isEmpty(0L));
-        for (Card c : getAllCards()) {
-            assertFalse(
-                    PackedCardSet.isEmpty(PackedCardSet.singleton(c.packed())));
-        }
-    }
-
-    @Test
-    void addAndContainsWork() {
-        long set = PackedCardSet.EMPTY;
-        for (Card c : getAllCards()) {
-            assertFalse(PackedCardSet.contains(set, c.packed()));
-            set = PackedCardSet.add(set, c.packed());
-            assertTrue(PackedCardSet.contains(set, c.packed()));
-        }
-    }
-
-    @Test
-    void removeAndContainsWork() {
-        long set = PackedCardSet.ALL_CARDS;
-        for (Card c : getAllCards()) {
-            assertTrue(PackedCardSet.contains(set, c.packed()));
-            set = PackedCardSet.remove(set, c.packed());
-            assertFalse(PackedCardSet.contains(set, c.packed()));
-        }
-    }
-
-    @Test
-    void complementWorksWithEmptyFullSet() {
-        assertEquals(PackedCardSet.EMPTY,
-                PackedCardSet.complement(PackedCardSet.ALL_CARDS));
-        assertEquals(PackedCardSet.ALL_CARDS,
-                PackedCardSet.complement(PackedCardSet.EMPTY));
-
-    }
-
 }

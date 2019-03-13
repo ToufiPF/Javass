@@ -1,35 +1,46 @@
 package ch.epfl.javass.jass;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
-class TeamIdTest {
-    private static TeamId[] getAllTeamId() {
-        return new TeamId[] { TeamId.TEAM_1, TeamId.TEAM_2 };
+public class TeamIdTest {
+    private static TeamId[] getAllTeamIds() {
+        return new TeamId[] {
+                TeamId.TEAM_1,
+                TeamId.TEAM_2,
+        };
     }
 
     @Test
-    void TeamIdIsInTheRightOrder() {
-        assertArrayEquals(getAllTeamId(), TeamId.values());
+    void teamIdsAreInRightOrder() {
+        assertArrayEquals(getAllTeamIds(), TeamId.values());
     }
-    
+
     @Test
-    void TeamIdAllIsCorrect() {
+    void teamIdAllIsCorrect() {
         assertEquals(Arrays.asList(TeamId.values()), TeamId.ALL);
     }
 
     @Test
-    void TeamIdCountIsCorrect() {
-        assertEquals(getAllTeamId().length, TeamId.COUNT);
+    void teamIdAllIsUnmodifiable() {
+        assertThrows(UnsupportedOperationException.class, () -> {
+            TeamId.ALL.set(0, null);
+        });
     }
-    
+
     @Test
-    void TeamIdOtherIsCorrect() {
-        assertEquals(TeamId.TEAM_1, TeamId.TEAM_2.other());
+    void teamIdCountIsCorrect() {
+        assertEquals(getAllTeamIds().length, TeamId.COUNT);
+    }
+
+    @Test
+    void otherIsCorrect() {
         assertEquals(TeamId.TEAM_2, TeamId.TEAM_1.other());
+        assertEquals(TeamId.TEAM_1, TeamId.TEAM_2.other());
     }
 }
