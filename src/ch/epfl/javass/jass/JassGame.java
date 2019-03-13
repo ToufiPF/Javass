@@ -24,6 +24,8 @@ public final class JassGame {
     private TurnState mTurnState;
     private PlayerId mFirstPlayer;
     private CardSet[] mHands;
+    
+    private boolean mGameIsOver;
 
     /**
      * Construit un JassGame à partir de la seed et des
@@ -119,7 +121,11 @@ public final class JassGame {
         for (int i = 0 ; i < hands.length ; ++i)
             hands[i] = CardSet.of(shuffled.subList(i * cardsPerPlayer, (i + 1) * cardsPerPlayer));
     }
-
+    
+    private PlayerId getPlayerWith7Diamond() {
+        return PlayerId.ALL.get(getIndexOfHandWith(mHands, Card.of(Card.Color.DIAMOND, Card.Rank.SEVEN)));
+    }
+    
     private int getIndexOfHandWith(CardSet[] hands, Card card) {
         for (int i = 0 ; i < hands.length ; ++i)
             if (hands[i].contains(card))
