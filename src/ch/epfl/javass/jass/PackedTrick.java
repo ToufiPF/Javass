@@ -289,7 +289,7 @@ public final class PackedTrick {
     }
     /**
      * Represente le pli donné dans un String de la forme
-     * {cartes_jouées}, trump:, (index_pli/8), points_pli
+     * (index_pli/8), {cartes_jouées}, trump:, points_pli
      * @param pkTrick (int) le pli à représenter
      * @return (String) une représentation de pkTrick
      */
@@ -300,7 +300,7 @@ public final class PackedTrick {
         for (int i = 0; i < size(pkTrick); ++i)
             j.add(PackedCard.toString(PackedTrick.card(pkTrick, i)));
         
-        return j.toString() + ", trump:" + trump(pkTrick) + ", (" + index(pkTrick) + "/" + MAX_VALID_INDEX_TRICK + "), " + points(pkTrick) + "pts";
+        return "(" + index(pkTrick) + "/" + MAX_VALID_INDEX_TRICK + "), " +  j.toString() + ", trump:" + trump(pkTrick) + ", " + points(pkTrick) + "pts";
     }
     
     /**

@@ -136,12 +136,11 @@ public final class TurnState {
     /**
      * Retourne si l'état est terminal, càd si le dernier pli du tour a été joué
      * 
-     * @return true (boolean) ssi l'état est terminal, càd si le pli actuel est
-     *         le dernier et est plein
+     * @return true (boolean) ssi l'état est terminal, 
+     * càd si le pli actuel est invalide
      */
     public boolean isTerminal() {
-        return PackedTrick.isLast(actualTrick)
-                && PackedTrick.isFull(actualTrick);
+        return actualTrick == PackedTrick.INVALID;
     }
 
     /**
@@ -186,7 +185,8 @@ public final class TurnState {
         exceptionIfTrickNotFull();
 
         // On met à jour le score actuel
-        long newActualScore = PackedScore.nextTurn(actualScore);
+        long newActualScore = PackedScore.withAdditionalTrick(actualScore, 
+                PackedTrick.winningPlayer(actualTrick).team(), PackedTrick.points(actualTrick));
 
         // On met à jour le pli actuel
         int newActualTrick = PackedTrick.nextEmpty(actualTrick);
@@ -209,9 +209,8 @@ public final class TurnState {
         TurnState updated = this.withNewCardPlayed(card);
 
         // On vérifie si le pli est plein et si oui, on ramasse le pli courant
-        if (updated.trick().isFull()) {
+        if (updated.trick().isFull())
             updated = updated.withTrickCollected();
-        }
 
         return updated;
     }
