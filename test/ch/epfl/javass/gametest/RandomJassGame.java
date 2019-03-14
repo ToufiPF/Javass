@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.epfl.javass.jass.JassGame;
+import ch.epfl.javass.jass.PacedPlayer;
 import ch.epfl.javass.jass.Player;
 import ch.epfl.javass.jass.PlayerId;
 
@@ -15,7 +16,7 @@ public final class RandomJassGame {
         for (PlayerId pId: PlayerId.ALL) {
             Player player = new RandomPlayer(2019);
             if (pId == PlayerId.PLAYER_1)
-                player = new PrintingPlayer(player);
+                player = new PrintingPlayer(new PacedPlayer(player, .5));
             players.put(pId, player);
             playerNames.put(pId, pId.name());
         }

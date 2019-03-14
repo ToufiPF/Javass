@@ -69,33 +69,35 @@ public final class JassGame {
 
         // On est au 1er pli du 1er tour de la partie
         if (mTurnState == null) {
-            dealCards(getShuffledCards(), mHands);
-            updateHandForAllPlayers(mHands);
+            dealCardsToPlayers();
+            updateHandForAll(mHands);
             mFirstPlayer = getPlayerWith7Diamond();
 
             mTurnState = TurnState.initial(generateTrump(), Score.INITIAL, mFirstPlayer);
-            setTrumpForAllPlayers(mTurnState.trick().trump());
+            setTrumpForAll(mTurnState.trick().trump());
         }
         else {
             mTurnState = mTurnState.withTrickCollected();
         }
-        updateScoreForAllPlayers(mTurnState.score());
-        
+        updateScoreForAll(mTurnState.score());
+
         if (getWinningTeam() != null) {
-            setWinningTeamForAllPlayers(getWinningTeam());
+            setWinningTeamForAll(getWinningTeam());
             mGameIsOver = true;
             return;
         }
         
         // Si le tour est terminé
+        // On en recrée un
         if (mTurnState.isTerminal()) {
-            dealCards(getShuffledCards(), mHands);
-            updateHandForAllPlayers(mHands);
+            dealCardsToPlayers();
+            updateHandForAll(mHands);
             mFirstPlayer = PlayerId.ALL.get((mFirstPlayer.ordinal() + 1) % PlayerId.COUNT);
 
             mTurnState = TurnState.initial(generateTrump(), mTurnState.score().nextTurn(), mFirstPlayer);
-            setTrumpForAllPlayers(mTurnState.trick().trump());
+            setTrumpForAll(mTurnState.trick().trump());
         }
+        updateTrickForAll(mTurnState.trick());
         
         for (int i = 0 ; i < PlayerId.COUNT ; ++i) {
             PlayerId player_i = mTurnState.nextPlayer();
@@ -105,7 +107,7 @@ public final class JassGame {
             mTurnState = mTurnState.withNewCardPlayed(card_i);
 
             mMapPlayers.get(player_i).updateHand(mHands[player_i.ordinal()]);
-            updateTrickForAllPlayers(mTurnState.trick());
+            updateTrickForAll(mTurnState.trick());
         }
     }
 
@@ -118,26 +120,27 @@ public final class JassGame {
         Collections.shuffle(cards, mShuffleRng);
         return cards;
     }
-    private void dealCards(List<Card> shuffled, CardSet[] hands) {
-        final int cardsPerPlayer = shuffled.size() / hands.length;
-        for (int i = 0 ; i < hands.length ; ++i)
-            hands[i] = CardSet.of(shuffled.subList(i * cardsPerPlayer, (i + 1) * cardsPerPlayer));
+    private void dealCardsToPlayers() {
+        List<Card> shuffled = getShuffledCards();
+        
+        final int cardsPerPlayer = shuffled.size() / mHands.length;
+        for (int i = 0 ; i < mHands.length ; ++i)
+            mHands[i] = CardSet.of(shuffled.subList(i * cardsPerPlayer, (i + 1) * cardsPerPlayer));
     }
-    
-    private PlayerId getPlayerWith7Diamond() {
-        return PlayerId.ALL.get(getIndexOfHandWith(mHands, Card.of(Card.Color.DIAMOND, Card.Rank.SEVEN)));
-    }
-    
-    private int getIndexOfHandWith(CardSet[] hands, Card card) {
-        for (int i = 0 ; i < hands.length ; ++i)
-            if (hands[i].contains(card))
+
+    private int getIndexOfHandWith(Card card) {
+        for (int i = 0 ; i < mHands.length ; ++i)
+            if (mHands[i].contains(card))
                 return i;
         return -1;
+    }
+    private PlayerId getPlayerWith7Diamond() {
+        return PlayerId.ALL.get(getIndexOfHandWith(Card.of(Card.Color.DIAMOND, Card.Rank.SEVEN)));
     }
     
     private TeamId getWinningTeam() {
         for (TeamId id : TeamId.ALL) {
-            if (mTurnState.score().gamePoints(id) >= 1000)
+            if (mTurnState.score().totalPoints(id) >= 1000)
                 return id;
         }
         return null;
@@ -147,23 +150,23 @@ public final class JassGame {
         return Card.Color.ALL.get(mTrumpRng.nextInt(Card.Color.COUNT));
     }
     
-    private void updateHandForAllPlayers(CardSet[] hands) {
+    private void updateHandForAll(CardSet[] hands) {
         for (Map.Entry<PlayerId, Player> e : mMapPlayers.entrySet())
             e.getValue().updateHand(hands[e.getKey().ordinal()]);
     }
-    private void updateTrickForAllPlayers(Trick newTrick) {
+    private void updateTrickForAll(Trick newTrick) {
         for (Map.Entry<PlayerId, Player> e: mMapPlayers.entrySet())
             e.getValue().updateTrick(newTrick);
     }
-    private void updateScoreForAllPlayers(Score newScore) {
+    private void updateScoreForAll(Score newScore) {
         for (Map.Entry<PlayerId, Player> e: mMapPlayers.entrySet())
             e.getValue().updateScore(newScore);
     }
-    private void setTrumpForAllPlayers(Card.Color trump) {
+    private void setTrumpForAll(Card.Color trump) {
         for (Map.Entry<PlayerId, Player> e: mMapPlayers.entrySet())
             e.getValue().setTrump(trump);
     }
-    private void setWinningTeamForAllPlayers(TeamId winningTeam) {
+    private void setWinningTeamForAll(TeamId winningTeam) {
         for (Map.Entry<PlayerId, Player> e: mMapPlayers.entrySet())
             e.getValue().setWinningTeam(winningTeam);
     }

@@ -2,6 +2,7 @@ package ch.epfl.javass.jass;
 
 import java.util.Map;
 
+import ch.epfl.javass.Preconditions;
 import ch.epfl.javass.jass.Card.Color;
 
 /**
@@ -26,6 +27,8 @@ public final class PacedPlayer implements Player {
      * @param minTimeInSecs (double) le temps minimum pour la méthode cardToPlay, en secondes
      */
     public PacedPlayer(Player underlyingPlayer, double minTimeInSecs) {
+        Preconditions.checkArgument(minTimeInSecs >= 0);
+        
         mUnderPlayer = underlyingPlayer;
         mMinTime = (long) (minTimeInSecs * 1000);
     }

@@ -31,7 +31,7 @@ public final class PrintingPlayer implements Player {
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> mapNames) {
         System.out.println("Les joueurs sont : ");
         for (Map.Entry<PlayerId, String> e : mapNames.entrySet())
-            System.out.println(" - " + e.getValue() + (e.getKey() == ownId ? " (moi)" : ""));
+            System.out.println(" \u2022 " + (e.getKey().ordinal() + 1) + ": " + e.getValue() + (e.getKey() == ownId ? " (moi)" : ""));
         underlyingPlayer.setPlayers(ownId, mapNames);
     }
 
