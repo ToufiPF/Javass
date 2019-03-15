@@ -26,6 +26,5 @@ public final class RandomJassGame {
             g.advanceToEndOfNextTrick();
             System.out.println("----");
         }
-        
     }
 }

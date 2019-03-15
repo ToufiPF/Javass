@@ -173,7 +173,25 @@ class PackedTrickTest {
         System.out.println("In the trick : " + PackedTrick.toString(trick));
         System.out.println("With the hand : " + PackedCardSet.toString(hand));
         System.out.println("Playable : " + PackedCardSet.toString(PackedTrick.playableCards(trick, hand)));
-        System.out.println("");
+    }
+
+    @Test
+    void playableCardTestUnit4() {
+        System.out.println("--------------------------");
+        System.out.println("PackedTrickTest - playableCardTestUnit4");
+
+        int trick = PackedTrick.firstEmpty(Card.Color.CLUB, PlayerId.PLAYER_2);
+        trick = PackedTrick.withAddedCard(trick, PackedCard.pack(Card.Color.DIAMOND, Card.Rank.ACE));
+        trick = PackedTrick.withAddedCard(trick, PackedCard.pack(Card.Color.CLUB, Card.Rank.SEVEN));
+        long hand = PackedCardSet.EMPTY;
+        hand = PackedCardSet.add(hand, PackedCard.pack(Card.Color.CLUB, Card.Rank.SIX));
+        hand = PackedCardSet.add(hand, PackedCard.pack(Card.Color.CLUB, Card.Rank.EIGHT));
+        hand = PackedCardSet.add(hand, PackedCard.pack(Card.Color.HEART, Card.Rank.EIGHT));
+        hand = PackedCardSet.add(hand, PackedCard.pack(Card.Color.HEART, Card.Rank.KING));
+
+        System.out.println("In the trick : " + PackedTrick.toString(trick));
+        System.out.println("With the hand : " + PackedCardSet.toString(hand));
+        System.out.println("Playable : " + PackedCardSet.toString(PackedTrick.playableCards(trick, hand)));
     }
     
     @Test

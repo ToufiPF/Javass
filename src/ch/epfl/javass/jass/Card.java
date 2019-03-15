@@ -21,7 +21,7 @@ public final class Card {
      * @author Amaury Pierre (296498)
      */
     public enum Color {
-        SPADE("\u2660"), HEART("\u2661"), DIAMOND("\u2662"), CLUB("\u2663");
+        SPADE("\u2660"), HEART("\u2665"), DIAMOND("\u2666"), CLUB("\u2663");
 
         private final String symbol;
 
