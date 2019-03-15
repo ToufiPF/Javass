@@ -20,8 +20,9 @@ public final class RandomJassGame {
             players.put(pId, player);
             playerNames.put(pId, pId.name());
         }
-
-        JassGame g = new JassGame(2019, players, playerNames);
+        
+        //Original seed : 2019
+        JassGame g = new JassGame(1516845162365231321L, players, playerNames);
         while (!g.isGameOver()) {
             g.advanceToEndOfNextTrick();
             System.out.println("----");

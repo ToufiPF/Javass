@@ -83,8 +83,8 @@ public final class JassGame {
         updateScoreForAll(mTurnState.score());
 
         // On vérifie si une team a gagné
-        if (mTurnState.score().totalPoints(getWinningTeam()) >= 1000) {
-            setWinningTeamForAll(getWinningTeam());
+        if (mTurnState.score().totalPoints(getTeamWithMostPoints()) >= 1000) {
+            setWinningTeamForAll(getTeamWithMostPoints());
             mGameIsOver = true;
             return;
         }
@@ -156,12 +156,11 @@ public final class JassGame {
     }
 
     /**
-     * Donne la team qui gagne, càd celle avec le
-     * plus de points au total
+     * Donne la team avec le plus de points au total
      * (Dans le cas où le nb de points est égal, retourne TEAM_1)
      * @return (TeamId) la team avec le plus de points
      */
-    private TeamId getWinningTeam() {
+    private TeamId getTeamWithMostPoints() {
         if (mTurnState.score().totalPoints(TeamId.TEAM_1) >= mTurnState.score().totalPoints(TeamId.TEAM_2))
             return TeamId.TEAM_1;
         return TeamId.TEAM_2;

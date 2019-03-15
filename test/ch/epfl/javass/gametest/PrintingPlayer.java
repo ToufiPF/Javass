@@ -23,7 +23,7 @@ public final class PrintingPlayer implements Player {
     public Card cardToPlay(TurnState state, CardSet hand) {
         System.out.print("C'est à moi de jouer... Je joue : ");
         Card c = underlyingPlayer.cardToPlay(state, hand);
-        System.out.println(c);
+        System.out.println(c + " - (au choix dans : " + state.trick().playableCards(hand).toString() + ").");
         return c;
     }
 
