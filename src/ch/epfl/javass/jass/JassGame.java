@@ -81,7 +81,7 @@ public final class JassGame {
         }
         updateScoreForAll(mTurnState.score());
 
-        if (getWinningTeam() != null) {
+        if (mTurnState.score().totalPoints(getWinningTeam()) >= 1000) {
             setWinningTeamForAll(getWinningTeam());
             mGameIsOver = true;
             return;
@@ -110,7 +110,7 @@ public final class JassGame {
             updateTrickForAll(mTurnState.trick());
         }
     }
-
+    
     private List<Card> getShuffledCards() {
         List<Card> cards = new ArrayList<Card>();
         for (Card.Color c : Card.Color.ALL)
@@ -127,25 +127,44 @@ public final class JassGame {
         for (int i = 0 ; i < mHands.length ; ++i)
             mHands[i] = CardSet.of(shuffled.subList(i * cardsPerPlayer, (i + 1) * cardsPerPlayer));
     }
-
+    
+    /**
+     * Donne l'index de la main qui contient la carte donnée
+     * Retourne -1 si aucune main ne la possède
+     * @param card (Card) la carte à chercher
+     * @return (int) l'index de la main
+     */
     private int getIndexOfHandWith(Card card) {
         for (int i = 0 ; i < mHands.length ; ++i)
             if (mHands[i].contains(card))
                 return i;
         return -1;
     }
+    /**
+     * Retourne le joueur qui possède le 7 de carreaux
+     * @return (PlayerId) le joueur avec le 7 de carreaux
+     * @throws IndexOutOfBoundsException si aucun joueur ne l'a
+     */
     private PlayerId getPlayerWith7Diamond() {
         return PlayerId.ALL.get(getIndexOfHandWith(Card.of(Card.Color.DIAMOND, Card.Rank.SEVEN)));
     }
     
+    /**
+     * Donne la team qui gagne, càd celle avec le
+     * plus de points au total
+     * (Dans le cas où le nb de points est égal, retourne TEAM_1)
+     * @return (TeamId) la team avec le plus de points
+     */
     private TeamId getWinningTeam() {
-        for (TeamId id : TeamId.ALL) {
-            if (mTurnState.score().totalPoints(id) >= 1000)
-                return id;
-        }
-        return null;
+        if (mTurnState.score().totalPoints(TeamId.TEAM_1) >= mTurnState.score().totalPoints(TeamId.TEAM_2))
+            return TeamId.TEAM_1;
+        return TeamId.TEAM_2;
     }
-
+    
+    /**
+     * Genere aléatoirement une couleur pour les cartes d'atout
+     * @return (Card.Color) la nouvelle couleur pour les atouts
+     */
     private Card.Color generateTrump() {
         return Card.Color.ALL.get(mTrumpRng.nextInt(Card.Color.COUNT));
     }
@@ -155,19 +174,19 @@ public final class JassGame {
             e.getValue().updateHand(hands[e.getKey().ordinal()]);
     }
     private void updateTrickForAll(Trick newTrick) {
-        for (Map.Entry<PlayerId, Player> e: mMapPlayers.entrySet())
+        for (Map.Entry<PlayerId, Player> e : mMapPlayers.entrySet())
             e.getValue().updateTrick(newTrick);
     }
     private void updateScoreForAll(Score newScore) {
-        for (Map.Entry<PlayerId, Player> e: mMapPlayers.entrySet())
+        for (Map.Entry<PlayerId, Player> e : mMapPlayers.entrySet())
             e.getValue().updateScore(newScore);
     }
     private void setTrumpForAll(Card.Color trump) {
-        for (Map.Entry<PlayerId, Player> e: mMapPlayers.entrySet())
+        for (Map.Entry<PlayerId, Player> e : mMapPlayers.entrySet())
             e.getValue().setTrump(trump);
     }
     private void setWinningTeamForAll(TeamId winningTeam) {
-        for (Map.Entry<PlayerId, Player> e: mMapPlayers.entrySet())
+        for (Map.Entry<PlayerId, Player> e : mMapPlayers.entrySet())
             e.getValue().setWinningTeam(winningTeam);
     }
 }

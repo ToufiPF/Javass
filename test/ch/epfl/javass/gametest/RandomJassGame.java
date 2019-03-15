@@ -16,15 +16,16 @@ public final class RandomJassGame {
         for (PlayerId pId: PlayerId.ALL) {
             Player player = new RandomPlayer(2019);
             if (pId == PlayerId.PLAYER_1)
-                player = new PrintingPlayer(new PacedPlayer(player, .5));
+                player = new PrintingPlayer(new PacedPlayer(player, 0));
             players.put(pId, player);
             playerNames.put(pId, pId.name());
         }
 
         JassGame g = new JassGame(2019, players, playerNames);
-        while (! g.isGameOver()) {
+        while (!g.isGameOver()) {
             g.advanceToEndOfNextTrick();
             System.out.println("----");
         }
+        
     }
 }
