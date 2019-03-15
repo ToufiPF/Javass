@@ -143,10 +143,14 @@ public final class JassGame {
     /**
      * Retourne le joueur qui possède le 7 de carreaux
      * @return (PlayerId) le joueur avec le 7 de carreaux
-     * @throws IndexOutOfBoundsException si aucun joueur ne l'a
+     * @throws IllegalStateException si aucun joueur ne le possède
      */
     private PlayerId getPlayerWith7Diamond() {
-        return PlayerId.ALL.get(getIndexOfHandWith(Card.of(Card.Color.DIAMOND, Card.Rank.SEVEN)));
+        final int index = getIndexOfHandWith(Card.of(Card.Color.DIAMOND, Card.Rank.SEVEN));
+        if (index == -1)
+            throw new IllegalStateException("Aucun joueur ne possède le 7 de carreaux.\n"
+                    + "L'appel à la méthode getPlayerWith7Diamond est interdit.");
+        return PlayerId.ALL.get(index);
     }
     
     /**
