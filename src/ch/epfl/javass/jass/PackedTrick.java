@@ -300,7 +300,8 @@ public final class PackedTrick {
         for (int i = 0; i < size(pkTrick); ++i)
             j.add(PackedCard.toString(PackedTrick.card(pkTrick, i)));
         
-        return "(" + index(pkTrick) + "/" + MAX_VALID_INDEX_TRICK + "), " +  j.toString() + ", trump:" + trump(pkTrick) + ", " + points(pkTrick) + "pts";
+        return "(" + index(pkTrick) + "/" + MAX_VALID_INDEX_TRICK + "), 1st Player: " + player(pkTrick, 0).toString() 
+                + ", " +  j.toString() + ", trump:" + trump(pkTrick) + ", " + points(pkTrick) + "pts";
     }
     
     /**
