@@ -37,6 +37,8 @@ class TurnStateTest {
      
     @Test
     void initialWorksWithSomeRandomScore() {
+        //Teste Initial et les getters
+        
         SplittableRandom rng = newRandom();
 
         for(int i = 0; i < Color.COUNT; ++i) {
@@ -58,9 +60,5 @@ class TurnStateTest {
                 }
             }
         }
-    }
-
-    
-    
-    
+    }  
 }

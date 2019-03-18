@@ -79,11 +79,12 @@ public final class Trick {
     /**
      * Méthode publique retournant le pli empaqueté vide suivant ce pli
      * 
-     * @return (int) le pli empaqueté vide suivant ce pli
+     * @return (Trick) le pli empaqueté vide suivant ce pli
      */
     public Trick nextEmpty() {
         exceptionIfNotFull();
-        return ofPacked(PackedTrick.nextEmpty(pkTrick));
+        System.out.println(PackedTrick.nextEmpty(pkTrick));
+        return new Trick(PackedTrick.nextEmpty(pkTrick));
     }
 
     /**
