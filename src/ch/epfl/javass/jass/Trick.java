@@ -83,7 +83,6 @@ public final class Trick {
      */
     public Trick nextEmpty() {
         exceptionIfNotFull();
-        System.out.println(PackedTrick.nextEmpty(pkTrick));
         return new Trick(PackedTrick.nextEmpty(pkTrick));
     }
 
