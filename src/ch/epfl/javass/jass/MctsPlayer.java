@@ -27,12 +27,12 @@ public final class MctsPlayer implements Player {
         private int mTotalPoints;
         private int mNbTours;
 
-        private Node(TurnState turnState, CardSet nonExistingChilds, int totalPoints, int nbTours) {
+        private Node(TurnState turnState, CardSet nonExistingChilds, int totalPoints) {
             mState = turnState;
             mChilds = new Node[nonExistingChilds.size()];
             mNonExistingChilds = nonExistingChilds;
-            mTotalPoints = totalPoints;
-            mNbTours = nbTours;
+            mTotalPoints = 0;
+            mNbTours = 1;
         }
 
         /**
@@ -74,28 +74,47 @@ public final class MctsPlayer implements Player {
         private void addChildToIndex(int index) {
             assert index >= 0;
             assert index < mChilds.length;
-            
+
+            ++mNbTours;
             if (mChilds[index] == null) {
-                mChilds[index] = child;
+                mChilds[index] = new Node(mState, mNonExistingChilds.remove(mState.));
             }
-            else
-                System.out.println("Node " + hashCode() + " - addChildToNode() - index child déjà occupé par " + mChilds[index]);
+            else {
+                System.out.println("Node.addChildToNode() - index child déjà occupé par " + mChilds[index]);
+            }
         }
         
-
+        /**
+         * Donne les cartes possiblement jouables,
+         * étant donné l'état du pli, les cartes déja jouées 
+         * et la main du joueur du Node actuel
+         * @return (CardSet) les cartes que les autres joueurs pourraient possiblement jouer
+         */
         private CardSet getPossibleCards() {
-            CardSet possibleCards = CardSet.ALL_CARDS;
-            for (int i = 0 ; i < mState.trick().size() ; ++i)
-                possibleCards.remove(mState.trick().card(i));
-            return possibleCards.difference(mNonExistingChilds);
+            CardSet possibleCards = CardSet.ALL_CARDS.difference(mNonExistingChilds).difference(mState.unplayedCards());
+            return mState.trick().playableCards(possibleCards);
         }
 
-        private Score computeScoreEndOfTrick(TurnState state) {
+        private Score computeScoreEndOfTurnWhenPlaying(Card c) {
+            TurnState state = mState;
+            if (state.trick().isFull())
+                state.withTrickCollected();
+            state = state.withNewCardPlayedAndTrickCollected(c);
+
             CardSet possibleCards = getPossibleCards();
-            while (!PackedTrick.isFull(state.packedTrick())) {
-                Card card = possibleCards.get(mRng.nextInt(possibleCards.size()));
-                state = state.withNewCardPlayed(card);
-                possibleCards.remove(card);
+            CardSet ownCards = mNonExistingChilds;
+            while (!state.isTerminal()) {
+                if (mState.nextPlayer() == mOwnId) {
+                    CardSet playable = state.trick().playableCards(ownCards);
+                    Card card = playable.get(mRng.nextInt(playable.size()));
+                    state = state.withNewCardPlayedAndTrickCollected(card);
+                    ownCards.remove(c);
+                }
+                else {
+                    Card card = possibleCards.get(mRng.nextInt(possibleCards.size()));
+                    state = state.withNewCardPlayedAndTrickCollected(card);
+                    possibleCards.remove(card);
+                }
             }
             return state.score();
         }
