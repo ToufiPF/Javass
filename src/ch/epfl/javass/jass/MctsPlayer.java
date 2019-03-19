@@ -142,8 +142,8 @@ public final class MctsPlayer implements Player {
         
         /**
          * Crée un enfant avec la carte donnée
-         * @param card
-         * @return
+         * @param card (Card) carte à jouer dans le turnState de l'enfant à créer
+         * @return (Node) un enfant de ce Node avec la carte jouée
          */
         private Node createChildNodeWithCard(Card card) {
             /// /!\ TurnState peut etre invalide ???
@@ -174,7 +174,7 @@ public final class MctsPlayer implements Player {
             CardSet othersCards = getPossibleCardsForOthers();
             CardSet ownCards = mNonExistingChildren;
             while (!state.isTerminal()) {
-                if (state.nextPlayer() == getRoot().mLinkedPlayer) {
+                if (state.nextPlayer() == mRoot.mLinkedPlayer) {
                     CardSet playable = state.trick().playableCards(ownCards);
                     Card card = playable.get(mRng.nextInt(playable.size()));
                     state = state.withNewCardPlayedAndTrickCollected(card);
@@ -204,7 +204,7 @@ public final class MctsPlayer implements Player {
 
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
-        Node baseTree = new Node(state, hand, 0);
+        Node baseTree = new Node(state, hand, null);
         for (int i = 0 ; i < mIterations ; ++i) {
             
         }
