@@ -1,5 +1,7 @@
 package ch.epfl.javass.jass;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.SplittableRandom;
 
 import ch.epfl.javass.Preconditions;
@@ -20,35 +22,85 @@ public final class MctsPlayer implements Player {
      * @author Amaury Pierre (296498) 
      * @author Aurélien Clergeot (302592)
      */
-    private class Node{
-        private TurnState mState;
+    private static class Node{
+        
+        public static final int V_CONSTANTE = 40;
+        
+        /// Etat du tour pour ce node
+        private final TurnState mState;
+        /// Joueur lié au node
+        private final PlayerId mLinkedPlayer;
+
+        /// Racine du node
+        private final Node mRoot;
+        /// Parent du node
+        private final Node mParent;
+        
+        /// CardSet pour les nodes enfants pas encore créés
+        private final CardSet mNonExistingChildren;
+        /// CardSet pour les cartes jouables par le joueur lié à ce node
+        private final CardSet mPlayableCards;
+        
+        /// Enfants du node
         private Node[] mChildren;
-        private CardSet mNonExistingChildren;
+        
+        /// Points totaux : somme des points des enfants (+ ceux du node actuel si simulé)
         private int mTotalPoints;
+        /// Nombre de tours totaux : somme des tours des enfants (+1 si un tour a été simulé pour ce node)
         private int mNbTours;
 
-        private Node(TurnState turnState, CardSet nonExistingChildren) {
+        public Node(TurnState turnState, CardSet nonExistingChildren, Node parent) {
             mState = turnState;
-            mChildren = new Node[nonExistingChildren.size()];
+            mLinkedPlayer = mState.nextPlayer();
+
+            mRoot = computeRoot();
+            mParent = parent;
+            
             mNonExistingChildren = nonExistingChildren;
-            mTotalPoints = computeScoreEndOfTurn().totalPoints();
+            if (this.mLinkedPlayer == mRoot.mLinkedPlayer)
+                mPlayableCards = mState.trick().playableCards(mNonExistingChildren);
+            else
+                mPlayableCards = mState.trick().playableCards(getPossibleCardsForOthers());
+            
+            mChildren = new Node[mPlayableCards.size()];
+            // pas bon :
+            //mTotalPoints = computeScoreEndOfTurn().totalPoints(mLinkedPlayer.team());
             mNbTours = 1;
         }
         
-        private Node createChildWithCard(Card c) {
-            return new Node(mState.withNewCardPlayedAndTrickCollected(c), mNonExistingChildren.remove(c));
+        /**
+         * @return (Node) la racine de l'arbre de nodes 
+         */
+        private Node computeRoot() {
+            Node node = this;
+            while (node.mParent != null)
+                node = node.mParent;
+            return node;  
+        }
+        
+        /**
+         * @return (List<Node>) le chemin de ce node jusqu'à la racine
+         */
+        public List<Node> getPathToRoot() {
+            List<Node> list = new LinkedList<Node>();
+            Node node = this;
+            while (node.mParent != null) {
+                list.add(node);
+                node = node.mParent;
+            }
+            return list;
         }
 
         /**
          * Choisit l'index du "meilleur" enfant de ce Node,
          * càd celui ayant le plus grande valeur de V (cf. Etape 6 site internet)
-         * C'est le fils auquel on devra ajouter un nouveau Node
+         * C'est l'index du tableau auquel on devra assigner un nouveau Node
          * 
          * @param c (int) constante pour l'importance du degré d'exploration des noeuds
          * (c=0 donnera l'index du Node avec la meilleure carte jouée)
          * @return (int) index dans le tableau d'enfant
          */
-        private int bestChildIndex(int c) {
+        public int bestChildIndex(int c) {
             double[] scoresChilds = new double [mChildren.length];
             for(int i = 0; i < mChildren.length; ++i) {
                 if (mChildren[i] == null || mChildren[i].mNbTours <= 0)
@@ -70,22 +122,33 @@ public final class MctsPlayer implements Player {
         }
 
         /**
-         * Ajoute un enfant à ce Node,
-         * en y jouant la carte à l'index donné dans le
-         * CardSet nonExistingChilds
+         * Assigne un Node à l'index donné avec la carte à l'index donné (dans playableCards),
+         * ou, si l'index est déjà pris,
+         * assigne le meilleur enfant du Node à cet index à celui-ci
          * @param index (int) l'index de la carte
          */
-        private void addChildToIndex(int index) {
+        private void assignChildToIndex(int index) {
             assert index >= 0;
             assert index < mChildren.length;
 
             ++mNbTours;
             if (mChildren[index] == null) {
-                //mChildren[index] = new Node(mState, mNonExistingChildren.remove(mState.));
+                mChildren[index] = createChildNodeWithCard(mPlayableCards.get(index));
             }
             else {
-                System.out.println("Node.addChildToNode() - index child déjà occupé par " + mChildren[index]);
+                mChildren[index].assignChildToIndex(mChildren[index].bestChildIndex(V_CONSTANTE));
             }
+        }
+        
+        /**
+         * Crée un enfant avec la carte donnée
+         * @param card
+         * @return
+         */
+        private Node createChildNodeWithCard(Card card) {
+            /// /!\ TurnState peut etre invalide ???
+            // si le joueur n'est pas le joueur original, card n'est pas sensé être dans nonExistingChildren donc osef
+            return new Node(mState.withNewCardPlayedAndTrickCollected(card), mNonExistingChildren.remove(card), this);
         }
         
         /**
@@ -111,7 +174,7 @@ public final class MctsPlayer implements Player {
             CardSet othersCards = getPossibleCardsForOthers();
             CardSet ownCards = mNonExistingChildren;
             while (!state.isTerminal()) {
-                if (state.nextPlayer() == mOwnId) {
+                if (state.nextPlayer() == getRoot().mLinkedPlayer) {
                     CardSet playable = state.trick().playableCards(ownCards);
                     Card card = playable.get(mRng.nextInt(playable.size()));
                     state = state.withNewCardPlayedAndTrickCollected(card);
@@ -147,8 +210,5 @@ public final class MctsPlayer implements Player {
         }
 
         return null;
-    }
-    
-
-    
+    }    
 }
