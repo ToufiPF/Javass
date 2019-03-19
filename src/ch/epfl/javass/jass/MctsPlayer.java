@@ -23,7 +23,7 @@ public final class MctsPlayer implements Player {
      * @author Aurélien Clergeot (302592)
      */
     private static class Node{
-        
+        /** Constante interne à Node pour déterminer l'importance du degré d'exploration des nodes */ 
         public static final int V_CONSTANTE = 40;
         
         /// Etat du tour pour ce node
@@ -31,9 +31,9 @@ public final class MctsPlayer implements Player {
         /// Joueur lié au node
         private final PlayerId mLinkedPlayer;
 
-        /// Racine du node
+        /// Racine du node, this si ce node est la racine
         private final Node mRoot;
-        /// Parent du node
+        /// Parent du node, null si ce node est la racine
         private final Node mParent;
         
         /// CardSet pour les nodes enfants pas encore créés
@@ -43,8 +43,10 @@ public final class MctsPlayer implements Player {
         
         /// Enfants du node
         private Node[] mChildren;
-        
-        /// Points totaux : somme des points des enfants (+ ceux du node actuel si simulé)
+
+        /// Score à la fin du tour simulé
+        private Score mScoreEndOfTurn;
+        /// Points totaux : somme des points des enfants pour la team de linkedPlayer (+ ceux du node actuel si simulé)
         private int mTotalPoints;
         /// Nombre de tours totaux : somme des tours des enfants (+1 si un tour a été simulé pour ce node)
         private int mNbTours;
@@ -52,8 +54,13 @@ public final class MctsPlayer implements Player {
         public Node(TurnState turnState, CardSet nonExistingChildren, Node parent) {
             mState = turnState;
             mLinkedPlayer = mState.nextPlayer();
-
-            mRoot = computeRoot();
+            
+            if (parent == null) {
+                mRoot = this;
+            }
+            else {
+                mRoot = parent.mRoot;
+            }
             mParent = parent;
             
             mNonExistingChildren = nonExistingChildren;
@@ -63,34 +70,18 @@ public final class MctsPlayer implements Player {
                 mPlayableCards = mState.trick().playableCards(getPossibleCardsForOthers());
             
             mChildren = new Node[mPlayableCards.size()];
-            // pas bon :
-            //mTotalPoints = computeScoreEndOfTurn().totalPoints(mLinkedPlayer.team());
-            mNbTours = 1;
+            mTotalPoints = computeTotalPoints();
+            mNbTours = computeNbTours();
         }
         
-        /**
-         * @return (Node) la racine de l'arbre de nodes 
-         */
-        private Node computeRoot() {
-            Node node = this;
-            while (node.mParent != null)
-                node = node.mParent;
-            return node;  
-        }
         
         /**
-         * @return (List<Node>) le chemin de ce node jusqu'à la racine
+         * Advance the Mcts algorithm of one step
          */
-        public List<Node> getPathToRoot() {
-            List<Node> list = new LinkedList<Node>();
-            Node node = this;
-            while (node.mParent != null) {
-                list.add(node);
-                node = node.mParent;
-            }
-            return list;
+        public void iterate() {
+            assignChildToIndex(bestChildIndex(V_CONSTANTE));
         }
-
+        
         /**
          * Choisit l'index du "meilleur" enfant de ce Node,
          * càd celui ayant le plus grande valeur de V (cf. Etape 6 site internet)
@@ -133,33 +124,54 @@ public final class MctsPlayer implements Player {
 
             ++mNbTours;
             if (mChildren[index] == null) {
-                mChildren[index] = createChildNodeWithCard(mPlayableCards.get(index));
+                /// /!\ TurnState peut etre invalide ???
+                // si le joueur n'est pas le joueur original, card n'est pas sensé être dans nonExistingChildren donc osef
+                Card card = mPlayableCards.get(index);
+                mChildren[index] = new Node(mState.withNewCardPlayedAndTrickCollected(card), mNonExistingChildren.remove(card), this);
             }
             else {
                 mChildren[index].assignChildToIndex(mChildren[index].bestChildIndex(V_CONSTANTE));
             }
+            mTotalPoints = computeTotalPoints();
+        }
+        
+
+        /**
+         * @return (List<Node>) le chemin de ce node jusqu'à la racine
+         */
+        private List<Node> getPathToRoot() {
+            List<Node> list = new LinkedList<Node>();
+            Node node = this;
+            while (node.mParent != null) {
+                list.add(node);
+                node = node.mParent;
+            }
+            return list;
         }
         
         /**
-         * Crée un enfant avec la carte donnée
-         * @param card (Card) carte à jouer dans le turnState de l'enfant à créer
-         * @return (Node) un enfant de ce Node avec la carte jouée
+         * Calcule le nb de points total d'un Node
+         * (càd son score à la fin du tour + celui de ses enfants)
+         * @return (int) le nombre de points de la team de linkedPlayer
          */
-        private Node createChildNodeWithCard(Card card) {
-            /// /!\ TurnState peut etre invalide ???
-            // si le joueur n'est pas le joueur original, card n'est pas sensé être dans nonExistingChildren donc osef
-            return new Node(mState.withNewCardPlayedAndTrickCollected(card), mNonExistingChildren.remove(card), this);
+        private int computeTotalPoints() {
+            int points = mScoreEndOfTurn.turnPoints(mLinkedPlayer.team());
+            for (int i = 0 ; i < mChildren.length ; ++i)
+                if (mChildren[i] != null)
+                    points += mChildren[i].mScoreEndOfTurn.turnPoints(mLinkedPlayer.team());
+            return points;
         }
-        
         /**
-         * Donne les cartes possiblement jouables par les autres joueurs,
-         * étant donné l'état du pli, les cartes déja jouées 
-         * et la main du joueur du Node actuel
-         * @return (CardSet) les cartes que les autres joueurs pourraient possiblement jouer
+         * Calcule le nb de tours d'un Node
+         * (càd celui de ses enfants + 1 si il n'est pas racine)
+         * @return (int) le nombre de points de la team de linkedPlayer
          */
-        private CardSet getPossibleCardsForOthers() {
-            CardSet possibleCards = mState.unplayedCards().difference(mNonExistingChildren);
-            return mState.trick().playableCards(possibleCards);
+        private int computeNbTours() {
+            int nbTours = this == mRoot ? 0 : 1;
+            for (int i = 0 ; i < mChildren.length ; ++i)
+                if (mChildren[i] != null)
+                    nbTours += mChildren[i].mNbTours;
+            return nbTours;
         }
         
         /**
@@ -168,25 +180,36 @@ public final class MctsPlayer implements Player {
          * et les autres des cartes dans celles retournées par getPossibleCards()
          * @return (Score) le score à la fin du tour joué aléatoirement
          */
-        private Score computeScoreEndOfTurn() {
+        private Score computeScoreEndOfTurn(SplittableRandom rng) {
             TurnState state = mState;
 
-            CardSet othersCards = getPossibleCardsForOthers();
+            CardSet othersCards = getPlayableCardsForOthers();
             CardSet ownCards = mNonExistingChildren;
             while (!state.isTerminal()) {
                 if (state.nextPlayer() == mRoot.mLinkedPlayer) {
                     CardSet playable = state.trick().playableCards(ownCards);
-                    Card card = playable.get(mRng.nextInt(playable.size()));
+                    Card card = playable.get(rng.nextInt(playable.size()));
                     state = state.withNewCardPlayedAndTrickCollected(card);
                     ownCards = ownCards.remove(card);
                 }
                 else {
-                    Card card = othersCards.get(mRng.nextInt(othersCards.size()));
+                    Card card = othersCards.get(rng.nextInt(othersCards.size()));
                     state = state.withNewCardPlayedAndTrickCollected(card);
                     othersCards = othersCards.remove(card);
                 }
             }
             return state.score();
+        }
+
+        /**
+         * Donne les cartes jouables parmi celles étant 
+         * possiblement possedées par les autres joueurs,
+         * étant donné l'état du pli, les cartes déja jouées
+         * @return (CardSet) les cartes que les autres joueurs pourraient possiblement jouer
+         */
+        private CardSet getPlayableCardsForOthers() {
+            CardSet possibleCards = mState.unplayedCards().difference(mNonExistingChildren);
+            return mState.trick().playableCards(possibleCards);
         }
     }
 
@@ -201,14 +224,15 @@ public final class MctsPlayer implements Player {
         mIterations = iterations;
     }
 
-
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
-        Node baseTree = new Node(state, hand, null);
-        for (int i = 0 ; i < mIterations ; ++i) {
-            
-        }
+        if (state.trick().playableCards(hand).size() == 1)
+            return hand.get(0);
+        
+        Node baseTree = new Node(state, hand, null);        
+        for (int i = 0 ; i < mIterations ; ++i)
+            baseTree.iterate();
 
-        return null;
+        return baseTree.mPlayableCards.get(baseTree.bestChildIndex(0));
     }    
 }
