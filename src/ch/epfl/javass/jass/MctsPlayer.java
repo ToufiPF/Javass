@@ -55,23 +55,22 @@ public final class MctsPlayer implements Player {
             mState = turnState;
             mLinkedPlayer = mState.nextPlayer();
             
-            if (parent == null) {
-                mRoot = this;
-            }
-            else {
-                mRoot = parent.mRoot;
-            }
+            
+            mRoot = (parent == null) ? this : parent.mRoot;
             mParent = parent;
             
             mNonExistingChildren = nonExistingChildren;
             if (this.mLinkedPlayer == mRoot.mLinkedPlayer)
                 mPlayableCards = mState.trick().playableCards(mNonExistingChildren);
             else
-                mPlayableCards = mState.trick().playableCards(getPossibleCardsForOthers());
+                mPlayableCards = mState.trick().playableCards(getPlayableCardsForOthers());
             
             mChildren = new Node[mPlayableCards.size()];
+            
+            mScoreEndOfTurn = (this == mRoot) ? Score.INITIAL : computeScoreEndOfTurn(rng);
+            
             mTotalPoints = computeTotalPoints();
-            mNbTours = computeNbTours();
+            mNbTours = (this == mRoot) ? 0 : 1;
         }
         
         
@@ -160,18 +159,6 @@ public final class MctsPlayer implements Player {
                 if (mChildren[i] != null)
                     points += mChildren[i].mScoreEndOfTurn.turnPoints(mLinkedPlayer.team());
             return points;
-        }
-        /**
-         * Calcule le nb de tours d'un Node
-         * (càd celui de ses enfants + 1 si il n'est pas racine)
-         * @return (int) le nombre de points de la team de linkedPlayer
-         */
-        private int computeNbTours() {
-            int nbTours = this == mRoot ? 0 : 1;
-            for (int i = 0 ; i < mChildren.length ; ++i)
-                if (mChildren[i] != null)
-                    nbTours += mChildren[i].mNbTours;
-            return nbTours;
         }
         
         /**
