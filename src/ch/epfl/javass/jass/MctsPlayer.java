@@ -69,7 +69,7 @@ public final class MctsPlayer implements Player {
             
             mScoreEndOfTurn = (parent == null) ? Score.INITIAL : computeScoreEndOfTurn();
             
-            mTotalPoints = computeTotalPoints();
+            mTotalPoints = computeTotalPoints(mLinkedPlayer.team());
             mNbTours = (parent == null) ? 0 : 1;
         }
         private Node(TurnState turnState, CardSet nonExistingChildren, Node parent) {
@@ -133,20 +133,23 @@ public final class MctsPlayer implements Player {
                 Card card = mPlayableCards.get(index);
                 TurnState childState = mState.withNewCardPlayedAndTrickCollected(card);
                 if (childState.isTerminal()) {
-                    childState = TurnState.initial(Card.Color.ALL.get(mRootMctsPlayer.mRng.nextInt(Card.Color.COUNT)), 
-                            mState.score().nextTurn(), mState.nextPlayer());
+                    //TODO:
+                    return;
                 }
                 mChildren[index] = new Node(childState, mNonExistingChildren.remove(card), this);
             }
             else {
                 mChildren[index].assignChildToIndex(mChildren[index].bestChildIndex(V_CONSTANTE));
             }
-            mTotalPoints = computeTotalPoints();
+            
+            for (Node n : getPathToRoot())
+                n.mTotalPoints += n.computeTotalPoints(mLinkedPlayer.team());
         }
         
 
         /**
-         * @return (List<Node>) le chemin de ce node jusqu'à la racine
+         * @return (List<Node>) le chemin de nodes 
+         * partant de celui ci, allant jusqu'à la racine
          */
         private List<Node> getPathToRoot() {
             List<Node> list = new LinkedList<Node>();
@@ -163,11 +166,11 @@ public final class MctsPlayer implements Player {
          * (càd son score à la fin du tour + celui de ses enfants)
          * @return (int) le nombre de points de la team de linkedPlayer
          */
-        private int computeTotalPoints() {
-            int points = mScoreEndOfTurn.turnPoints(mLinkedPlayer.team());
+        private int computeTotalPoints(TeamId team) {
+            int points = mScoreEndOfTurn.turnPoints(team);
             for (int i = 0 ; i < mChildren.length ; ++i)
                 if (mChildren[i] != null)
-                    points += mChildren[i].mScoreEndOfTurn.turnPoints(mLinkedPlayer.team());
+                    points += mChildren[i].mScoreEndOfTurn.turnPoints(team);
             return points;
         }
         
@@ -182,6 +185,7 @@ public final class MctsPlayer implements Player {
 
             CardSet othersCards = getRemainingCardsForOthers();
             CardSet ownCards = mNonExistingChildren;
+            
             while (!state.isTerminal()) {
                 if (state.nextPlayer() == mRootMctsPlayer.mOwnId) {
                     CardSet playable = state.trick().playableCards(ownCards);

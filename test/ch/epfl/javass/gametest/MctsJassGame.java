@@ -8,6 +8,7 @@ import ch.epfl.javass.jass.MctsPlayer;
 import ch.epfl.javass.jass.PacedPlayer;
 import ch.epfl.javass.jass.Player;
 import ch.epfl.javass.jass.PlayerId;
+import ch.epfl.javass.jass.TeamId;
 
 public final class MctsJassGame {
     public static void main(String[] args) {
@@ -16,8 +17,9 @@ public final class MctsJassGame {
 
         for (PlayerId pId: PlayerId.ALL) {
             Player player;
-            if (pId == PlayerId.PLAYER_1) {
-                player = new PrintingPlayer(new PacedPlayer(new MctsPlayer(PlayerId.PLAYER_1, 2019, 5000), 0.2f));
+            if (pId.team() == TeamId.TEAM_1) {
+                player = new PrintingPlayer(new PacedPlayer(new MctsPlayer(pId, 2019, 5000), 0.f));
+                //player = new PacedPlayer(new MctsPlayer(pId, 2019, 1000), 0.f);
             }
             else {
                 player = new RandomPlayer(2019);

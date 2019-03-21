@@ -14,6 +14,7 @@ import ch.epfl.javass.jass.Card.Color;
 
 public final class PrintingPlayer implements Player {
     private final Player underlyingPlayer;
+    private String mName = null;
 
     public PrintingPlayer(Player underlyingPlayer) {
         this.underlyingPlayer = underlyingPlayer;
@@ -21,7 +22,7 @@ public final class PrintingPlayer implements Player {
 
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
-        System.out.print("C'est à moi de jouer... Je joue : ");
+        System.out.print("C'est à moi de jouer (" + mName + ")... Je joue : ");
         Card c = underlyingPlayer.cardToPlay(state, hand);
         System.out.println(c + " - (au choix dans : " + state.trick().playableCards(hand).toString() + ").");
         return c;
@@ -29,6 +30,7 @@ public final class PrintingPlayer implements Player {
 
     @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> mapNames) {
+        mName = mapNames.get(ownId);
         System.out.println("Les joueurs sont : ");
         for (Map.Entry<PlayerId, String> e : mapNames.entrySet())
             System.out.println(" \u2022 " + (e.getKey().ordinal() + 1) + ": " + e.getValue() + (e.getKey() == ownId ? " (moi)" : ""));
