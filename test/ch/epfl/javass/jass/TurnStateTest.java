@@ -129,9 +129,6 @@ class TurnStateTest {
                 st = st.withNewCardPlayedAndTrickCollected(st.unplayedCards().get(rng.nextInt(st.unplayedCards().size())));
         }
     }
-    } 
-
-    
 
     @Test 
     void nextPlayerThrowsExceptionWhenFull() {
