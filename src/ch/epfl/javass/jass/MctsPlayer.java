@@ -24,7 +24,7 @@ public final class MctsPlayer implements Player {
      */
     private static class Node{
         /** Constante interne à Node pour déterminer l'importance du degré d'exploration des nodes */ 
-        public static final int V_CONSTANTE = 40;
+        public static final int V_DEGRE_EXPLORATION = 40;
         
         /// Etat du tour pour ce node
         private final TurnState mState;
@@ -61,17 +61,23 @@ public final class MctsPlayer implements Player {
             mParent = parent;
             
             mNonExistingChildren = nonExistingChildren;
+            // Si le joueur du Node est celui simulé
+            // les cartes jouables sont extraites de sa main
             if (this.mLinkedPlayer == mRootMctsPlayer.mOwnId)
                 mPlayableCards = mState.trick().playableCards(mNonExistingChildren);
+            // sinon, les cartes jouables sont déduites des cartes non jouées
             else
                 mPlayableCards = mState.trick().playableCards(getRemainingCardsForOthers());
             
+            // Un enfant par carte jouable
             mChildren = new Node[mPlayableCards.size()];
             
+            // On simule le tour si le node n'est pas racine
             mScoreEndOfTurn = (parent == null) ? Score.INITIAL : computeScoreEndOfTurn();
-            
-            recomputeTotalPoints();
             mNbTours = (parent == null) ? 0 : 1;
+            
+            // On recalcule le nombre de points total
+            recomputeTotalPoints();
         }
         private Node(TurnState turnState, CardSet nonExistingChildren, Node parent) {
             this(turnState, nonExistingChildren, parent, parent.mRootMctsPlayer);
@@ -83,14 +89,15 @@ public final class MctsPlayer implements Player {
 
         /**
          * @return (List<Node>) le chemin de nodes 
-         * partant du node donné, allant jusqu'à la racine
+         * partant du node donné (inclus), allant jusqu'à la racine (incluse)
          */
         private static List<Node> getPathToRootFrom(Node n) {
             List<Node> list = new LinkedList<Node>();
             Node node = n;
+            list.add(node);
             while (node.mParent != null) {
-                list.add(node);
                 node = node.mParent;
+                list.add(node);
             }
             return list;
         }
@@ -99,7 +106,7 @@ public final class MctsPlayer implements Player {
          * Advance the Mcts algorithm of one step
          */
         public void iterate() {
-            assignChildToIndex(bestChildIndex(V_CONSTANTE));
+            assignChildToIndex(bestChildIndex(V_DEGRE_EXPLORATION));
         }
         
         /**
@@ -147,7 +154,7 @@ public final class MctsPlayer implements Player {
                 Card card = mPlayableCards.get(index);
                 TurnState childState = mState.withNewCardPlayedAndTrickCollected(card);
                 if (childState.isTerminal()) {
-                    //TODO:
+                    //TODO: quoi faire ici ?
                     return;
                 }
                 mChildren[index] = new Node(childState, mNonExistingChildren.remove(card), this);
@@ -156,7 +163,7 @@ public final class MctsPlayer implements Player {
                     n.recomputeTotalPoints();
             }
             else {
-                mChildren[index].assignChildToIndex(mChildren[index].bestChildIndex(V_CONSTANTE));
+                mChildren[index].assignChildToIndex(mChildren[index].bestChildIndex(V_DEGRE_EXPLORATION));
             }
         }
         
@@ -202,7 +209,7 @@ public final class MctsPlayer implements Player {
                     othersCards = othersCards.remove(card);
                 }
                 
-                if (state.trick().isFull())
+                if (PackedTrick.isFull(state.packedTrick()))
                     state = state.withTrickCollected();
             }
             return state.score();
@@ -215,6 +222,19 @@ public final class MctsPlayer implements Player {
          */
         private CardSet getRemainingCardsForOthers() {
             return mState.unplayedCards().difference(mNonExistingChildren);
+        }
+        
+        
+        @Override
+        public String toString() {
+            StringBuilder build = new StringBuilder();
+            build.append("Pronfondeur=").append(getPathToRootFrom(this).size() - 1).append(", ");
+            build.append("Nb d'enfants:").append(mChildren.length).append(", ");
+            build.append("Points:").append(this.mTotalPoints).append(", ");
+            build.append("NbTours:").append(this.mNbTours).append(", ");
+            build.append("PtsMoyens:").append((double) this.mTotalPoints / this.mNbTours);
+            
+            return build.toString();
         }
     }
 
@@ -231,13 +251,18 @@ public final class MctsPlayer implements Player {
 
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
+        // Si il n'y a qu'une carte jouable : pas besoin de réfléchir
         if (state.trick().playableCards(hand).size() == 1)
             return state.trick().playableCards(hand).get(0);
         
         Node baseTree = Node.rootNode(state, hand, this);
         for (int i = 0 ; i < mIterations ; ++i)
             baseTree.iterate();
-
+        
+        System.out.println("Node Racine : " + baseTree);
+        for (Node n : baseTree.mChildren)
+            System.out.println(" - " + n);
+        
         return baseTree.mPlayableCards.get(baseTree.bestChildIndex(0));
     }    
 }
