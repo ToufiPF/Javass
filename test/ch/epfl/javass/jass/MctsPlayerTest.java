@@ -25,8 +25,8 @@ class MctsPlayerTest {
                 .add(Card.of(Color.HEART, Rank.TEN))
                 .add(Card.of(Color.HEART, Rank.JACK));
         
-        MctsPlayer player1 = new MctsPlayer(PlayerId.PLAYER_2, 0, 100_000);
-        Card playedCard = player1.cardToPlay(state, hand);
+        MctsPlayer player2 = new MctsPlayer(PlayerId.PLAYER_2, 0, 100_000);
+        Card playedCard = player2.cardToPlay(state, hand);
         assertEquals(Card.of(Card.Color.SPADE, Card.Rank.EIGHT), playedCard);
     }
 
