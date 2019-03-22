@@ -17,10 +17,6 @@ public final class TurnState {
     private final int actualTrick;
 
     private TurnState(long actualScore, long unplayedCards, int actualTrick) {
-        assert PackedScore.isValid(actualScore);
-        assert PackedCardSet.isValid(unplayedCards);
-        assert PackedTrick.isValid(actualTrick);
-
         this.actualScore = actualScore;
         this.unplayedCards = unplayedCards;
         this.actualTrick = actualTrick;
@@ -53,6 +49,7 @@ public final class TurnState {
      */
     public static TurnState initial(Color trump, Score score,
             PlayerId firstPlayer) {
+        
         return new TurnState(score.packed(), PackedCardSet.ALL_CARDS,
                 Trick.firstEmpty(trump, firstPlayer).packed());
     }
