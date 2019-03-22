@@ -80,7 +80,20 @@ public final class MctsPlayer implements Player {
         public static Node rootNode(TurnState state, CardSet nonExistingChildren, MctsPlayer rootPlayer) {
             return new Node(state, nonExistingChildren, null, rootPlayer);
         }
-        
+
+        /**
+         * @return (List<Node>) le chemin de nodes 
+         * partant du node donné, allant jusqu'à la racine
+         */
+        private static List<Node> getPathToRootFrom(Node n) {
+            List<Node> list = new LinkedList<Node>();
+            Node node = n;
+            while (node.mParent != null) {
+                list.add(node);
+                node = node.mParent;
+            }
+            return list;
+        }
         
         /**
          * Advance the Mcts algorithm of one step
@@ -138,29 +151,16 @@ public final class MctsPlayer implements Player {
                     return;
                 }
                 mChildren[index] = new Node(childState, mNonExistingChildren.remove(card), this);
+                
+                for (Node n : getPathToRootFrom(mChildren[index]))
+                    n.recomputeTotalPoints();
             }
             else {
                 mChildren[index].assignChildToIndex(mChildren[index].bestChildIndex(V_CONSTANTE));
             }
-            
-            for (Node n : getPathToRoot())
-                n.recomputeTotalPoints();
         }
         
 
-        /**
-         * @return (List<Node>) le chemin de nodes 
-         * partant de celui ci, allant jusqu'à la racine
-         */
-        private List<Node> getPathToRoot() {
-            List<Node> list = new LinkedList<Node>();
-            Node node = this;
-            while (node.mParent != null) {
-                list.add(node);
-                node = node.mParent;
-            }
-            return list;
-        }
         
         /**
          * Calcule le nb de points total d'un Node

@@ -13,8 +13,9 @@ public final class MctsJassGame {
     public static void main(String[] args) {
         Map<PlayerId, Player> players = new HashMap<>();
         Map<PlayerId, String> playerNames = new HashMap<>();
-        
-        final long RNG_SEED = 1581623;
+
+        //Original seed : 2019L
+        final long RNG_SEED = 2019;
         final int ITERATIONS = 10_000;
         final double WAIT_TIME = 0;
         
@@ -31,7 +32,6 @@ public final class MctsJassGame {
             playerNames.put(pId, pId.name());
         }
 
-        //Original seed : 2019
         JassGame g = new JassGame(RNG_SEED, players, playerNames);
         while (!g.isGameOver()) {
             g.advanceToEndOfNextTrick();

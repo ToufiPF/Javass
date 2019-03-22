@@ -17,9 +17,7 @@ public final class TurnState {
     private final int actualTrick;
 
     private TurnState(long actualScore, long unplayedCards, int actualTrick) {
-        assert PackedScore.isValid(actualScore);
-        assert PackedCardSet.isValid(unplayedCards);
-        assert PackedTrick.isValid(actualTrick);
+        
 
         this.actualScore = actualScore;
         this.unplayedCards = unplayedCards;

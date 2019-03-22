@@ -36,6 +36,7 @@ public final class Card {
             this.symbol = symbol;
         }
 
+        @Override
         public String toString() {
             return symbol;
         }
@@ -86,6 +87,7 @@ public final class Card {
             }
         }
 
+        @Override
         public String toString() {
             return rank;
         }
