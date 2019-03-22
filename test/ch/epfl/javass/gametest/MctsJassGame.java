@@ -1,19 +1,13 @@
 package ch.epfl.javass.gametest;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import ch.epfl.javass.jass.Card;
-import ch.epfl.javass.jass.CardSet;
 import ch.epfl.javass.jass.JassGame;
 import ch.epfl.javass.jass.MctsPlayer;
 import ch.epfl.javass.jass.PacedPlayer;
 import ch.epfl.javass.jass.Player;
 import ch.epfl.javass.jass.PlayerId;
-import ch.epfl.javass.jass.Score;
-import ch.epfl.javass.jass.TurnState;
 
 public final class MctsJassGame {
     
@@ -33,7 +27,7 @@ public final class MctsJassGame {
             else if (pId == PlayerId.PLAYER_3)
                 player = new PacedPlayer(new MctsPlayer(pId, RNG_SEED, ITERATIONS), WAIT_TIME);
             else 
-                player = new RandomPlayer(2019);
+                player = new RandomPlayer(RNG_SEED);
             
             players.put(pId, player);
             playerNames.put(pId, pId.name());

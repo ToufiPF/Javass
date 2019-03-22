@@ -167,8 +167,6 @@ public final class MctsPlayer implements Player {
             }
         }
         
-
-        
         /**
          * Calcule le nb de points total d'un Node
          * (càd son score à la fin du tour + celui de ses enfants)
