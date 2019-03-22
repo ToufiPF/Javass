@@ -14,15 +14,16 @@ public final class MctsJassGame {
         Map<PlayerId, Player> players = new HashMap<>();
         Map<PlayerId, String> playerNames = new HashMap<>();
         
+        final long RNG_SEED = 1581623;
         final int ITERATIONS = 10_000;
         final double WAIT_TIME = 0;
         
         for (PlayerId pId: PlayerId.ALL) {
             Player player;
             if (pId == PlayerId.PLAYER_1)
-                player = new PrintingPlayer(new PacedPlayer(new MctsPlayer(pId, 2019, ITERATIONS), WAIT_TIME));
+                player = new PrintingPlayer(new PacedPlayer(new MctsPlayer(pId, RNG_SEED, ITERATIONS), WAIT_TIME));
             else if (pId == PlayerId.PLAYER_3)
-                player = new PacedPlayer(new MctsPlayer(pId, 2019, ITERATIONS), WAIT_TIME);
+                player = new PacedPlayer(new MctsPlayer(pId, RNG_SEED, ITERATIONS), WAIT_TIME);
             else 
                 player = new RandomPlayer(2019);
             
@@ -31,7 +32,7 @@ public final class MctsJassGame {
         }
 
         //Original seed : 2019
-        JassGame g = new JassGame(2019, players, playerNames);
+        JassGame g = new JassGame(RNG_SEED, players, playerNames);
         while (!g.isGameOver()) {
             g.advanceToEndOfNextTrick();
             System.out.println("----");
