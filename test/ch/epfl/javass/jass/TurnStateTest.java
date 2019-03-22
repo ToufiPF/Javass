@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import ch.epfl.javass.bits.Bits32;
 import ch.epfl.javass.jass.Card.Color;
+import ch.epfl.javass.jass.Card.Rank;
 import ch.epfl.test.TestRandomizer;
 
 class TurnStateTest {
@@ -38,8 +39,10 @@ class TurnStateTest {
         return Bits32.pack(card1, 6, card2, 6, card3, 6, PackedCard.INVALID, 6, index, 4, joueur1, 2, trump, 2);
     }
 
-    
-     
+    SplittableRandom rng = newRandom();
+    TurnState turnStateTest = TurnState.initial(Color.ALL.get(rng.nextInt(Color.ALL.size())), 
+            Score.ofPacked(randomPkScore(rng)), PlayerId.ALL.get(rng.nextInt(PlayerId.ALL.size())));
+
     @Test
     void initialWorksWithSomeRandomScore() {
         //Test Initial et les getters
@@ -125,5 +128,20 @@ class TurnStateTest {
             while (!st.isTerminal())
                 st = st.withNewCardPlayedAndTrickCollected(st.unplayedCards().get(rng.nextInt(st.unplayedCards().size())));
         }
+    }
+    } 
+
+    
+
+    @Test 
+    void nextPlayerThrowsExceptionWhenFull() {
+        for(int i = 0; i < 4; ++ i) {
+            System.out.println(PackedTrick.player(turnStateTest.packedTrick(), PackedTrick.size(turnStateTest.packedTrick())));
+
+            turnStateTest = turnStateTest.withNewCardPlayed(Card.of(Color.ALL.get(rng.nextInt(Color.ALL.size())), Rank.ALL.get(rng.nextInt(Rank.ALL.size()))));
+        }
+        assertThrows(IllegalStateException.class, () -> {
+           turnStateTest.nextPlayer();
+        });
     }
 }
