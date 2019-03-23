@@ -78,6 +78,18 @@ public final class MctsPlayer implements Player {
             }
             return bestIndex;
         }
+
+        @Override
+        public String toString() {
+            StringBuilder build = new StringBuilder();
+            build.append("Pronfondeur=").append(getPathToRootFrom(this).size() - 1).append(", ");
+            build.append("Nb d'enfants:").append(children.length).append(", ");
+            build.append("Points:").append(this.totalPoints).append(", ");
+            build.append("NbTours:").append(this.nbTours).append(", ");
+            build.append("PtsMoyens:").append((double) this.totalPoints / this.nbTours);
+            
+            return build.toString();
+        }
     }
 
     private final PlayerId mOwnId;
@@ -101,6 +113,11 @@ public final class MctsPlayer implements Player {
         for (int i = 0 ; i < mIterations ; ++i) {
             createChildForNode(root, hand);
         }
+        /*
+        System.out.println(root);
+        for (Node n : root.children)
+            System.out.println(" - " + n);
+        */
         return playable.get(root.bestChildIndex(0));
     }
     
@@ -118,7 +135,8 @@ public final class MctsPlayer implements Player {
             p.nonExistingChildren = p.nonExistingChildren.remove(card);
             CardSet cardsetChild = chState.nextPlayer() == mOwnId ? 
                     chState.trick().playableCards(unplayedCardsInHand(chState, handOfMcts))
-                            : chState.trick().playableCards(unplayedCardsForOther(chState, handOfMcts));
+                        : chState.trick().playableCards(unplayedCardsForOther(chState, handOfMcts));
+                    /* : unplayedCardsForOther(chState, handOfMcts); */
             
             p.children[index] = new Node(chState, cardsetChild, p);
             Score sc = computeEndOfTurnScore(chState, handOfMcts);

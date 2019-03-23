@@ -16,7 +16,7 @@ public final class MctsJassGame {
         Map<PlayerId, String> playerNames = new HashMap<>();
 
         //Original seed : 2019
-        final long RNG_SEED = 0;
+        final long RNG_SEED = 2019;
         final int ITERATIONS = 10_000;
         final double WAIT_TIME = 0;
         
@@ -32,12 +32,21 @@ public final class MctsJassGame {
             players.put(pId, player);
             playerNames.put(pId, pId.name());
         }
-
-        JassGame g = new JassGame(RNG_SEED, players, playerNames);
-        while (!g.isGameOver()) {
-            g.advanceToEndOfNextTrick();
-            System.out.println("----");
+        
+        final int NB_GAMES = 10;
+        float tempsMoyen = 0.f;
+        for (int i = 0 ; i < NB_GAMES ; ++i) {
+            final long startTime = System.currentTimeMillis();
+            JassGame g = new JassGame(RNG_SEED, players, playerNames);
+            while (!g.isGameOver()) {
+                g.advanceToEndOfNextTrick();
+                System.out.println("----");
+            }
+            final long endTime = System.currentTimeMillis();
+            tempsMoyen += endTime - startTime;
         }
+        tempsMoyen /= NB_GAMES;
+        System.out.println("Temps écoulé (Algo v2) : " + tempsMoyen / 1000.f + "s.");
     }
     
     /*
@@ -46,20 +55,19 @@ public final class MctsJassGame {
         state = state.withNewCardPlayed(Card.of(Card.Color.SPADE, Card.Rank.JACK));
         
         CardSet hand = CardSet.EMPTY
-                .add(Card.of(Color.SPADE, Rank.EIGHT))
-                .add(Card.of(Color.SPADE, Rank.NINE))
-                .add(Card.of(Color.SPADE, Rank.TEN))
-                .add(Card.of(Color.HEART, Rank.SIX))
-                .add(Card.of(Color.HEART, Rank.SEVEN))
-                .add(Card.of(Color.HEART, Rank.EIGHT))
-                .add(Card.of(Color.HEART, Rank.NINE))
-                .add(Card.of(Color.HEART, Rank.TEN))
-                .add(Card.of(Color.HEART, Rank.JACK));
+                .add(Card.of(Card.Color.SPADE, Card.Rank.EIGHT))
+                .add(Card.of(Card.Color.SPADE, Card.Rank.NINE))
+                .add(Card.of(Card.Color.SPADE, Card.Rank.TEN))
+                .add(Card.of(Card.Color.HEART, Card.Rank.SIX))
+                .add(Card.of(Card.Color.HEART, Card.Rank.SEVEN))
+                .add(Card.of(Card.Color.HEART, Card.Rank.EIGHT))
+                .add(Card.of(Card.Color.HEART, Card.Rank.NINE))
+                .add(Card.of(Card.Color.HEART, Card.Rank.TEN))
+                .add(Card.of(Card.Color.HEART, Card.Rank.JACK));
         
         MctsPlayer player2 = new MctsPlayer(PlayerId.PLAYER_2, 0, 100_000);
         Card playedCard = player2.cardToPlay(state, hand);
         assertEquals(Card.of(Card.Color.SPADE, Card.Rank.EIGHT), playedCard);
-    
     }
     */
 }
