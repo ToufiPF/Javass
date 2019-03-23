@@ -180,10 +180,10 @@ public final class MctsPlayer implements Player {
         }*/
         
         private void addScoreToTotalPoints(Score score) {
-            // Le joueur lié à la node est décalé de 1 par rapport 
-            // à la carte qui vient d'être jouée (à cause de nextPlayer())
-            // donc le nombre de points qui nous intéresse vraiment est celui de la team adverse
-            mTotalPoints += score.turnPoints(mNextPlayer.team().other());
+            if (mParent != null)
+                mTotalPoints += score.turnPoints(mParent.mNextPlayer.team());
+            else
+                mTotalPoints += score.turnPoints(mNextPlayer.team());
         }
          
         /**
