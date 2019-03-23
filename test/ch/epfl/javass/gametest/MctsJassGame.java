@@ -15,8 +15,8 @@ public final class MctsJassGame {
         Map<PlayerId, Player> players = new HashMap<>();
         Map<PlayerId, String> playerNames = new HashMap<>();
 
-        //Original seed : 2019
-        final long RNG_SEED = 2019;
+        //Original seed : 2019L
+        final long RNG_SEED = 0;
         final int ITERATIONS = 10_000;
         final double WAIT_TIME = 0;
         
