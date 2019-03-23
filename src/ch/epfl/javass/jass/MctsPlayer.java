@@ -105,7 +105,7 @@ public final class MctsPlayer implements Player {
     }
     
     private void createChildForNode(Node p, CardSet handOfMcts) {
-        int index = p.bestChildIndex(Node.V_CONSTANTE);
+        int index = p.bestChildIndex(Node.V_DEGRE_EXPLORATION);
         Preconditions.checkIndex(index, p.children.length);
         
         ++p.nbTours;
