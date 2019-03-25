@@ -32,7 +32,7 @@ public final class MctsJassGame {
             players.put(pId, player);
             playerNames.put(pId, pId.name());
         }
-        
+
         final int NB_GAMES = 10;
         float tempsMoyen = 0.f;
         for (int i = 0 ; i < NB_GAMES ; ++i) {
@@ -46,7 +46,7 @@ public final class MctsJassGame {
             tempsMoyen += endTime - startTime;
         }
         tempsMoyen /= NB_GAMES;
-        System.out.println("Temps écoulé (Algo v2) : " + tempsMoyen / 1000.f + "s.");
+        System.out.println("Temps écoulé (Algo v0) : " + tempsMoyen / 1000.f + "s.");
     }
     
     /*
