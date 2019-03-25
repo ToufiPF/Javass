@@ -17,6 +17,12 @@ public final class MctsPlayer implements Player {
     private final int mIterations;
     private final SplittableRandom mRng;
 
+    /**
+     * Construit un joueur utilisant l'algorithme MCTS pour décider quelle carte jouer
+     * @param ownId (PlayerId) l'identité du joueur simulé
+     * @param rngSeed (long) la graine aléatoire permettant de simuler des parties aléatoires
+     * @param iterations (int) le nombre d'itérations à effectuer dans l'algorithme MCTS
+     */
     public MctsPlayer(PlayerId ownId, long rngSeed, int iterations) {
         Preconditions.checkArgument(iterations >= 9);
         mOwnId = ownId;

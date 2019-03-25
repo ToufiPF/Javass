@@ -45,7 +45,7 @@ public final class MctsPlayer_V2 implements Player {
             this.nonExistingChildren = nonExistingChildren;
             this.children = new Node[nonExistingChildren.size()];
 
-            this.totalPoints = 0;
+            this.totalPoints = 0; 
             this.nbTours = (parent == null) ? 0 : 1;
         }
 
@@ -58,7 +58,7 @@ public final class MctsPlayer_V2 implements Player {
          * (c=0 donnera l'index du Node avec la meilleure carte jouée)
          * @return (int) index dans le tableau d'enfant
          */
-        public int bestChildIndex(int c) {
+        private int bestChildIndex(int c) {
             double[] scoresChilds = new double [children.length];
             for(int i = 0; i < children.length; ++i) {
                 if (children[i] == null || children[i].nbTours <= 0)
