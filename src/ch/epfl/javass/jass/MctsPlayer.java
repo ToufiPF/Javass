@@ -58,7 +58,7 @@ public final class MctsPlayer implements Player {
          * (c=0 donnera l'index du Node avec la meilleure carte jouée)
          * @return (int) index dans le tableau d'enfant
          */
-        public int bestChildIndex(int c) {
+        private int bestChildIndex(int c) {
             double[] scoresChilds = new double [children.length];
             for(int i = 0; i < children.length; ++i) {
                 if (children[i] == null || children[i].nbTours <= 0)
@@ -96,6 +96,12 @@ public final class MctsPlayer implements Player {
     private final int mIterations;
     private final SplittableRandom mRng;
 
+    /**
+     * Construit un joueur utilisant l'algorithme MCTS pour décider quelle carte jouer
+     * @param ownId (PlayerId) l'identité du joueur simulé
+     * @param rngSeed (long) la graine aléatoire permettant de simuler des parties aléatoires
+     * @param iterations (int) le nombre d'itérations à effectuer dans l'algorithme MCTS
+     */
     public MctsPlayer(PlayerId ownId, long rngSeed, int iterations) {
         Preconditions.checkArgument(iterations >= 9);
         mOwnId = ownId;
@@ -121,6 +127,11 @@ public final class MctsPlayer implements Player {
         return playable.get(root.bestChildIndex(0));
     }
     
+    /**
+     * Méthode privée utilisée pour créer un enfant à un certain Node
+     * @param p (Node) le node parent
+     * @param handOfMcts (CardSet) la main du joueur simulé
+     */
     private void createChildForNode(Node p, CardSet handOfMcts) {
         int index = p.bestChildIndex(Node.V_DEGRE_EXPLORATION);
         Preconditions.checkIndex(index, p.children.length);
@@ -150,6 +161,11 @@ public final class MctsPlayer implements Player {
         }
     }
     
+    /**
+     * Méthode privée permettant d'ajouter un score au node
+     * @param n (Node) le node dont on veut ajouter le score sc
+     * @param sc (Score) le score à ajouter au Node
+     */
     private void addScoreToNode(Node n, Score sc) {
         if (n.parent == null)
             n.totalPoints += sc.turnPoints(mOwnId.team().other());
@@ -157,6 +173,12 @@ public final class MctsPlayer implements Player {
             n.totalPoints += sc.turnPoints(n.parent.state.nextPlayer().team());
     }
     
+    /**
+     * Méthode privée permettant de calculer le score final d'un tour joué aléatoirement
+     * @param state (TurnState) l'état de la partie à partir duquel on joue aléatoirement
+     * @param handOfMctsplayer (CardSet) la main du joueur simulé
+     * @return (Score) le score final du tour joué aléatoirement
+     */
     private Score computeEndOfTurnScore(TurnState state, CardSet handOfMctsplayer) {
         CardSet mctsCards = unplayedCardsInHand(state, handOfMctsplayer);
         CardSet otherCards = unplayedCardsForOther(state, handOfMctsplayer);
@@ -174,6 +196,11 @@ public final class MctsPlayer implements Player {
         return state.score();
     }
 
+    /**
+     * Méthode privée statique retournant le chemin jusqu'à la racine du node n
+     * @param n (Node) le node dont on veut connaitre le chamin jusqu'à la racine
+     * @return (List<Node>) le chemin jusqu'à la racine
+     */
     private static List<Node> getPathToRootFrom(Node n) {
         List<Node> path = new LinkedList<Node>();
         path.add(n);
@@ -185,9 +212,21 @@ public final class MctsPlayer implements Player {
         return path;
     }
     
+    /**
+     * Méthode privée statique retournant les cartes non jouées de la main du joueur
+     * @param state (TurnState) l'état actuel du tour
+     * @param hand (CardSet) la main du joueur
+     * @return (CardSet) les cartes non jouées de la main du joueur
+     */
     private static CardSet unplayedCardsInHand(TurnState state, CardSet hand) {
         return state.unplayedCards().intersection(hand);
     }
+    /**
+     * Méthode privée statique retournant les cartes non jouées de la main des autres joueurs
+     * @param state (TurnState) l'état actuel du tour
+     * @param hand (CardSet) la main du joueur simulé
+     * @return (CardSet) les cartes non jouées des autres joueurs
+     */
     private static CardSet unplayedCardsForOther(TurnState state, CardSet handOfMcts) {
         return state.unplayedCards().difference(handOfMcts);
     }
