@@ -13,7 +13,6 @@ import ch.epfl.javass.Preconditions;
  */
 public final class MctsPlayer implements Player {
     //TODO choose best class and put it here
-
     private final PlayerId mOwnId;
     private final int mIterations;
     private final SplittableRandom mRng;
