@@ -83,6 +83,50 @@ public final class MctsPlayer implements Player {
             }
             return bestIndex;
         }
+        
+        /**
+         * Crée un enfant à partir de la racine donnée, si possible 
+         * (càd si son meilleur enfant peut encore en créer un)
+         * Retourne le chemin de la racine à le Node ajouté
+         * (ou le Node terminale si l'ajout n'a pas été possible)
+         * 
+         * @param root (Node) racine
+         * @param handOfMcts (CardSet) main du joueur simulé
+         * @return (List<Node>) chemin de la racine jusqu'à la Node ajoutée
+         */
+        private static LinkedList<Node> createChild(Node root, long handOfMcts, PlayerId idMcts) {
+            LinkedList<Node> pathToNewNode = new LinkedList<Node>();
+            
+            Node n = root;
+            int id = root.bestChildIndex(Node.V_DEGRE_EXPLORATION);
+            ++root.nbTours;
+            pathToNewNode.add(root);
+            
+            while (n.children[id] != null) { 
+                Preconditions.checkIndex(id, n.children.length);
+
+                n = n.children[id];
+                id = n.bestChildIndex(Node.V_DEGRE_EXPLORATION);
+                ++n.nbTours;
+                pathToNewNode.add(n);
+            }
+            
+            //Ici, n.children[id] == null
+            int pkCard = PackedCardSet.get(n.pkNonExistingChildren, 0);
+            TurnState chState = n.state.withNewCardPlayedAndTrickCollected(Card.ofPacked(pkCard));
+            if (chState.isTerminal()) {
+                return pathToNewNode;
+            }
+            n.pkNonExistingChildren = PackedCardSet.remove(n.pkNonExistingChildren, pkCard);
+            long cardsetChild = chState.nextPlayer() == idMcts ? 
+                    PackedTrick.playableCards(chState.packedTrick(), unplayedCardsInHand(chState, handOfMcts))
+                    : PackedTrick.playableCards(chState.packedTrick(), unplayedCardsForOther(chState, handOfMcts));
+
+            n.children[id] = new Node(chState, cardsetChild);
+            pathToNewNode.add(n.children[id]);
+
+            return pathToNewNode;
+        }
 
         @Override
         public String toString() {
@@ -115,7 +159,7 @@ public final class MctsPlayer implements Player {
 
         Node root = new Node(state, playable.packed());
         for (int i = 0 ; i < mIterations ; ++i) {
-            LinkedList<Node> path = createChild(root, hand.packed());
+            LinkedList<Node> path = Node.createChild(root, hand.packed(), mOwnId);
             long sc = computeEndOfTurnScore(path.getLast().state, hand.packed());
             Node parent = null;
             for (Node n : path) {
@@ -130,49 +174,6 @@ public final class MctsPlayer implements Player {
         
         return playable.get(root.bestChildIndex(0));
     }
-    /**
-     * Crée un enfant à partir de la racine donnée, si possible 
-     * (càd si son meilleur enfant peut encore en créer un)
-     * Retourne le chemin de la racine à le Node ajouté
-     * (ou le Node terminale si l'ajout n'a pas été possible)
-     * 
-     * @param root (Node) racine
-     * @param handOfMcts (CardSet) main du joueur simulé
-     * @return (List<Node>) chemin de la racine jusqu'à la Node ajoutée
-     */
-    private LinkedList<Node> createChild(Node root, long handOfMcts) {
-        LinkedList<Node> pathToNewNode = new LinkedList<Node>();
-        pathToNewNode.add(root);
-        Node n = root;
-        int id = root.bestChildIndex(Node.V_DEGRE_EXPLORATION);
-        
-        while (n.children[id] != null) { 
-            Preconditions.checkIndex(id, n.children.length);
-
-            ++n.nbTours;
-            n = n.children[id];
-            id = n.bestChildIndex(Node.V_DEGRE_EXPLORATION);
-            
-            pathToNewNode.add(n);
-        }
-        
-        //Ici, n.children[id] == null
-        int pkCard = PackedCardSet.get(n.pkNonExistingChildren, 0);
-        TurnState chState = n.state.withNewCardPlayedAndTrickCollected(Card.ofPacked(pkCard));
-        if (chState.isTerminal()) {
-            return pathToNewNode;
-        }
-        n.pkNonExistingChildren = PackedCardSet.remove(n.pkNonExistingChildren, pkCard);
-        long cardsetChild = chState.nextPlayer() == mOwnId ? 
-                PackedTrick.playableCards(chState.packedTrick(), unplayedCardsInHand(chState, handOfMcts))
-                : PackedTrick.playableCards(chState.packedTrick(), unplayedCardsForOther(chState, handOfMcts));
-
-        n.children[id] = new Node(chState, cardsetChild);
-        pathToNewNode.add(n.children[id]);
-
-        return pathToNewNode;
-    }
-
 
     private long computeEndOfTurnScore(TurnState state, long handOfMctsplayer) {
         long mctsCards = unplayedCardsInHand(state, handOfMctsplayer);
