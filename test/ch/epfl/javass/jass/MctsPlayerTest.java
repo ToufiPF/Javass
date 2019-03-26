@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import ch.epfl.javass.gametest.RandomPlayer;
@@ -86,14 +87,11 @@ class MctsPlayerTest {
                 .add(Card.of(Color.HEART, Rank.TEN))
                 .add(Card.of(Color.HEART, Rank.JACK));
         
-        MctsPlayer_Aure playerAure = new MctsPlayer_Aure(PlayerId.PLAYER_2, RNG_SEED, 100_000);
-        MctsPlayer_V1 playerV1 = new MctsPlayer_V1(PlayerId.PLAYER_2, RNG_SEED, 100_000);
-        MctsPlayer_V2 playerV2 = new MctsPlayer_V2(PlayerId.PLAYER_2, RNG_SEED, 100_000);
-        assertEquals(Card.of(Card.Color.SPADE, Card.Rank.EIGHT), playerAure.cardToPlay(state, hand));
-        assertEquals(Card.of(Card.Color.SPADE, Card.Rank.EIGHT), playerV1.cardToPlay(state, hand));
-        assertEquals(Card.of(Card.Color.SPADE, Card.Rank.EIGHT), playerV2.cardToPlay(state, hand));
+        MctsPlayer player = new MctsPlayer(PlayerId.PLAYER_2, RNG_SEED, 100_000);
+        assertEquals(Card.of(Card.Color.SPADE, Card.Rank.EIGHT), player.cardToPlay(state, hand));
     }
     
+    @Disabled
     @Test
     void tempsGameMoyen() {
         

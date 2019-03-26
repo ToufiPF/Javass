@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.epfl.javass.jass.JassGame;
-import ch.epfl.javass.jass.MctsPlayer_V2;
+import ch.epfl.javass.jass.MctsPlayer;
 import ch.epfl.javass.jass.PacedPlayer;
 import ch.epfl.javass.jass.Player;
 import ch.epfl.javass.jass.PlayerId;
@@ -23,9 +23,9 @@ public final class MctsJassGame {
         for (PlayerId pId: PlayerId.ALL) {
             Player player;
             if (pId == PlayerId.PLAYER_1)
-                player = new PrintingPlayer(new PacedPlayer(new MctsPlayer_V2(pId, RNG_SEED, ITERATIONS), WAIT_TIME));
+                player = new PrintingPlayer(new PacedPlayer(new MctsPlayer(pId, RNG_SEED, ITERATIONS), WAIT_TIME));
             else if (pId == PlayerId.PLAYER_3)
-                player = new PacedPlayer(new MctsPlayer_V2(pId, RNG_SEED, ITERATIONS), WAIT_TIME);
+                player = new PacedPlayer(new MctsPlayer(pId, RNG_SEED, ITERATIONS), WAIT_TIME);
             else 
                 player = new RandomPlayer(RNG_SEED);
 
@@ -33,7 +33,7 @@ public final class MctsJassGame {
             playerNames.put(pId, pId.name());
         }
 
-        final int NB_GAMES = 10;
+        final int NB_GAMES = 1;
         float tempsMoyen = 0.f;
         for (int i = 0 ; i < NB_GAMES ; ++i) {
             final long startTime = System.currentTimeMillis();
@@ -46,7 +46,7 @@ public final class MctsJassGame {
             tempsMoyen += endTime - startTime;
         }
         tempsMoyen /= NB_GAMES;
-        System.out.println("Temps écoulé (Algo v0) : " + tempsMoyen / 1000.f + "s.");
+        System.out.println("Temps écoulé (Algo terminal) : " + tempsMoyen / 1000.f + "s.");
     }
     
 
