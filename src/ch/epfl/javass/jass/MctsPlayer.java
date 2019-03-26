@@ -124,11 +124,11 @@ public final class MctsPlayer implements Player {
                 parent = n;
             }
         }
-        
+        /*
         System.out.println(root);
         for (Node c : root.children)
             System.out.println(" - " + c);
-        
+        */
         return playable.get(root.bestChildIndex(0));
     }
     /**
