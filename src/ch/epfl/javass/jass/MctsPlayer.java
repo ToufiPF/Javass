@@ -101,9 +101,7 @@ public final class MctsPlayer implements Player {
             int id = root.bestChildIndex(Node.V_DEGRE_EXPLORATION);
             pathToNewNode.add(root);
             
-            while (n.children[id] != null) { 
-                Preconditions.checkIndex(id, n.children.length);
-
+            while (n.children[id] != null) {
                 n = n.children[id];
                 id = n.bestChildIndex(Node.V_DEGRE_EXPLORATION);
                 pathToNewNode.add(n);
