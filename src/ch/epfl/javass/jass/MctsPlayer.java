@@ -99,7 +99,6 @@ public final class MctsPlayer implements Player {
             
             Node n = root;
             int id = root.bestChildIndex(Node.V_DEGRE_EXPLORATION);
-            ++root.nbTours;
             pathToNewNode.add(root);
             
             while (n.children[id] != null) { 
@@ -107,7 +106,6 @@ public final class MctsPlayer implements Player {
 
                 n = n.children[id];
                 id = n.bestChildIndex(Node.V_DEGRE_EXPLORATION);
-                ++n.nbTours;
                 pathToNewNode.add(n);
             }
             
@@ -163,15 +161,16 @@ public final class MctsPlayer implements Player {
             long sc = computeEndOfTurnScore(path.getLast().state, hand.packed());
             Node parent = null;
             for (Node n : path) {
+                ++n.nbTours;
                 n.addScore(sc, parent == null ? mOwnId.team().other() : parent.state.nextPlayer().team());
                 parent = n;
             }
         }
-        
+        /*
         System.out.println(root);
         for (Node c : root.children)
             System.out.println(" - " + c);
-        
+        */
         return playable.get(root.bestChildIndex(0));
     }
 
