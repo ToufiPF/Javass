@@ -16,8 +16,7 @@ class MctsPlayerTest {
     Map<PlayerId, String> playerNames;
 
     //Original seed : 2019L
-    static final long RNG_SEED = 0;
-    static final int ITERATIONS = 10;
+    static final long RNG_SEED = 2019;
     
     public MctsPlayerTest() {        
         playerNames = new HashMap<>();
@@ -47,9 +46,8 @@ class MctsPlayerTest {
     }
     
     @Test
-    void testXGames() {
-        final int NB_GAMES = 100;
-        final int ITERATIONS = 1_000;
+    void test2000Games() {
+        final int ITERATIONS = 100;
         
         int winsT1 = 0;
         int winsT2 = 0;
@@ -68,9 +66,9 @@ class MctsPlayerTest {
         }
         
         final long start = System.currentTimeMillis();
-        for (int i = 0 ; i < NB_GAMES ; ++i) {
-            System.out.println("RunningGame " + (i + 1) + "/" + NB_GAMES);
-            JassGame g = new JassGame(RNG_SEED + i, players, playerNames);
+        for (int i = 1000 ; i < 3000 ; ++i) {
+            System.out.println("RunningGame " + (i - 1000 + 1) + "/" + 2000);
+            JassGame g = new JassGame(i, players, playerNames);
             while (!g.isGameOver())
                 g.advanceToEndOfNextTrick();
             
