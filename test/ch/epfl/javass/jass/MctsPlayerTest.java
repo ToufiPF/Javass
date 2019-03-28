@@ -13,29 +13,13 @@ import ch.epfl.javass.jass.Card.Rank;
 
 class MctsPlayerTest {
     
-    Map<PlayerId, Player> players;
     Map<PlayerId, String> playerNames;
 
     //Original seed : 2019L
     static final long RNG_SEED = 0;
     static final int ITERATIONS = 10;
-    static final double WAIT_TIME = 0;
     
-    public MctsPlayerTest() {
-
-        players = new HashMap<>();
-        for (PlayerId pId: PlayerId.ALL) {
-            Player p;
-            if (pId == PlayerId.PLAYER_1)
-                p = new MctsPlayer(pId, RNG_SEED, ITERATIONS);
-            else if (pId == PlayerId.PLAYER_3)
-                p = new MctsPlayer(pId, RNG_SEED, ITERATIONS);
-            else 
-                p = new RandomPlayer(RNG_SEED);
-            
-            players.put(pId, p);
-        }
-        
+    public MctsPlayerTest() {        
         playerNames = new HashMap<>();
         for (PlayerId pId: PlayerId.ALL)
             playerNames.put(pId, pId.name());
@@ -63,28 +47,43 @@ class MctsPlayerTest {
     }
     
     @Test
-    void test1000Games() {
-        final long start = System.currentTimeMillis();
-        runXGames(1000);
-        final float temps = (System.currentTimeMillis() - start) / 1000.f;
-        System.out.println("Temps écoulé : " + temps);
-    }
-    
-    private void runXGames(int nbGames) {
+    void testXGames() {
+        final int NB_GAMES = 100;
+        final int ITERATIONS = 1_000;
+        
         int winsT1 = 0;
         int winsT2 = 0;
-        for (int i = 0 ; i < nbGames ; ++i) {
-            System.out.println("RunningGame " + (i + 1) + "/" + nbGames);
+        
+        Map<PlayerId, Player> players = new HashMap<>();
+        for (PlayerId pId: PlayerId.ALL) {
+            Player p;
+            if (pId == PlayerId.PLAYER_1)
+                p = new MctsPlayer(pId, RNG_SEED, ITERATIONS);
+            else if (pId == PlayerId.PLAYER_3)
+                p = new MctsPlayer(pId, RNG_SEED, ITERATIONS);
+            else 
+                p = new RandomPlayer(RNG_SEED);
+            
+            players.put(pId, p);
+        }
+        
+        final long start = System.currentTimeMillis();
+        for (int i = 0 ; i < NB_GAMES ; ++i) {
+            System.out.println("RunningGame " + (i + 1) + "/" + NB_GAMES);
             JassGame g = new JassGame(RNG_SEED + i, players, playerNames);
-            while (!g.isGameOver()) {
+            while (!g.isGameOver())
                 g.advanceToEndOfNextTrick();
-            }
+            
             if (g.getTeamWithMostPoints() == TeamId.TEAM_1)
                 ++winsT1;
             else
                 ++winsT2;
         }
+        final float tempsEcoule = (System.currentTimeMillis() - start) / 1000.f;
+        
         System.out.println(" - Wins of team 1 : " + winsT1);
         System.out.println(" - Wins of team 2 : " + winsT2);
+        
+        System.out.println("Temps écoulé : " + tempsEcoule);
     }
 }

@@ -178,6 +178,9 @@ public final class MctsPlayer implements Player {
                 parent = child;
             }
         }
+        
+        //printNodeAndChildren(root);
+        
         return playable.get(root.bestChildIndex(0));
     }
 
