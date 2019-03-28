@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import ch.epfl.javass.gametest.RandomPlayer;
@@ -19,7 +18,7 @@ class MctsPlayerTest {
 
     //Original seed : 2019L
     static final long RNG_SEED = 0;
-    static final int ITERATIONS = 100;
+    static final int ITERATIONS = 10;
     static final double WAIT_TIME = 0;
     
     public MctsPlayerTest() {
@@ -64,21 +63,28 @@ class MctsPlayerTest {
     }
     
     @Test
-    void tempsGameMoyen() {
-        
+    void test1000Games() {
         final long start = System.currentTimeMillis();
-        runXGames(100);
+        runXGames(1000);
         final float temps = (System.currentTimeMillis() - start) / 1000.f;
-        System.out.println("temps : " + temps);
+        System.out.println("Temps écoulé : " + temps);
     }
     
     private void runXGames(int nbGames) {
+        int winsT1 = 0;
+        int winsT2 = 0;
         for (int i = 0 ; i < nbGames ; ++i) {
             System.out.println("RunningGame " + (i + 1) + "/" + nbGames);
             JassGame g = new JassGame(RNG_SEED + i, players, playerNames);
             while (!g.isGameOver()) {
                 g.advanceToEndOfNextTrick();
             }
+            if (g.getTeamWithMostPoints() == TeamId.TEAM_1)
+                ++winsT1;
+            else
+                ++winsT2;
         }
+        System.out.println(" - Wins of team 1 : " + winsT1);
+        System.out.println(" - Wins of team 2 : " + winsT2);
     }
 }
