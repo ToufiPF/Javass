@@ -83,7 +83,7 @@ public final class JassGame {
         updateScoreForAll(mTurnState.score());
 
         // On vérifie si une team a gagné
-        if (mTurnState.score().totalPoints(getTeamWithMostPoints()) >= 1000) {
+        if (mTurnState.score().totalPoints(getTeamWithMostPoints()) >= Jass.WINNING_POINTS) {
             setWinningTeamForAll(getTeamWithMostPoints());
             mGameIsOver = true;
             return;
@@ -125,9 +125,8 @@ public final class JassGame {
     private void dealCardsToPlayers() {
         List<Card> shuffled = getShuffledCards();
 
-        final int cardsPerPlayer = shuffled.size() / mHands.length;
         for (int i = 0 ; i < mHands.length ; ++i)
-            mHands[i] = CardSet.of(shuffled.subList(i * cardsPerPlayer, (i + 1) * cardsPerPlayer));
+            mHands[i] = CardSet.of(shuffled.subList(i * Jass.HAND_SIZE, (i + 1) * Jass.HAND_SIZE));
     }
 
     /**

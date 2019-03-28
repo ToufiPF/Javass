@@ -14,55 +14,27 @@ import ch.epfl.javass.jass.Card.Rank;
 
 class MctsPlayerTest {
     
-    Map<PlayerId, Player> playersVAure;
-    Map<PlayerId, Player> playersV1;
-    Map<PlayerId, Player> playersV2;
+    Map<PlayerId, Player> players;
     Map<PlayerId, String> playerNames;
 
     //Original seed : 2019L
     static final long RNG_SEED = 0;
-    static final int ITERATIONS = 10_000;
+    static final int ITERATIONS = 100;
     static final double WAIT_TIME = 0;
     
     public MctsPlayerTest() {
 
-        playersVAure = new HashMap<>();
+        players = new HashMap<>();
         for (PlayerId pId: PlayerId.ALL) {
             Player p;
             if (pId == PlayerId.PLAYER_1)
-                p = new MctsPlayer_Aure(pId, RNG_SEED, ITERATIONS);
+                p = new MctsPlayer(pId, RNG_SEED, ITERATIONS);
             else if (pId == PlayerId.PLAYER_3)
-                p = new MctsPlayer_Aure(pId, RNG_SEED, ITERATIONS);
+                p = new MctsPlayer(pId, RNG_SEED, ITERATIONS);
             else 
                 p = new RandomPlayer(RNG_SEED);
             
-            playersVAure.put(pId, p);
-        }
-
-        playersV1 = new HashMap<>();
-        for (PlayerId pId: PlayerId.ALL) {
-            Player p;
-            if (pId == PlayerId.PLAYER_1)
-                p = new MctsPlayer_V1(pId, RNG_SEED, ITERATIONS);
-            else if (pId == PlayerId.PLAYER_3)
-                p = new MctsPlayer_V1(pId, RNG_SEED, ITERATIONS);
-            else 
-                p = new RandomPlayer(RNG_SEED);
-            
-            playersV1.put(pId, p);
-        }
-
-        playersV2 = new HashMap<>();
-        for (PlayerId pId: PlayerId.ALL) {
-            Player p;
-            if (pId == PlayerId.PLAYER_1)
-                p = new MctsPlayer_V2(pId, RNG_SEED, ITERATIONS);
-            else if (pId == PlayerId.PLAYER_3)
-                p = new MctsPlayer_V2(pId, RNG_SEED, ITERATIONS);
-            else 
-                p = new RandomPlayer(RNG_SEED);
-            
-            playersV2.put(pId, p);
+            players.put(pId, p);
         }
         
         playerNames = new HashMap<>();
@@ -91,30 +63,19 @@ class MctsPlayerTest {
         assertEquals(Card.of(Card.Color.SPADE, Card.Rank.EIGHT), player.cardToPlay(state, hand));
     }
     
-    @Disabled
     @Test
     void tempsGameMoyen() {
         
-        final long startAure = System.currentTimeMillis();
-        run10GamesWith(playersVAure);
-        final float tempsAure = (System.currentTimeMillis() - startAure) / 1000.f;
-        System.out.println("temps auré : " + tempsAure);
-        
-        final long startV1 = System.currentTimeMillis();
-        run10GamesWith(playersV1);
-        final float tempsV1 = (System.currentTimeMillis() - startV1) / 1000.f;
-        System.out.println("Temps v1 : " + tempsV1);
-        
-        final long startV2 = System.currentTimeMillis();
-        run10GamesWith(playersV1);
-        final float tempsV2 = (System.currentTimeMillis() - startV2) / 1000.f;
-        System.out.println("Temps v2 : " + tempsV2);
+        final long start = System.currentTimeMillis();
+        runXGames(100);
+        final float temps = (System.currentTimeMillis() - start) / 1000.f;
+        System.out.println("temps : " + temps);
     }
     
-    private void run10GamesWith(Map<PlayerId, Player> map) {
-        for (int i = 0 ; i < 10 ; ++i) {
-            System.out.println("RunningGame " + (i + 1) + "/10");
-            JassGame g = new JassGame(RNG_SEED + i, map, playerNames);
+    private void runXGames(int nbGames) {
+        for (int i = 0 ; i < nbGames ; ++i) {
+            System.out.println("RunningGame " + (i + 1) + "/" + nbGames);
+            JassGame g = new JassGame(RNG_SEED + i, players, playerNames);
             while (!g.isGameOver()) {
                 g.advanceToEndOfNextTrick();
             }

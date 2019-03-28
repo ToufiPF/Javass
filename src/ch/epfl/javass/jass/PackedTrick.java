@@ -21,7 +21,7 @@ public final class PackedTrick {
      * (ce n'est pas le seul pli invalide possible)
      */
     public static final int INVALID = 0xFFFF_FFFF; // -1, tous les bits à 1
-    private static final int MAX_VALID_INDEX_TRICK = 8;
+    private static final int MAX_VALID_INDEX_TRICK = Jass.TRICKS_PER_TURN - 1;
     
     /**
      * Vérifie si le pli empaqueté donné est valide,
@@ -272,7 +272,7 @@ public final class PackedTrick {
         
         final Card.Color trump = trump(pkTrick);
         
-        int nbPoints = isLast(pkTrick) ? 5 : 0;
+        int nbPoints = isLast(pkTrick) ? Jass.LAST_TRICK_ADDITIONAL_POINTS : 0;
         for (int i = 0 ; i < size(pkTrick) ; ++i)
             nbPoints += PackedCard.points(trump, card(pkTrick, i));
         return nbPoints;
