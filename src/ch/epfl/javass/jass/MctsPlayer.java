@@ -52,7 +52,7 @@ public final class MctsPlayer implements Player {
          * @param pkSc (int) packed score
          * @param team (Teamid) team à ajouter
          */
-        private void addSimulatedTurn(long pkSc, TeamId team) {
+        private void addSimulatedScoreTurn(long pkSc, TeamId team) {
             totalPoints += PackedScore.turnPoints(pkSc, team);
             ++nbTours;
         }
@@ -69,13 +69,15 @@ public final class MctsPlayer implements Player {
         private int bestChildIndex(int c) {
             double[] scoresChilds = new double [children.length];
             for(int i = 0; i < children.length; ++i) {
-                if (children[i] == null || children[i].nbTours <= 0)
+                //Si l'enfant n'a pas été créé : on le retourne directement
+                if (children[i] == null)
                     return i;
                 else
                     scoresChilds[i] = (children[i].totalPoints / children[i].nbTours) 
                     + c * Math.sqrt((2 * Math.log(nbTours)) / children[i].nbTours);
             }
-
+            
+            // On choisit le meilleur enfant
             int bestIndex = 0;
             double maxScore = 0;
             for(int i = 0; i < scoresChilds.length; ++i) {
@@ -88,33 +90,33 @@ public final class MctsPlayer implements Player {
         }
         
         /**
-         * Crée un enfant à partir de la racine donnée, si possible 
-         * (càd si son meilleur enfant peut encore en créer un).
-         * Retourne le chemin, depuis la racine jusqu'au Node ajouté
+         * Crée un enfant à partir du Node, si possible 
+         * (càd si son meilleur enfant peut encore en créer un lui même).
+         * Retourne le chemin de ce Node jusqu'au Node ajouté
          * (ou le Node terminal si l'ajout n'a pas été possible)
          * 
-         * @param root (Node) racine
          * @param handOfMcts (CardSet) main du joueur simulé
+         * @param idMcts (PlayerId) id du joueur simulé
          * @return (List<Node>) chemin de la racine jusqu'à la Node ajoutée
          */
-        private static LinkedList<Node> createChild(Node root, long handOfMcts, PlayerId idMcts) {
+        private LinkedList<Node> createChild(long handOfMcts, PlayerId idMcts) {
             LinkedList<Node> pathToNewNode = new LinkedList<Node>();
             
-            Node n = root;
-            int id = root.bestChildIndex(Node.V_DEGRE_EXPLORATION);
-            pathToNewNode.add(root);
+            Node n = this;
+            int id = this.bestChildIndex(Node.V_DEGRE_EXPLORATION);
+            pathToNewNode.add(this);
             
             while (n.children[id] != null) {
                 n = n.children[id];
                 id = n.bestChildIndex(Node.V_DEGRE_EXPLORATION);
                 pathToNewNode.add(n);
             }
+            //A partir d'ici, n.children[id] == null
             
-            //Ici, n.children[id] == null
             int pkCard = PackedCardSet.get(n.pkNonExistingChildren, 0);
             TurnState chState = n.state.withNewCardPlayedAndTrickCollected(Card.ofPacked(pkCard));
             
-            // Si le tour est terminé, on ne peut pas simuler créer l'enfant
+            // Si le tour est terminé, on ne peut pas créer l'enfant
             if (chState.isTerminal())
                 return pathToNewNode;
 
@@ -135,7 +137,7 @@ public final class MctsPlayer implements Player {
             build.append("Nb d'enfants:").append(children.length).append(", ");
             build.append("Points:").append(this.totalPoints).append(", ");
             build.append("NbTours:").append(this.nbTours).append(", ");
-            build.append("PtsMoyens:").append((double) this.totalPoints / this.nbTours);
+            build.append("PtsMoyens:").append(this.nbTours == 0 ? 0 : (double) this.totalPoints / this.nbTours);
 
             return build.toString();
         }
@@ -155,13 +157,14 @@ public final class MctsPlayer implements Player {
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
         CardSet playable = state.trick().playableCards(hand);
+        // Si on a qu'une carte jouable, pas besoin de réfléchir
         if (playable.size() == 1)
             return playable.get(0);
 
         Node root = new Node(state, playable.packed());
         for (int i = 0 ; i < mIterations ; ++i) {
             // On crée un enfant à chaque itération
-            LinkedList<Node> path = Node.createChild(root, hand.packed(), mOwnId);
+            LinkedList<Node> path = root.createChild(hand.packed(), mOwnId);
             
             // On calcule le score pour un tour aléatoire à partir du TurnState de l'enfant créé
             long sc = computeEndOfTurnScore(path.getLast().state, hand.packed());
@@ -169,18 +172,17 @@ public final class MctsPlayer implements Player {
             // On ajoute le bon score à la racine
             Iterator<Node> it = path.iterator();
             Node parent = it.next();
-            parent.addSimulatedTurn(sc, mOwnId.team().other());
+            parent.addSimulatedScoreTurn(sc, mOwnId.team().other());
             
             // On ajoute ensuite les scores aux enfants
             while (it.hasNext()) {
                 Node child = it.next();
-                child.addSimulatedTurn(sc, parent.state.nextPlayer().team());
+                child.addSimulatedScoreTurn(sc, parent.state.nextPlayer().team());
                 parent = child;
             }
         }
         
         //printNodeAndChildren(root);
-        
         return playable.get(root.bestChildIndex(0));
     }
 

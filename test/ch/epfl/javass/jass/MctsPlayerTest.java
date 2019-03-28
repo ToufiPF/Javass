@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import ch.epfl.javass.gametest.RandomPlayer;
@@ -14,15 +15,11 @@ import ch.epfl.javass.jass.Card.Rank;
 class MctsPlayerTest {
     
     Map<PlayerId, String> playerNames;
-
-    //Original seed : 2019L
-    static final long RNG_SEED = 2019;
     
     public MctsPlayerTest() {        
         playerNames = new HashMap<>();
         for (PlayerId pId: PlayerId.ALL)
             playerNames.put(pId, pId.name());
-
     }
 
     @Test
@@ -41,33 +38,22 @@ class MctsPlayerTest {
                 .add(Card.of(Color.HEART, Rank.TEN))
                 .add(Card.of(Color.HEART, Rank.JACK));
         
-        MctsPlayer player = new MctsPlayer(PlayerId.PLAYER_2, RNG_SEED, 100_000);
+        MctsPlayer player = new MctsPlayer(PlayerId.PLAYER_2, 2019, 100_000);
         assertEquals(Card.of(Card.Color.SPADE, Card.Rank.EIGHT), player.cardToPlay(state, hand));
     }
     
+    @Disabled
     @Test
-    void test2000Games() {
-        final int ITERATIONS = 100;
-        
+    void test2000Games() {        
         int winsT1 = 0;
         int winsT2 = 0;
         
-        Map<PlayerId, Player> players = new HashMap<>();
-        for (PlayerId pId: PlayerId.ALL) {
-            Player p;
-            if (pId == PlayerId.PLAYER_1)
-                p = new MctsPlayer(pId, RNG_SEED, ITERATIONS);
-            else if (pId == PlayerId.PLAYER_3)
-                p = new MctsPlayer(pId, RNG_SEED, ITERATIONS);
-            else 
-                p = new RandomPlayer(RNG_SEED);
-            
-            players.put(pId, p);
-        }
+        Map<PlayerId, Player> players = createMapMctsPlayers(2019, 1000);
         
         final long start = System.currentTimeMillis();
         for (int i = 1000 ; i < 3000 ; ++i) {
             System.out.println("RunningGame " + (i - 1000 + 1) + "/" + 2000);
+            
             JassGame g = new JassGame(i, players, playerNames);
             while (!g.isGameOver())
                 g.advanceToEndOfNextTrick();
@@ -83,5 +69,22 @@ class MctsPlayerTest {
         System.out.println(" - Wins of team 2 : " + winsT2);
         
         System.out.println("Temps écoulé : " + tempsEcoule);
+    }
+    
+    private static Map<PlayerId, Player> createMapMctsPlayers(int seed, int iterations) {
+        Map<PlayerId, Player> players = new HashMap<>();
+        
+        for (PlayerId pId: PlayerId.ALL) {
+            Player p;
+            if (pId == PlayerId.PLAYER_1)
+                p = new MctsPlayer(pId, seed, iterations);
+            else if (pId == PlayerId.PLAYER_3)
+                p = new MctsPlayer(pId, seed, iterations);
+            else 
+                p = new RandomPlayer(seed);
+            
+            players.put(pId, p);
+        }
+        return players;
     }
 }
