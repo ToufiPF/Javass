@@ -159,8 +159,7 @@ public final class JassGame {
      * (Dans le cas où le nb de points est égal, retourne TEAM_1)
      * @return (TeamId) la team avec le plus de points
      */
-    //TODO : REMETTRE EN PRIVE
-    public TeamId getTeamWithMostPoints() {
+    private TeamId getTeamWithMostPoints() {
         if (mTurnState.score().totalPoints(TeamId.TEAM_1) >= mTurnState.score().totalPoints(TeamId.TEAM_2))
             return TeamId.TEAM_1;
         return TeamId.TEAM_2;

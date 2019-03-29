@@ -68,6 +68,8 @@ public final class MctsPlayer implements Player {
          */
         private int bestChildIndex(int c) {
             double[] scoresChilds = new double [children.length];
+            // Dans le cas où nbTours == 0, c'est qu'aucun enfant n'a encore été créé
+            // donc le fait que logNbTours = Double.NegativeInfinity n'est pas gênant
             final double logNbTours = Math.log(nbTours);
             
             for(int i = 0; i < children.length; ++i) {
@@ -75,7 +77,7 @@ public final class MctsPlayer implements Player {
                 if (children[i] == null)
                     return i;
                 else
-                    scoresChilds[i] = ((double) children[i].totalPoints / children[i].nbTours) 
+                    scoresChilds[i] = (double)children[i].totalPoints / children[i].nbTours
                     + c * Math.sqrt(2 * logNbTours / children[i].nbTours);
             }
             
@@ -97,9 +99,9 @@ public final class MctsPlayer implements Player {
          * Retourne le chemin de ce Node jusqu'au Node ajouté
          * (ou le Node terminal si l'ajout n'a pas été possible)
          * 
-         * @param handOfMcts (CardSet) main du joueur simulé
+         * @param handOfMcts (long) main du joueur simulé
          * @param idMcts (PlayerId) id du joueur simulé
-         * @return (List<Node>) chemin de la racine jusqu'à la Node ajoutée
+         * @return (LinkedList<Node>) chemin de la racine jusqu'à la Node ajoutée
          */
         private LinkedList<Node> createChild(long handOfMcts, PlayerId idMcts) {
             LinkedList<Node> pathToNewNode = new LinkedList<Node>();
@@ -132,17 +134,6 @@ public final class MctsPlayer implements Player {
 
             return pathToNewNode;
         }
-
-        @Override
-        public String toString() {
-            StringBuilder build = new StringBuilder();
-            build.append("Nb d'enfants:").append(children.length).append(", ");
-            build.append("Points:").append(this.totalPoints).append(", ");
-            build.append("NbTours:").append(this.nbTours).append(", ");
-            build.append("PtsMoyens:").append(this.nbTours == 0 ? 0 : (double) this.totalPoints / this.nbTours);
-
-            return build.toString();
-        }
     }
 
     private final PlayerId mOwnId;
@@ -171,7 +162,7 @@ public final class MctsPlayer implements Player {
             // On calcule le score pour un tour aléatoire à partir du TurnState de l'enfant créé
             long sc = computeEndOfTurnScore(path.getLast().state, hand.packed());
             
-            // On ajoute le bon score à la racine
+            // On ajoute un score à la racine (celui de la team adverse faute de mieux)
             Iterator<Node> it = path.iterator();
             Node parent = it.next();
             parent.addSimulatedTurnScore(sc, mOwnId.team().other());
@@ -182,11 +173,8 @@ public final class MctsPlayer implements Player {
                 child.addSimulatedTurnScore(sc, parent.state.nextPlayer().team());
                 parent = child;
             }
-            
-            System.out.println("Tour : " + path.getLast().state.trick() + ", Score : " + PackedScore.toString(sc));
         }
         
-        printNodeAndItsChildren(root);
         return playable.get(root.bestChildIndex(0));
     }
 
@@ -212,12 +200,5 @@ public final class MctsPlayer implements Player {
     }
     private static long unplayedCardsForOther(TurnState state, long hand) {
         return PackedCardSet.difference(state.packedUnplayedCards(), hand);
-    }
-    
-    @SuppressWarnings("unused")
-    private static void printNodeAndItsChildren(Node n) {
-        System.out.println(n);
-        for (Node c : n.children)
-            System.out.println(" - " + c);
     }
 }

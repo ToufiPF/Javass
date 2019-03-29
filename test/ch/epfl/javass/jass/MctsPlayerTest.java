@@ -5,9 +5,9 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import ch.epfl.javass.gametest.PrintingPlayer;
 import ch.epfl.javass.gametest.RandomPlayer;
 import ch.epfl.javass.jass.Card.Color;
 import ch.epfl.javass.jass.Card.Rank;
@@ -38,10 +38,25 @@ class MctsPlayerTest {
                 .add(Card.of(Color.HEART, Rank.TEN))
                 .add(Card.of(Color.HEART, Rank.JACK));
         
-        MctsPlayer player = new MctsPlayer(PlayerId.PLAYER_2, 0, 10);
+        MctsPlayer player = new MctsPlayer(PlayerId.PLAYER_2, 0, 100_000);
         assertEquals(Card.of(Card.Color.SPADE, Card.Rank.EIGHT), player.cardToPlay(state, hand));
     }
     
+    @Test
+    void test4Mcts() {
+        final int seed = 2019;
+        Map<PlayerId, Player> players = new HashMap<>();
+        
+        players.put(PlayerId.PLAYER_1, new PrintingPlayer(new MctsPlayer(PlayerId.PLAYER_1, seed, 100_000)));
+        players.put(PlayerId.PLAYER_2, new MctsPlayer(PlayerId.PLAYER_2, seed, 1000));
+        players.put(PlayerId.PLAYER_3, new MctsPlayer(PlayerId.PLAYER_3, seed, 100_000));
+        players.put(PlayerId.PLAYER_4, new MctsPlayer(PlayerId.PLAYER_4, seed, 1000));
+
+        JassGame g = new JassGame(seed, players, playerNames);
+        while (!g.isGameOver())
+            g.advanceToEndOfNextTrick();
+    }
+    /*
     @Disabled
     @Test
     void test2000Games() {        
@@ -70,7 +85,7 @@ class MctsPlayerTest {
         
         System.out.println("Temps écoulé : " + tempsEcoule);
     }
-    
+    */
     private static Map<PlayerId, Player> createMapMctsPlayers(int seed, int iterations) {
         Map<PlayerId, Player> players = new HashMap<>();
         
