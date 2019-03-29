@@ -38,7 +38,7 @@ class MctsPlayerTest {
                 .add(Card.of(Color.HEART, Rank.TEN))
                 .add(Card.of(Color.HEART, Rank.JACK));
         
-        MctsPlayer player = new MctsPlayer(PlayerId.PLAYER_2, 2019, 100_000);
+        MctsPlayer player = new MctsPlayer(PlayerId.PLAYER_2, 0, 10);
         assertEquals(Card.of(Card.Color.SPADE, Card.Rank.EIGHT), player.cardToPlay(state, hand));
     }
     

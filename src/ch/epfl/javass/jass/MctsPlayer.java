@@ -52,7 +52,7 @@ public final class MctsPlayer implements Player {
          * @param pkSc (int) packed score
          * @param team (Teamid) team à ajouter
          */
-        private void addSimulatedScoreTurn(long pkSc, TeamId team) {
+        private void addSimulatedTurnScore(long pkSc, TeamId team) {
             totalPoints += PackedScore.turnPoints(pkSc, team);
             ++nbTours;
         }
@@ -68,13 +68,15 @@ public final class MctsPlayer implements Player {
          */
         private int bestChildIndex(int c) {
             double[] scoresChilds = new double [children.length];
+            final double logNbTours = Math.log(nbTours);
+            
             for(int i = 0; i < children.length; ++i) {
                 //Si l'enfant n'a pas été créé : on le retourne directement
                 if (children[i] == null)
                     return i;
                 else
-                    scoresChilds[i] = (children[i].totalPoints / children[i].nbTours) 
-                    + c * Math.sqrt((2 * Math.log(nbTours)) / children[i].nbTours);
+                    scoresChilds[i] = ((double) children[i].totalPoints / children[i].nbTours) 
+                    + c * Math.sqrt(2 * logNbTours / children[i].nbTours);
             }
             
             // On choisit le meilleur enfant
@@ -172,17 +174,19 @@ public final class MctsPlayer implements Player {
             // On ajoute le bon score à la racine
             Iterator<Node> it = path.iterator();
             Node parent = it.next();
-            parent.addSimulatedScoreTurn(sc, mOwnId.team().other());
+            parent.addSimulatedTurnScore(sc, mOwnId.team().other());
             
             // On ajoute ensuite les scores aux enfants
             while (it.hasNext()) {
                 Node child = it.next();
-                child.addSimulatedScoreTurn(sc, parent.state.nextPlayer().team());
+                child.addSimulatedTurnScore(sc, parent.state.nextPlayer().team());
                 parent = child;
             }
+            
+            System.out.println("Tour : " + path.getLast().state.trick() + ", Score : " + PackedScore.toString(sc));
         }
         
-        //printNodeAndChildren(root);
+        printNodeAndItsChildren(root);
         return playable.get(root.bestChildIndex(0));
     }
 
@@ -206,15 +210,14 @@ public final class MctsPlayer implements Player {
     private static long unplayedCardsInHand(TurnState state, long hand) {
         return PackedCardSet.intersection(state.packedUnplayedCards(), hand);
     }
-    private static long unplayedCardsForOther(TurnState state, long handOfMcts) {
-        return PackedCardSet.difference(state.packedUnplayedCards(), handOfMcts);
+    private static long unplayedCardsForOther(TurnState state, long hand) {
+        return PackedCardSet.difference(state.packedUnplayedCards(), hand);
     }
     
     @SuppressWarnings("unused")
-    private static void printNodeAndChildren(Node n) {
+    private static void printNodeAndItsChildren(Node n) {
         System.out.println(n);
         for (Node c : n.children)
             System.out.println(" - " + c);
-        
     }
 }
