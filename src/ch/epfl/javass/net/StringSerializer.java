@@ -124,7 +124,7 @@ public final class StringSerializer {
      * @param map (Map<PlayerId, String>) la map des noms
      * @return (String) map sérialisée
      */
-    public static String serializeMapName(Map<PlayerId, String> map) {
+    public static String serializeMapNames(Map<PlayerId, String> map) {
         String[] strs = new String[PlayerId.COUNT];
         for (int i = 0 ; i < strs.length ; ++i)
             strs[i] = serializeString(map.get(PlayerId.ALL.get(i)));
@@ -135,7 +135,7 @@ public final class StringSerializer {
      * @param s (String) le string
      * @return (Map<PlayerId, Player>)
      */
-    public static Map<PlayerId, String> deserializeMapName(String s) {
+    public static Map<PlayerId, String> deserializeMapNames(String s) {
         String[] strs = split(",", s);
         Map<PlayerId, String> map = new HashMap<>();
         for (int i = 0 ; i < PlayerId.COUNT ; ++i)
