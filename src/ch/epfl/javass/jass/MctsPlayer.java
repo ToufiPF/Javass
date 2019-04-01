@@ -103,7 +103,7 @@ public final class MctsPlayer implements Player {
          * @param idMcts (PlayerId) id du joueur simulé
          * @return (LinkedList<Node>) chemin de la racine jusqu'à la Node ajoutée
          */
-        private LinkedList<Node> createChild(long handOfMcts, PlayerId idMcts) {
+        private LinkedList<Node> createBestChild(long handOfMcts, PlayerId idMcts) {
             LinkedList<Node> pathToNewNode = new LinkedList<Node>();
             
             Node n = this;
@@ -157,7 +157,7 @@ public final class MctsPlayer implements Player {
         Node root = new Node(state, playable.packed());
         for (int i = 0 ; i < mIterations ; ++i) {
             // On crée un enfant à chaque itération
-            LinkedList<Node> path = root.createChild(hand.packed(), mOwnId);
+            LinkedList<Node> path = root.createBestChild(hand.packed(), mOwnId);
             
             // On calcule le score pour un tour aléatoire à partir du TurnState de l'enfant créé
             long sc = computeEndOfTurnScore(path.getLast().state, hand.packed());
