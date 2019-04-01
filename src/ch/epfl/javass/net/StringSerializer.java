@@ -1,8 +1,13 @@
 package ch.epfl.javass.net;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+
+import ch.epfl.javass.jass.PlayerId;
+import ch.epfl.javass.jass.TurnState;
 
 /**
  * StringSerializer Une classe publique et finale contenant des méthodes de sérialisation
@@ -93,5 +98,48 @@ public final class StringSerializer {
      */
     public static String[] split(String delimiter, String toSplit) {
         return toSplit.split(delimiter);
+    }
+    
+    /**
+     * Méthode permettant de sérialiser un TurnState facilement
+     * @param state (TurnState) l'état du tour
+     * @return (String) l'état du tour sérialisé
+     */
+    public static String serializeTurnState(TurnState state) {
+        return join(",", serializeLong(state.packedScore()), serializeLong(state.packedUnplayedCards()), serializeInt(state.packedTrick()));
+    }
+    
+    /**
+     * Désérialise un String en TurnState
+     * @param s (String) le string
+     * @return (TurnState) le tour déserialisé
+     */
+    public static TurnState deserializeTurnState(String s) {
+        String[] strs = split(",", s);
+        return TurnState.ofPackedComponents(deserializeLong(strs[0]), deserializeLong(strs[1]), deserializeInt(strs[2]));
+    }
+    
+    /**
+     * Sérialise la map des noms des joueurs
+     * @param map (Map<PlayerId, String>) la map des noms
+     * @return (String) map sérialisée
+     */
+    public static String serializeMapName(Map<PlayerId, String> map) {
+        String[] strs = new String[PlayerId.COUNT];
+        for (int i = 0 ; i < strs.length ; ++i)
+            strs[i] = serializeString(map.get(PlayerId.ALL.get(i)));
+        return join(",", strs);
+    }
+    /**
+     * Déserialise la map des noms des joueurs
+     * @param s (String) le string
+     * @return (Map<PlayerId, Player>)
+     */
+    public static Map<PlayerId, String> deserializeMapName(String s) {
+        String[] strs = split(",", s);
+        Map<PlayerId, String> map = new HashMap<>();
+        for (int i = 0 ; i < PlayerId.COUNT ; ++i)
+            map.put(PlayerId.ALL.get(i), deserializeString(strs[i]));
+        return map;
     }
 }
