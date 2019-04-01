@@ -10,7 +10,7 @@ import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.TurnState;
 
 /**
- * StringSerializer Une classe publique et finale contenant des méthodes de sérialisation
+ * StringSerializer Une classe publique, finale et non instanciable contenant des méthodes de sérialisation
  *  des valeurs échangées entre le cliant et le serveur
  *  
  * @author Amaury Pierre (296498) 
