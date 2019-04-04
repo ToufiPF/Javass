@@ -18,11 +18,22 @@ import ch.epfl.javass.jass.TeamId;
 import ch.epfl.javass.jass.Trick;
 import ch.epfl.javass.jass.TurnState;
 
+/**
+ * RemotePlayerClient 
+ * Classe publique et finale représentant le cliant d'un joueur
+ * @author Amaury Pierre (296498) 
+ * @author Aurélien Clergeot (302592)
+ */
 public final class RemotePlayerClient implements Player, AutoCloseable{
     BufferedWriter w;
     BufferedReader r;
     Socket s;
 
+    /**
+     * Constructeur se connectant au serveur du joueur distant grâce au nom de l'hôte
+     * @param hostName (String) le nom de l'hôte
+     * @throws IOException si les flots ne sont pas fermés
+     */
     public RemotePlayerClient(String hostName) throws IOException {
         s = new Socket(hostName, 5108);
         r = new BufferedReader(
@@ -43,6 +54,7 @@ public final class RemotePlayerClient implements Player, AutoCloseable{
             throw new UncheckedIOException(e);
         }
     }
+    
     @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> mapNames) {
         String toSend = StringSerializer.join(" ", JassCommand.SET_PLAYERS.name(), StringSerializer.serializeInt(ownId.ordinal()),
