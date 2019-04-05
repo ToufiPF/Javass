@@ -21,10 +21,9 @@ import ch.epfl.javass.jass.TurnState;
 
 /**
  * RemotePlayerServer
- * Une classe implementant Runnable, 
- * qui prend en argument un joueur.
- * Fait jouer ce joueur dans sa méthode run
- * en fonction des commandes envoyées par le client
+ * Une classe qui prend en argument un joueur, et le fait jouer dans sa méthode run,
+ * en fonction des commandes/requêtes envoyées par le client.
+ * Elle implemente Runnable, afin de pouvoir la faire fonctionner dans un Thread.
  * 
  * @author Amaury Pierre (296498) 
  * @author Aurélien Clergeot (302592)
@@ -86,7 +85,7 @@ public final class RemotePlayerServer implements Runnable {
                     break;
                 case SET_WINNING_TEAM:
                     onSetWinningTeam(args);
-                    return;
+                    break;
                 case UPDATE_HAND:
                     onUpdateHand(args);
                     break;
