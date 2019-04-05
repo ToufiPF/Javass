@@ -82,7 +82,7 @@ public final class StringSerializer {
      * Méthode publique et statique permettant de joindre plusieurs
      *  chaînes de caractères en les séparant par un séparateur
      * @param delimiter (String) le séparateur
-     * @param elements (String) les chaînes de caractères à joindre
+     * @param elements (String...) les chaînes de caractères à joindre
      * @return (String) la chaîne de caractère composée des elements séparés par le delimiter
      */
     public static String join(String delimiter, String... elements) {
