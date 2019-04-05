@@ -103,7 +103,6 @@ public final class RemotePlayerServer implements Runnable {
             }
         } catch (SocketException e) {
             System.err.println("Connexion lost with client.");
-            throw new UncheckedIOException(e);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
