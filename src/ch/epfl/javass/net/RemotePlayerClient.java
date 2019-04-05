@@ -21,7 +21,7 @@ import ch.epfl.javass.jass.TurnState;
 
 /**
  * RemotePlayerClient 
- * Classe publique et finale représentant le cliant d'un joueur
+ * Classe publique et finale représentant le client d'un joueur
  * @author Amaury Pierre (296498) 
  * @author Aurélien Clergeot (302592)
  */
@@ -34,18 +34,17 @@ public final class RemotePlayerClient implements Player, AutoCloseable{
      * Constructeur se connectant au serveur du joueur distant 
      * grâce au nom de l'hôte, avec le port par default
      * @param hostName (String) le nom de l'hôte
-     * @throws IOException si les flots ne sont pas fermés
+     * @throws IOException si les flots ne se ferment pas
      */
     public RemotePlayerClient(String hostName) throws IOException {
         this(hostName, RemotePlayerServer.DEFAULT_PORT);
     }
-
+    
     /**
-     * Constructeur se connectant au serveur du joueur distant 
-     * grâce au nom de l'hôte, et le port spécifié
+     * Constructeur se connectant au serveur du joueur distant grâce au nom de l'hôte et au port donné
      * @param hostName (String) le nom de l'hôte
-     * @param port (int) port de l'hôte
-     * @throws IOException si les flots ne sont pas fermés
+     * @param port (int) le port sur lequel se connecter
+     * @throws IOException si les flots ne se ferment pas
      */
     public RemotePlayerClient(String hostName, int port) throws IOException {
         s = new Socket(hostName, port);
