@@ -20,31 +20,51 @@ import ch.epfl.javass.jass.Trick;
 import ch.epfl.javass.jass.TurnState;
 
 /**
- *  
+ * RemotePlayerServer
+ * Une classe implementant Runnable, 
+ * qui prend en argument un joueur.
+ * Fait jouer ce joueur dans sa méthode run
+ * en fonction des commandes envoyées par le client
+ * 
  * @author Amaury Pierre (296498) 
  * @author Aurélien Clergeot (302592)
  */
 public final class RemotePlayerServer implements Runnable {
 
-    public static final int PORT = 5108;
+    public static final int DEFAULT_PORT = 5108;
 
     private Player subPlayer;
     private final int effectivePort;
-
+    
+    /**
+     * Construit un RemotePlayerServer, avec le joueur donné,
+     * et connecté au port par default
+     * @param p (Player) player jouant dans le serveur
+     */
     public RemotePlayerServer(Player p) {
-        this(p, PORT);
+        this(p, DEFAULT_PORT);
     }
+    /**
+     * Construit un RemotePlayerServer, avec le joueur donné,
+     * et connecté au port spécifié
+     * @param p (Player) player jouant dans le serveur
+     * @param port (int) port de l'hôte
+     */
     public RemotePlayerServer(Player p, int port) {
         subPlayer = p;
         effectivePort = port;
     }
-
+    
+    /**
+     * Donne le port auquel le serveur s'est branché
+     * @return (int) port du serveur
+     */
     public int getPort() {
         return effectivePort;
     }
-
+    
     @Override
-    public void run() {
+    public void run() throws IllegalArgumentException {
         try (ServerSocket serv = new ServerSocket(effectivePort) ; Socket s = serv.accept() ; 
                 BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream())) ;
                 BufferedWriter output = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()))) {
@@ -66,7 +86,7 @@ public final class RemotePlayerServer implements Runnable {
                     break;
                 case SET_WINNING_TEAM:
                     onSetWinningTeam(args);
-                    break;
+                    return;
                 case UPDATE_HAND:
                     onUpdateHand(args);
                     break;
@@ -96,33 +116,27 @@ public final class RemotePlayerServer implements Runnable {
         output.write('\n');
         output.flush();
     }
-
     private void onSetPlayer(String args) {
         int id = StringSerializer.deserializeInt(args.substring(0, args.indexOf(' ')));
         Map<PlayerId, String> map = StringSerializer.deserializeMapNames(args.substring(args.indexOf(' ') + 1));
         subPlayer.setPlayers(PlayerId.ALL.get(id), map);
     }
-
     private void onSetTrump(String args) {
         int color = StringSerializer.deserializeInt(args);
         subPlayer.setTrump(Card.Color.ALL.get(color));
     }
-
     private void onSetWinningTeam(String args) {
         final int winningTeam = StringSerializer.deserializeInt(args);
         subPlayer.setWinningTeam(TeamId.ALL.get(winningTeam));
     }
-
     private void onUpdateHand(String args) {
         final long pkHand = StringSerializer.deserializeLong(args);
         subPlayer.updateHand(CardSet.ofPacked(pkHand));
     }
-    
     private void onUpdateScore(String args) {
         final long pkScore = StringSerializer.deserializeLong(args);
         subPlayer.updateScore(Score.ofPacked(pkScore));
     }
-    
     private void onUpdateTrick(String args) {
         final int pkTrick = StringSerializer.deserializeInt(args);
         subPlayer.updateTrick(Trick.ofPacked(pkTrick));

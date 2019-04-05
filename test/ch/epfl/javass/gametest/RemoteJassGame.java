@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.epfl.javass.jass.JassGame;
-import ch.epfl.javass.jass.MctsPlayer;
 import ch.epfl.javass.jass.Player;
 import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.net.RemotePlayerClient;
@@ -18,15 +17,11 @@ public class RemoteJassGame {
 
         //Original seed : 2019L
         final long RNG_SEED = 2019;
-        
-        RemotePlayerServer serv = new RemotePlayerServer(new MctsPlayer(PlayerId.PLAYER_1, RNG_SEED, 100_000), 51148);
-        Thread serverThread = new Thread(serv);
-        serverThread.start();
 
         for (PlayerId pId: PlayerId.ALL) {
             Player player;
             if (pId == PlayerId.PLAYER_1)
-                player = new PrintingPlayer(new RemotePlayerClient("localhost", serv.getPort()));
+                player = new PrintingPlayer(new RemotePlayerClient("128.179.190.101", RemotePlayerServer.DEFAULT_PORT));
             else 
                 player = new RandomPlayer(RNG_SEED);
 
