@@ -86,6 +86,8 @@ class MctsPlayerTest {
         System.out.println("Temps écoulé : " + tempsEcoule);
     }
     */
+    
+    @SuppressWarnings("unused")
     private static Map<PlayerId, Player> createMapMctsPlayers(int seed, int iterations) {
         Map<PlayerId, Player> players = new HashMap<>();
         

@@ -6,7 +6,6 @@ import java.util.Map;
 import ch.epfl.javass.jass.JassGame;
 import ch.epfl.javass.jass.MctsPlayer;
 import ch.epfl.javass.jass.PacedPlayer;
-import ch.epfl.javass.jass.PackedTrick;
 import ch.epfl.javass.jass.Player;
 import ch.epfl.javass.jass.PlayerId;
 
@@ -36,7 +35,6 @@ public final class MctsJassGame {
 
         //final int NB_GAMES = 1;
         float tempsMoyen = 0.f;
-        int nbVictoiresEquipe2 = 0;
         double nbParties = 0.0;
         for (int i = 1000 ; i < 3000 ; ++i) {
             ++nbParties;
@@ -46,7 +44,6 @@ public final class MctsJassGame {
                 g.advanceToEndOfNextTrick();
                 System.out.println("----");
             }
-           //TODO : Compter le nombre de victoires de l'équipe 2
             final long endTime = System.currentTimeMillis();
             tempsMoyen += endTime - startTime;
         }

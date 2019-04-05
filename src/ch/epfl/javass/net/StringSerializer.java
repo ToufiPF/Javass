@@ -37,7 +37,7 @@ public final class StringSerializer {
      * @return (int) l'entier en base 10 représenté par s
      */
     public static int deserializeInt(String s) {
-        return Integer.parseUnsignedInt(s);
+        return Integer.parseUnsignedInt(s, 16);
     }
     
     /**
@@ -52,12 +52,12 @@ public final class StringSerializer {
     
     /**
      * Méthode publique et statique permettant de convertir
-     *  une chaine de caractères en long en base 10 qu'elle représente en base 16
+     *  une chaine de caractères en long qu'elle représente en base 16
      * @param s (String) la chaîne de caractères à convertir
-     * @return (long) le long en base 10 représenté par s
+     * @return (long) le long représenté par s
      */
     public static long deserializeLong(String s) {
-        return Long.parseUnsignedLong(s);
+        return Long.parseUnsignedLong(s, 16);
     }
     
     /**
@@ -133,7 +133,7 @@ public final class StringSerializer {
     /**
      * Déserialise la map des noms des joueurs
      * @param s (String) le string
-     * @return (Map<PlayerId, Player>)
+     * @return (Map<PlayerId, Player>) map désérialisée
      */
     public static Map<PlayerId, String> deserializeMapNames(String s) {
         String[] strs = split(",", s);

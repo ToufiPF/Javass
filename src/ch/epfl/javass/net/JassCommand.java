@@ -15,7 +15,30 @@ public enum JassCommand {
     
     /** Nombre de commandes **/
     public static final int COUNT = JassCommand.values().length;
+
+    /**
+     * Retourne l'enum correspondant à la commande donnée
+     * @param cmd (String) une commande du type "PLRS", "TRMP"...
+     * @return (JassCommand) l'enum correspondant
+     * @throws IllegalArgumentException si le String en argument ne 
+     * correspondant à aucun enum
+     */
+    public static JassCommand valueOfByCommand(String cmd) throws IllegalArgumentException {
+        for (JassCommand e : values())
+            if (e.cmd.equals(cmd))
+                return e;
+        
+        throw new IllegalArgumentException("Unknown command : " + cmd);
+    }
+
+    
+    private final String cmd;
     
     private JassCommand(String str) {
+        this.cmd = str;
+    }
+    
+    public String command() {
+        return cmd;
     }
 }

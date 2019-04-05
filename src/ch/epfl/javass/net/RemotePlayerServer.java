@@ -41,7 +41,7 @@ public final class RemotePlayerServer {
             
             while (true) {
                 String msg = input.readLine().trim();
-                JassCommand cmd = JassCommand.valueOf(msg.substring(0, msg.indexOf(' ')));
+                JassCommand cmd = JassCommand.valueOfByCommand(msg.substring(0, msg.indexOf(' ')));
                 String args = msg.substring(msg.indexOf(' ') + 1);
                 
                 switch (cmd) {
@@ -94,12 +94,14 @@ public final class RemotePlayerServer {
                     break;
                 }
                 default:
-                    throw new IOException("Unknown Command : " + cmd);
+                    throw new IllegalArgumentException("Unsupported Command : " + cmd);
                 }
             }
             
         } catch (IOException e) {
             throw new UncheckedIOException(e);
+        } catch (IllegalArgumentException e) {
+            System.err.println(e);
         }
     }
 }
