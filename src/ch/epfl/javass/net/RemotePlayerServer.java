@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.io.UncheckedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Map;
 
 import ch.epfl.javass.jass.Card;
@@ -23,7 +24,7 @@ import ch.epfl.javass.jass.TurnState;
  * RemotePlayerServer
  * Une classe qui prend en argument un joueur, et le fait jouer dans sa méthode run,
  * en fonction des commandes/requêtes envoyées par le client.
- * Elle implemente Runnable, afin de pouvoir la faire fonctionner dans un Thread.
+ * Elle implémente Runnable, afin de pouvoir la faire fonctionner dans un Thread.
  * 
  * @author Amaury Pierre (296498) 
  * @author Aurélien Clergeot (302592)
@@ -34,7 +35,7 @@ public final class RemotePlayerServer implements Runnable {
 
     private Player subPlayer;
     private final int effectivePort;
-    
+
     /**
      * Construit un RemotePlayerServer, avec le joueur donné,
      * et connecté au port par default
@@ -53,7 +54,7 @@ public final class RemotePlayerServer implements Runnable {
         subPlayer = p;
         effectivePort = port;
     }
-    
+
     /**
      * Donne le port auquel le serveur s'est branché
      * @return (int) port du serveur
@@ -61,7 +62,7 @@ public final class RemotePlayerServer implements Runnable {
     public int getPort() {
         return effectivePort;
     }
-    
+
     @Override
     public void run() throws IllegalArgumentException {
         try (ServerSocket serv = new ServerSocket(effectivePort) ; Socket s = serv.accept() ; 
@@ -95,12 +96,14 @@ public final class RemotePlayerServer implements Runnable {
                 case UPDATE_TRICK:
                     onUpdateTrick(args);
                     break;
-                
+
                 default:
                     throw new IllegalArgumentException("Unsupported Command : " + cmd);
                 }
             }
-
+        } catch (SocketException e) {
+            if (!e.getMessage().equals("Connection reset"))
+                throw new UncheckedIOException(e);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
