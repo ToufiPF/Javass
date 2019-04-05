@@ -34,7 +34,7 @@ public final class RemotePlayerClient implements Player, AutoCloseable{
      * Constructeur se connectant au serveur du joueur distant 
      * grâce au nom de l'hôte, avec le port par default
      * @param hostName (String) le nom de l'hôte
-     * @throws IOException si les flots ne se ferment pas
+     * @throws IOException si les flots ne peuvent pas se créer
      */
     public RemotePlayerClient(String hostName) throws IOException {
         this(hostName, RemotePlayerServer.DEFAULT_PORT);
@@ -44,7 +44,7 @@ public final class RemotePlayerClient implements Player, AutoCloseable{
      * Constructeur se connectant au serveur du joueur distant grâce au nom de l'hôte et au port donné
      * @param hostName (String) le nom de l'hôte
      * @param port (int) le port sur lequel se connecter
-     * @throws IOException si les flots ne se ferment pas
+     * @throws IOException si les flots ne peuvent pas se créer
      */
     public RemotePlayerClient(String hostName, int port) throws IOException {
         s = new Socket(hostName, port);
