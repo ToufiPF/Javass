@@ -8,16 +8,33 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
+/**
+ * ScoreBean Un bean JavaFX contenant (principalement) les scores
+ * @author Amaury Pierre (296498) 
+ * @author Aurélien Clergeot (302592)
+ */
 public final class ScoreBean {
-    private IntegerProperty turnPointsTeam1 = new SimpleIntegerProperty();
-    private IntegerProperty gamePointsTeam1 = new SimpleIntegerProperty();
-    private IntegerProperty totalPointsTeam1 = new SimpleIntegerProperty();
-    private IntegerProperty turnPointsTeam2 = new SimpleIntegerProperty();
-    private IntegerProperty gamePointsTeam2 = new SimpleIntegerProperty();
-    private IntegerProperty totalPointsTeam2 = new SimpleIntegerProperty();
-    private ObjectProperty<TeamId> winningTeam = new SimpleObjectProperty<>();
+    private IntegerProperty turnPointsTeam1;
+    private IntegerProperty gamePointsTeam1;
+    private IntegerProperty totalPointsTeam1;
+    private IntegerProperty turnPointsTeam2;
+    private IntegerProperty gamePointsTeam2;
+    private IntegerProperty totalPointsTeam2;
+    private ObjectProperty<TeamId> winningTeam;
 
 
+    /**
+     *Constructeur public de la classe
+     */
+    public ScoreBean() {
+        turnPointsTeam1 = new SimpleIntegerProperty();
+        gamePointsTeam1 = new SimpleIntegerProperty();
+        totalPointsTeam1 = new SimpleIntegerProperty();
+        turnPointsTeam2 = new SimpleIntegerProperty();
+        gamePointsTeam2 = new SimpleIntegerProperty();
+        totalPointsTeam2 = new SimpleIntegerProperty();
+        winningTeam = new SimpleObjectProperty<>();
+    }
     /**
      * Méthode publique retournant la propriété contenant
      *      les points du tour de l'équipe donnée
