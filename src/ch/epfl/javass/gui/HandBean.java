@@ -3,17 +3,23 @@ package ch.epfl.javass.gui;
 import ch.epfl.javass.jass.Card;
 import ch.epfl.javass.jass.CardSet;
 import ch.epfl.javass.jass.Jass;
-import javafx.beans.property.SimpleSetProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 
 public final class HandBean {
-    private Card[] hand = new Card[Jass.HAND_SIZE];
-    private ObservableSet<Card> playableCards = new SimpleSetProperty<>();
+    private ObservableList<Card> hand;
+    private ObservableSet<Card> playableCards;
+    
+    public HandBean() {
+        hand = FXCollections.observableArrayList();
+        for (int i = 0 ; i < Jass.HAND_SIZE ; ++i)
+            hand.add(null);
+        playableCards = FXCollections.observableSet();
+    }
     
     public ObservableList<Card> hand() {
-        return FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(hand));
+        return FXCollections.unmodifiableObservableList(hand);
     }
     public void setHand(CardSet newHand) throws IllegalArgumentException {
         final int handSize = newHand.size();
@@ -22,12 +28,12 @@ public final class HandBean {
         }
         else if (handSize == Jass.HAND_SIZE) {
             for(int i = 0; i < handSize ; ++ i)
-                hand[i] = newHand.get(i);
+                hand.set(i, newHand.get(i));
         }
         else if (handSize < Jass.HAND_SIZE) {
             for(int i = 0; i < Jass.HAND_SIZE; ++ i)
-                if(!newHand.contains(hand[i]))
-                    hand[i] = null;
+                if(hand.get(i) != null && !newHand.contains(hand.get(i)))
+                    hand.set(i, null);
         }
     }
     
