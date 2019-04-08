@@ -5,20 +5,16 @@ import ch.epfl.javass.jass.CardSet;
 import ch.epfl.javass.jass.Jass;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleSetProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 
 public final class HandBean {
-    private ObservableList<Card> hand;
-    private ObservableSet<Card> playableCards;
-    
-    public HandBean() {
-        hand = new SimpleListProperty<>();
-        playableCards = new SimpleSetProperty<>();
-    }
+    private ObservableList<Card> hand = new SimpleListProperty<>();
+    private ObservableSet<Card> playableCards = new SimpleSetProperty<>();
     
     public ObservableList<Card> hand() {
-        return hand;
+        return FXCollections.unmodifiableObservableList(hand);
     }
     
     public void setHand(CardSet newHand) throws IllegalArgumentException {
@@ -27,14 +23,13 @@ public final class HandBean {
         }
         else if (newHand.size() == Jass.HAND_SIZE) {
             hand.clear();
-            for(int i = 0; i < newHand.size(); ++ i) {
+            for(int i = 0; i < newHand.size(); ++ i)
                 hand.add(newHand.get(i));
-            }
         }
         else if (newHand.size() < Jass.HAND_SIZE) {
             for(int i = 0; i < hand.size(); ++ i) {
                 if(!newHand.contains(hand.get(i))) {
-                    hand.get(i) = null;
+                    hand.set(i, null);
                 }
             }
         }
