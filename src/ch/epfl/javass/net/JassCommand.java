@@ -14,7 +14,7 @@ public enum JassCommand {
     CARD_TO_PLAY("CARD");
     
     /** Nombre de commandes **/
-    public static final int COUNT = JassCommand.values().length;
+    public static final int COUNT = values().length;
 
     /**
      * Retourne l'enum correspondant à la commande donnée

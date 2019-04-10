@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import ch.epfl.javass.Preconditions;
+
 /**
  * Card Une classe immuable représentant une carte
  * 
@@ -23,15 +25,16 @@ public final class Card {
     public enum Color {
         SPADE("\u2660"), HEART("\u2665"), DIAMOND("\u2666"), CLUB("\u2663");
 
-        private final String symbol;
-
-        // Liste immuable contenant toutes les valeurs du type énuméré Color
+        /** Liste immuable contenant toutes les valeurs du type énuméré Color */
         public static final List<Color> ALL = Collections
                 .unmodifiableList(Arrays.asList(values()));
 
-        // Constante du nombre de valeur du type énuméré Color
-        public static final int COUNT = 4;
+        /** Constante du nombre de valeur du type énuméré Color */
+        public static final int COUNT = values().length;
 
+
+        private final String symbol;
+        
         private Color(String symbol) {
             this.symbol = symbol;
         }
@@ -50,16 +53,17 @@ public final class Card {
     public enum Rank {
         SIX("6"), SEVEN("7"), EIGHT("8"), NINE("9"), TEN("10"), JACK(
                 "J"), QUEEN("Q"), KING("K"), ACE("A");
-
-        private String rank;
         
-        // Liste immuable contenant toutes les valeurs du type énuméré Rank
+        /** Liste immuable contenant toutes les valeurs du type énuméré Rank */
         public static final List<Rank> ALL = Collections
                 .unmodifiableList(Arrays.asList(values()));
         
-        // Constante du nombre de valeur du type énuméré Rank
-        public static final int COUNT = 9;
+        /** Constante du nombre de valeur du type énuméré Rank */
+        public static final int COUNT = values().length;
 
+        
+        private String rank;
+        
         private Rank(String rank) {
             this.rank = rank;
         }
@@ -95,9 +99,6 @@ public final class Card {
 
     private final int pkCard;
 
-    /**
-     * Constructeur privé de Card
-     */
     private Card(int pkCard) {
         this.pkCard = pkCard;
     }
@@ -127,12 +128,9 @@ public final class Card {
      *             si la valeur empaquetée n'est pas valide
      */
     public static Card ofPacked(int packed) throws IllegalArgumentException {
-        if (PackedCard.isValid(packed)) {
-            Card card = new Card(packed);
-            return card;
-        } else {
-            throw new IllegalArgumentException();
-        }
+        Preconditions.checkArgument(PackedCard.isValid(packed));
+        Card card = new Card(packed);
+        return card;
     }
 
     /**

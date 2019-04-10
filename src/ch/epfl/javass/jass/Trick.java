@@ -4,15 +4,14 @@ import ch.epfl.javass.Preconditions;
 import ch.epfl.javass.jass.Card.Color;
 
 /**
- * Trick 
- * Une classe publique, finale et immuable représenant un pli
+ * Trick Une classe publique, finale et immuable représenant un pli
  * 
- * @author Amaury Pierre (296498) 
+ * @author Amaury Pierre (296498)
  * @author Aurélien Clergeot (302592)
  */
 public final class Trick {
 
-    // représente un pli invalide
+    /** Représente un pli invalide (non unique) */
     public final static Trick INVALID = new Trick(PackedTrick.INVALID);
 
     private final int pkTrick;
@@ -22,21 +21,18 @@ public final class Trick {
     }
 
     private void exceptionIfFull() throws IllegalStateException {
-        if (isFull()) {
+        if (isFull())
             throw new IllegalStateException();
-        }
     }
 
     private void exceptionIfNotFull() throws IllegalStateException {
-        if(!isFull()) {
+        if (!isFull())
             throw new IllegalStateException();
-        }
     }
-    
+
     private void exceptionIfEmpty() throws IllegalStateException {
-        if (isEmpty()) {
+        if (isEmpty())
             throw new IllegalStateException();
-        }
     }
 
     /**
@@ -61,8 +57,10 @@ public final class Trick {
      * @param packed
      *            (int) la version empaquetée du pli à créer
      * @return (Trick) le pli correspondant à la version empaquetée packed
+     * @throws IllegalArgumentException
+     *             si packed est invalide
      */
-    public static Trick ofPacked(int packed) {
+    public static Trick ofPacked(int packed) throws IllegalArgumentException {
         Preconditions.checkArgument(PackedTrick.isValid(packed));
         return new Trick(packed);
     }
@@ -89,7 +87,7 @@ public final class Trick {
     /**
      * Méthode publique retournant si le pli est vide
      * 
-     * @return true (boolean) si le pli est vide, càd qu'il ne contient aucune
+     * @return (boolean) true si le pli est vide, càd qu'il ne contient aucune
      *         carte
      */
     public boolean isEmpty() {
@@ -99,7 +97,7 @@ public final class Trick {
     /**
      * Méthode publique retournant si le pli est plein
      * 
-     * @return true (boolean) si le pli est plein, càd s'il contient 4 cartes
+     * @return (boolean) true si le pli est plein, càd s'il contient 4 cartes
      */
     public boolean isFull() {
         return PackedTrick.isFull(pkTrick);
@@ -108,7 +106,7 @@ public final class Trick {
     /**
      * Méthode publique retournant si le pli est le dernier du tour
      * 
-     * @return true (boolean) si le pli est le dernier du tour, càd si son index
+     * @return (boolean) true si le pli est le dernier du tour, càd si son index
      *         vaut 8
      */
     public boolean isLast() {
@@ -148,9 +146,11 @@ public final class Trick {
      * @param index
      *            (int) l'index du joueur à retourner
      * @return (PlayerId) le joueur d'index donné dans le pli
+     * @throws IndexOutOfBoundsException
+     *             si l'index est invalide
      */
-    public PlayerId player(int index) {
-        Preconditions.checkIndex(index, 4);
+    public PlayerId player(int index) throws IndexOutOfBoundsException {
+        Preconditions.checkIndex(index, PlayerId.COUNT);
         return PackedTrick.player(pkTrick, index);
     }
 
@@ -160,8 +160,10 @@ public final class Trick {
      * @param index
      *            (int) l'index de la carte à retourner
      * @return (Card) la carte du pli à'index donné
+     * @throws IllegalArgumentException
+     *             si l'index est invalide
      */
-    public Card card(int index) {
+    public Card card(int index) throws IndexOutOfBoundsException {
         Preconditions.checkIndex(index, size());
         return Card.ofPacked(PackedTrick.card(pkTrick, index));
     }
@@ -172,8 +174,10 @@ public final class Trick {
      * @param c
      *            (Card) la carte que l'on veut ajouter au pli
      * @return (Trick) le pli auquel on a ajouté la carte c
+     * @throws IllegalStateException
+     *             si le pli est déjà plein
      */
-    public Trick withAddedCard(Card c) {
+    public Trick withAddedCard(Card c) throws IllegalStateException {
         exceptionIfFull();
         return ofPacked(PackedTrick.withAddedCard(pkTrick, c.packed()));
     }
@@ -183,8 +187,10 @@ public final class Trick {
      * 
      * @return (Color) la couleur de base du pli, càd la couleur de la première
      *         carte jouée
+     * @throws IllegalStateException
+     *             si le pli est vide
      */
-    public Color baseColor() {
+    public Color baseColor() throws IllegalStateException {
         exceptionIfEmpty();
         return PackedTrick.baseColor(pkTrick);
     }
@@ -198,8 +204,10 @@ public final class Trick {
      *            être jouées
      * @return (CardSet) l'ensemble des cartes de la main pouvant être jouées
      *         comme prochaine carte du pli
+     * @throws IllegalStateException
+     *             si le pli est plein
      */
-    public CardSet playableCards(CardSet hand) {
+    public CardSet playableCards(CardSet hand) throws IllegalStateException {
         exceptionIfFull();
         return CardSet
                 .ofPacked(PackedTrick.playableCards(pkTrick, hand.packed()));
@@ -218,8 +226,9 @@ public final class Trick {
      * Méthode publique retournant le joueur menant le pli
      * 
      * @return (PlayerId) le joueur menant le pli
+     * @throws IllegalStateException si le pli est vide
      */
-    public PlayerId winningPlayer() {
+    public PlayerId winningPlayer() throws IllegalStateException {
         exceptionIfEmpty();
         return PackedTrick.winningPlayer(pkTrick);
     }

@@ -29,10 +29,10 @@ public final class Score {
      * de sa version empaquetée
      * @param packed (long) la version empaquetée du Score
      * @return (Score) le score correspondant à packed
+     * @throws IllegalArgumentException si packed est invalide
      */
-    public static Score ofPacked(long packed) {
+    public static Score ofPacked(long packed) throws IllegalArgumentException {
         Preconditions.checkArgument(PackedScore.isValid(packed));
-
         return new Score(packed);
     }
     
@@ -89,8 +89,9 @@ public final class Score {
      * @param winner (TeamId) la team qui a remporté le pli
      * @param trickPoints (int) le nombre de points du pli
      * @return (Score) le score du prochain pli
+     * @throws IllegalArgumentException si trickPoints < 0
      */
-    public Score withAdditionalTrick(TeamId winner, int trickPoints) {
+    public Score withAdditionalTrick(TeamId winner, int trickPoints) throws IllegalArgumentException {
         Preconditions.checkArgument(trickPoints >= 0);
         return new Score(PackedScore.withAdditionalTrick(mPackedScore, winner, trickPoints));
     }

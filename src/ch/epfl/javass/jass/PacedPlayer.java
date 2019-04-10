@@ -15,7 +15,7 @@ import ch.epfl.javass.jass.Card.Color;
  */
 public final class PacedPlayer implements Player {
 
-    private Player mUnderPlayer;
+    private final Player mUnderPlayer;
     private final long mMinTime;
 
     /**
@@ -25,8 +25,9 @@ public final class PacedPlayer implements Player {
      * minimum avant de retourner sa carte
      * @param underlyingPlayer (Player) le joueur sous-jacent
      * @param minTimeInSecs (double) le temps minimum pour la méthode cardToPlay, en secondes
+     * @throws IllegalArgumentException si minTimeInSecs < 0
      */
-    public PacedPlayer(Player underlyingPlayer, double minTimeInSecs) {
+    public PacedPlayer(Player underlyingPlayer, double minTimeInSecs) throws IllegalArgumentException {
         Preconditions.checkArgument(minTimeInSecs >= 0);
         
         mUnderPlayer = underlyingPlayer;

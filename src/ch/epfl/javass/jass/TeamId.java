@@ -13,21 +13,20 @@ import java.util.List;
 public enum TeamId {
     TEAM_1, TEAM_2;
 
-    // Liste immuable contenant toutes les valeurs du type énuméré TeamId
+    /** Liste immuable contenant toutes les valeurs du type énuméré TeamId */
     public static final List<TeamId> ALL = Collections
             .unmodifiableList(Arrays.asList(values()));
 
-    // Constante du nombre de valeur du type énuméré TeamId
-    public static final int COUNT = 2;
+    /** Constante du nombre de valeur du type énuméré TeamId */
+    public static final int COUNT = values().length;
 
     /**
-     * Methode permettant de retourner l'autre équipe que celle à laquelle on
-     * l'applique (si on l'applique sur TEAM_1, la méthode retourn l'équipe à
-     * l'emplacement 1-0 = 1, càd TEAM_2)
-     * 
-     * @return (TeamId) l'autre équipe que celle à laquelle on l'applique
+     * Methode permettant de retourner l'équipe adverse à celle-ci
+     * @return (TeamId) l'équipe adverse
      */
     public TeamId other() {
+        //(si on l'applique sur TEAM_1, la méthode retourne l'équipe à
+        //l'emplacement 1-0 = 1, càd TEAM_2)
         return ALL.get(1 - this.ordinal());
     }
 }

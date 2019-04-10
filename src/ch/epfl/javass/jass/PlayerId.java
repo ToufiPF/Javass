@@ -13,12 +13,12 @@ import java.util.List;
 public enum PlayerId {
     PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4;
 
-    // Liste immuable contenant toutes les valeurs du type énuméré PlayerId
+    /** Liste immuable contenant toutes les valeurs du type énuméré PlayerId */
     public static final List<PlayerId> ALL = Collections
             .unmodifiableList(Arrays.asList(values()));
 
-    // Constante du nombre de valeur du type énuméré PlayerId
-    public static final int COUNT = 4;
+    /** Constante du nombre de valeur du type énuméré PlayerId */
+    public static final int COUNT = values().length;
 
     /**
      * Méthode retournant l'équipe à laquelle appartient le joueur auquel on

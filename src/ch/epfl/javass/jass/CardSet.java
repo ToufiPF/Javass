@@ -38,15 +38,16 @@ public final class CardSet {
         
         for (Card c : cards)
             pkSet = PackedCardSet.add(pkSet, c.packed());
-        return ofPacked(pkSet);
+        return new CardSet(pkSet);
     }
     /**
      * Methode statique pour créer un nouveau CardSet
      * à partir de sa version empaquetée
      * @param pkCardSet (long) la version paquetée du CardSet
      * @return (CardSet) l'ensemble correspondant à pkCardSet
+     * @throws IllegalArgumentException si pkCardSet est invalide
      */
-    public static CardSet ofPacked(long pkCardSet) {
+    public static CardSet ofPacked(long pkCardSet) throws IllegalArgumentException {
         Preconditions.checkArgument(PackedCardSet.isValid(pkCardSet));
         return new CardSet(pkCardSet);
     }
@@ -78,8 +79,9 @@ public final class CardSet {
      * Retourne la carte à l'index donné de ce CardSet
      * @param index (int) index de la carte à retourner
      * @return (Card) la carte à l'index donné
+     * @throws IndexOutOfBoundsException si index < 0 ou index >= size()
      */
-    public Card get(int index) {
+    public Card get(int index) throws IndexOutOfBoundsException  {
         Preconditions.checkIndex(index, size());
         return Card.ofPacked(PackedCardSet.get(mPkCardSet, index));
     }

@@ -7,7 +7,7 @@ import ch.epfl.javass.jass.Card.Color;
  * TurnState Une classe publique, finale et immuable représentant l'état d'un
  * tour
  *
- * @author Amaury Pierre (296498) 
+ * @author Amaury Pierre (296498)
  * @author Aurélien Clergeot (302592)
  */
 public final class TurnState {
@@ -23,15 +23,13 @@ public final class TurnState {
     }
 
     private void exceptionIfTrickFull() throws IllegalStateException {
-        if (PackedTrick.isFull(actualTrick)) {
+        if (PackedTrick.isFull(actualTrick))
             throw new IllegalStateException();
-        }
     }
 
     private void exceptionIfTrickNotFull() throws IllegalStateException {
-        if (!PackedTrick.isFull(actualTrick)) {
+        if (!PackedTrick.isFull(actualTrick))
             throw new IllegalStateException();
-        }
     }
 
     /**
@@ -49,7 +47,6 @@ public final class TurnState {
      */
     public static TurnState initial(Color trump, Score score,
             PlayerId firstPlayer) {
-        
         return new TurnState(score.packed(), PackedCardSet.ALL_CARDS,
                 Trick.firstEmpty(trump, firstPlayer).packed());
     }
@@ -66,9 +63,11 @@ public final class TurnState {
      *            (int) le pli empaqueté actuel
      * @return (TurnState) l'état du tour dont les composantes sont celles
      *         données
+     * @throws IllegalArgumentException
+     *             si l'un des arguments packed est invalide
      */
     public static TurnState ofPackedComponents(long pkScore,
-            long pkUnplayedCards, int pkTrick) {
+            long pkUnplayedCards, int pkTrick) throws IllegalArgumentException {
         Preconditions.checkArgument(PackedScore.isValid(pkScore));
         Preconditions.checkArgument(PackedCardSet.isValid(pkUnplayedCards));
         Preconditions.checkArgument(PackedTrick.isValid(pkTrick));
@@ -133,8 +132,8 @@ public final class TurnState {
     /**
      * Retourne si l'état est terminal, càd si le dernier pli du tour a été joué
      * 
-     * @return true (boolean) ssi l'état est terminal, 
-     * càd si le pli actuel est invalide
+     * @return true (boolean) ssi l'état est terminal, càd si le pli actuel est
+     *         invalide
      */
     public boolean isTerminal() {
         return actualTrick == PackedTrick.INVALID;
@@ -144,8 +143,9 @@ public final class TurnState {
      * Retourne le joueur devant jouer la prochaine carte
      * 
      * @return (PlayerId) le joueur devant jouer la prochaine carte
+     * @throws IllegalStateException si le pli est plein
      */
-    public PlayerId nextPlayer() {
+    public PlayerId nextPlayer() throws IllegalStateException {
         exceptionIfTrickFull();
         return PackedTrick.player(actualTrick, PackedTrick.size(actualTrick));
     }
@@ -157,8 +157,9 @@ public final class TurnState {
      * @param card
      *            (Card) la carte à jouer dans l'état du tour
      * @return (TurnState) l'état du tour après avoir joué la carte card
+     * @throws IllegalStateException si le pli est plein 
      */
-    public TurnState withNewCardPlayed(Card card) {
+    public TurnState withNewCardPlayed(Card card) throws IllegalStateException {
         exceptionIfTrickFull();
 
         // On ajoute la carte card au pli actuel
@@ -177,18 +178,20 @@ public final class TurnState {
      * 
      * @return (TurnState) l'état correspondant à celui auquel on l'applique
      *         après que le pli courant ait été ramassé
+     *         @throws IllegalStateException si le pli n'est pas plein 
      */
-    public TurnState withTrickCollected() {
+    public TurnState withTrickCollected() throws IllegalStateException {
         exceptionIfTrickNotFull();
 
         // On met à jour le score actuel
-        long newActualScore = PackedScore.withAdditionalTrick(actualScore, 
-                PackedTrick.winningPlayer(actualTrick).team(), PackedTrick.points(actualTrick));
+        long newScore = PackedScore.withAdditionalTrick(actualScore,
+                PackedTrick.winningPlayer(actualTrick).team(),
+                PackedTrick.points(actualTrick));
 
         // On met à jour le pli actuel
-        int newActualTrick = PackedTrick.nextEmpty(actualTrick);
+        int newTrick = PackedTrick.nextEmpty(actualTrick);
 
-        return new TurnState(newActualScore, unplayedCards, newActualTrick);
+        return new TurnState(newScore, unplayedCards, newTrick);
     }
 
     /**

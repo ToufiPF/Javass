@@ -35,8 +35,9 @@ public final class StringSerializer {
      *  une chaine de caractères en l'entier en base 10 qu'elle représente en base 16
      * @param s (String) la chaîne de caractères à convertir
      * @return (int) l'entier en base 10 représenté par s
+     * @throws NumberFormatException si s n'est pas transformable en int base 16
      */
-    public static int deserializeInt(String s) {
+    public static int deserializeInt(String s) throws NumberFormatException{
         return Integer.parseUnsignedInt(s, 16);
     }
     
@@ -55,8 +56,9 @@ public final class StringSerializer {
      *  une chaine de caractères en long qu'elle représente en base 16
      * @param s (String) la chaîne de caractères à convertir
      * @return (long) le long représenté par s
+     * @throws NumberFormatException si s n'est pas transformable en long base 16
      */
-    public static long deserializeLong(String s) {
+    public static long deserializeLong(String s) throws NumberFormatException{
         return Long.parseUnsignedLong(s, 16);
     }
     
