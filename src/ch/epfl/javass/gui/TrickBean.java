@@ -1,8 +1,5 @@
 package ch.epfl.javass.gui;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import ch.epfl.javass.jass.Card;
 import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.Trick;
@@ -24,10 +21,9 @@ public final class TrickBean {
     private final ObjectProperty<PlayerId> winningPlayer = new SimpleObjectProperty<PlayerId>();
     
     public TrickBean() {
-        Map<PlayerId, Card> map = new HashMap<>();
+        trickProp = FXCollections.observableHashMap();
         for (PlayerId p : PlayerId.ALL)
-            map.put(p, null);
-        trickProp = FXCollections.observableMap(map);
+            trickProp.put(p, null);
     }
     
     /**
