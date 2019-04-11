@@ -64,8 +64,10 @@ public final class ScoreBean {
         switch (team) {
         case TEAM_1:
             gamePointsTeam1.set(newGamePoints);
+            break;
         case TEAM_2:
             gamePointsTeam2.set(newGamePoints);
+            break;
         default:
             throw new IllegalArgumentException("Team non reconnue");
         }
@@ -87,8 +89,10 @@ public final class ScoreBean {
         switch (team) {
         case TEAM_1:
             totalPointsTeam1.set(newTotalPoints);
+            break;
         case TEAM_2:
             totalPointsTeam2.set(newTotalPoints);
+            break;
         default:
             throw new IllegalArgumentException("Team non reconnue");
         }
@@ -110,8 +114,10 @@ public final class ScoreBean {
         switch (team) {
         case TEAM_1:
             turnPointsTeam1.set(newTurnPoints);
+            break;
         case TEAM_2:
             turnPointsTeam2.set(newTurnPoints);
+            break;
         default:
             throw new IllegalArgumentException("Team non reconnue");
         }
