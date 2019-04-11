@@ -108,7 +108,7 @@ public final class CardSet {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj.getClass() == CardSet.class) {
+        if (obj != null && obj.getClass() == CardSet.class) {
             CardSet otherCardSet = (CardSet) obj;
             return this.packed() == otherCardSet.packed();
         }

@@ -1,5 +1,8 @@
 package ch.epfl.javass.gui;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import ch.epfl.javass.jass.Card;
 import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.Trick;
@@ -17,10 +20,16 @@ import javafx.collections.ObservableMap;
  */
 public final class TrickBean {
     private final ObjectProperty<Card.Color> trumpProp = new SimpleObjectProperty<Card.Color>();
-    private final ObservableMap<PlayerId, Card> trickProp = FXCollections
-            .<PlayerId, Card> observableHashMap();
+    private final ObservableMap<PlayerId, Card> trickProp;
     private final ObjectProperty<PlayerId> winningPlayer = new SimpleObjectProperty<PlayerId>();
-
+    
+    public TrickBean() {
+        Map<PlayerId, Card> map = new HashMap<>();
+        for (PlayerId p : PlayerId.ALL)
+            map.put(p, null);
+        trickProp = FXCollections.observableMap(map);
+    }
+    
     /**
      * Change l'état du Trick observé, càd les cartes en jeu
      *
@@ -29,9 +38,10 @@ public final class TrickBean {
      */
     public void setTrick(Trick trick) {
         final int trickSize = trick.size();
-        trickProp.clear();
         for (int i = 0; i < trickSize; ++i)
             trickProp.put(trick.player(i), trick.card(i));
+        for (int i = trickSize ; i < PlayerId.COUNT ; ++i)
+            trickProp.put(trick.player(i), null);
 
         if (trick.isEmpty())
             winningPlayer.set(null);

@@ -38,7 +38,7 @@ public final class Score {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj.getClass() == Score.class) {
+        if (obj != null && obj.getClass() == Score.class) {
             Score objScore = (Score) obj;
             return objScore.packed() == this.packed();
         }
