@@ -18,38 +18,27 @@ public final class PackedCard {
 
     private static final int RANK_START = 0;
     private static final int RANK_SIZE = 4;
-    
+
     private static final int COLOR_START = 4;
     private static final int COLOR_SIZE = 2;
 
     /**
      * Donne la couleur d'une carte à partir de sa représentation en int
-     * 
+     *
      * @param pkCard
      *            (int) la représentation de la carte
      * @return (Card.Color) la couleur de la carte
      */
     public static Card.Color color(int pkCard) {
         assert isValid(pkCard);
-        return Card.Color.ALL.get(Bits32.extract(pkCard, COLOR_START, COLOR_SIZE));
-    }
-
-    /**
-     * Donne le rang d'une carte à partir de sa représentation en int
-     * 
-     * @param pkCard
-     *            (int) la représentation de la carte
-     * @return (Card.Rank) le rang de la carte
-     */
-    public static Card.Rank rank(int pkCard) {
-        assert isValid(pkCard);
-        return Card.Rank.ALL.get(Bits32.extract(pkCard, RANK_START, RANK_SIZE));
+        return Card.Color.ALL
+                .get(Bits32.extract(pkCard, COLOR_START, COLOR_SIZE));
     }
 
     /**
      * Compare les deux cartes données et retourne true si et seulement si celle
      * de gauche est meilleure, en sachant que la couleur des atouts vaut trump.
-     * 
+     *
      * @param trump
      *            (Card.Color) la couleur des atouts
      * @param pkCardL
@@ -84,7 +73,7 @@ public final class PackedCard {
      * Verifie que l'int passé en argument représente une carte valide, càd que
      * seuls les 6 bits de poids faibles sont utilisés, et que l'id du rang soit
      * valide (<=8)
-     * 
+     *
      * @param packedCard
      *            (int) l'entier à vérifier
      * @return (boolean) true si l'entier est valide
@@ -96,13 +85,13 @@ public final class PackedCard {
         // - que l'id du rang soit inferieur ou égal à 8
         // (ie. Bits32.extract(packedCard, 0, 4) <= 8)
 
-        return Bits32.extract(packedCard, 6, 32-6) == 0
-                && Bits32.extract(packedCard, RANK_START, RANK_SIZE) < Rank.COUNT;
+        return Bits32.extract(packedCard, 6, 32 - 6) == 0 && Bits32
+                .extract(packedCard, RANK_START, RANK_SIZE) < Rank.COUNT;
     }
 
     /**
      * Crée l'int représentant la carte donnée (sa couleur et son rang)
-     * 
+     *
      * @param c
      *            (Card.Color) la couleur de la carte
      * @param r
@@ -115,7 +104,7 @@ public final class PackedCard {
 
     /**
      * Donne la valeur en points de la carte donnée
-     * 
+     *
      * @param trump
      *            (Card.Color) la couleur des atouts
      * @param pkCard
@@ -161,9 +150,21 @@ public final class PackedCard {
     }
 
     /**
+     * Donne le rang d'une carte à partir de sa représentation en int
+     *
+     * @param pkCard
+     *            (int) la représentation de la carte
+     * @return (Card.Rank) le rang de la carte
+     */
+    public static Card.Rank rank(int pkCard) {
+        assert isValid(pkCard);
+        return Card.Rank.ALL.get(Bits32.extract(pkCard, RANK_START, RANK_SIZE));
+    }
+
+    /**
      * Donne la représentation d'une carte sous forme d'une chaîne de caractères
      * composée du symbole de la couleur et du nom abrégé du rang
-     * 
+     *
      * @param pkCard
      *            (int) la carte à afficher
      * @return (String) représentation de la carte

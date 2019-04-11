@@ -6,7 +6,7 @@ import ch.epfl.javass.Preconditions;
 
 /**
  * Card Set Une classe immuable représentant un ensemble de cartes
- * 
+ *
  * @author Amaury Pierre (296498)
  * @author Aurélien Clergeot (302592)
  */
@@ -24,7 +24,7 @@ public final class CardSet {
     /**
      * Methode statique pour créer un nouveau CardSet à partir d'une liste de
      * Card
-     * 
+     *
      * @param cards
      *            (List<Card>) non null, la liste de cartes comprises dans
      *            l'ensemble
@@ -41,7 +41,7 @@ public final class CardSet {
     /**
      * Methode statique pour créer un nouveau CardSet à partir de sa version
      * empaquetée
-     * 
+     *
      * @param pkCardSet
      *            (long) la version paquetée du CardSet
      * @return (CardSet) l'ensemble correspondant à pkCardSet
@@ -62,7 +62,7 @@ public final class CardSet {
 
     /**
      * Retourne cet ensemble de cartes, auquel on a ajouté card
-     * 
+     *
      * @param card
      *            (Card) la carte à ajouter
      * @return (CardSet) le nouvel ensemble avec card ajoutée
@@ -74,7 +74,7 @@ public final class CardSet {
     /**
      * Donne le complement de ce CardSet, càd l'ensemble des cartes qui ne sont
      * pas contenues dans celui-ci
-     * 
+     *
      * @return (CardSet) le complement de ce CardSet
      */
     public CardSet complement() {
@@ -83,7 +83,7 @@ public final class CardSet {
 
     /**
      * Verifie si ce CardSet contient la carte donnée
-     * 
+     *
      * @param card
      *            (Card) carte à chercher
      * @return (boolean) true si ce CardSet contient card, false sinon
@@ -95,7 +95,7 @@ public final class CardSet {
     /**
      * Donne la difference entre ce CardSet et other, càd les cartes qui sont
      * dans ce CardSet, mais pas dans other
-     * 
+     *
      * @param other
      *            (CardSet) le 2e CardSet
      * @return (CardSet) un nouveau CardSet correspondant à la difference des
@@ -106,9 +106,18 @@ public final class CardSet {
                 PackedCardSet.difference(mPkCardSet, other.packed()));
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() == CardSet.class) {
+            CardSet otherCardSet = (CardSet) obj;
+            return this.packed() == otherCardSet.packed();
+        }
+        return false;
+    }
+
     /**
      * Retourne la carte à l'index donné de ce CardSet
-     * 
+     *
      * @param index
      *            (int) index de la carte à retourner
      * @return (Card) la carte à l'index donné
@@ -120,9 +129,14 @@ public final class CardSet {
         return Card.ofPacked(PackedCardSet.get(mPkCardSet, index));
     }
 
+    @Override
+    public int hashCode() {
+        return Long.hashCode(mPkCardSet);
+    }
+
     /**
      * Donne l'intersection de ce CardSet et de other
-     * 
+     *
      * @param other
      *            (CardSet) le 2e CardSet
      * @return (CardSet) un nouveau CardSet correspondant à l'intersection des
@@ -135,7 +149,7 @@ public final class CardSet {
 
     /**
      * Retourne vrai si l'ensemble de cartes est vide
-     * 
+     *
      * @return true (boolean) ssi l'ensemble de cartes est vide
      */
     public boolean isEmpty() {
@@ -144,7 +158,7 @@ public final class CardSet {
 
     /**
      * Retourne la version empaquetée du CardSet
-     * 
+     *
      * @return (long) la version paquetée de ce CardSet
      */
     public long packed() {
@@ -153,7 +167,7 @@ public final class CardSet {
 
     /**
      * Retourne cet ensemble de cartes, auquel on a retiré card
-     * 
+     *
      * @param card
      *            (Card) la carte à retirer
      * @return (CardSet) le nouvel ensemble avec card retirée
@@ -164,7 +178,7 @@ public final class CardSet {
 
     /**
      * Donne le nombre de cartes de ce CardSet
-     * 
+     *
      * @return (int) nombre de cartes dans ce CardSet
      */
     public int size() {
@@ -173,7 +187,7 @@ public final class CardSet {
 
     /**
      * Donne le CardSet contenant toutes les cartes de la couleur donnée
-     * 
+     *
      * @param color
      *            (Card.Color) la couleur voulue
      * @return (CardSet) l'ensemble de cartes de couleur color
@@ -189,7 +203,7 @@ public final class CardSet {
 
     /**
      * Donne l'union de ce CardSet et de other
-     * 
+     *
      * @param other
      *            (CardSet) le 2e CardSet
      * @return (CardSet) un nouveau CardSet correspondant à l'union des deux
@@ -197,20 +211,6 @@ public final class CardSet {
      */
     public CardSet union(CardSet other) {
         return new CardSet(PackedCardSet.union(mPkCardSet, other.packed()));
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (obj.getClass() == CardSet.class) {
-            CardSet otherCardSet = (CardSet) obj;
-            return this.packed() == otherCardSet.packed();
-        }
-        return false;
-    }
-    
-    @Override
-    public int hashCode() {
-        return Long.hashCode(mPkCardSet);
     }
 
 }

@@ -10,7 +10,7 @@ import javafx.collections.ObservableSet;
 /**
  * Un bean JavaFX permettant l'observation de la main et des cartes jouables du
  * joueur
- * 
+ *
  * @author Amaury Pierre (296498)
  * @author Aurélien Clergeot (302592)
  */
@@ -30,7 +30,7 @@ public final class HandBean {
 
     /**
      * Getter pour la propriété de la main
-     * 
+     *
      * @return (ObservableList<Card>) la propriété de la main
      */
     public ObservableList<Card> hand() {
@@ -39,7 +39,7 @@ public final class HandBean {
 
     /**
      * Getter pour la propriété des cartes jouables de la main
-     * 
+     *
      * @return (ObservableSet<Card>) la propriété des cartes jouables
      */
     public ObservableSet<Card> playableCards() {
@@ -48,7 +48,7 @@ public final class HandBean {
 
     /**
      * Change les valeurs contenues dans la propriété de la main
-     * 
+     *
      * @param newHand
      *            (CardSet) la nouvelle main
      * @throws IllegalArgumentException
@@ -71,7 +71,7 @@ public final class HandBean {
     /**
      * Méthode permettant de changer les cartes jouables contenues dans la
      * propriété
-     * 
+     *
      * @param newPlayableCards
      *            (CardSet) les nouvelles cartes jouables
      */
@@ -79,7 +79,7 @@ public final class HandBean {
         final int playableSize = newPlayableCards.size();
         if (playableSize > Jass.HAND_SIZE)
             throw new IllegalArgumentException("Trop de cartes jouables.");
-        
+
         playableCards.clear();
         for (int i = 0; i < playableSize; ++i)
             playableCards.add(newPlayableCards.get(i));

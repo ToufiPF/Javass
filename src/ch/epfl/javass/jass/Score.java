@@ -18,7 +18,7 @@ public final class Score {
 
     /**
      * Methode statique pour créer un Score à partir de sa version empaquetée
-     * 
+     *
      * @param packed
      *            (long) la version empaquetée du Score
      * @return (Score) le score correspondant à packed
@@ -36,10 +36,19 @@ public final class Score {
         mPackedScore = packed;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() == Score.class) {
+            Score objScore = (Score) obj;
+            return objScore.packed() == this.packed();
+        }
+        return false;
+    }
+
     /**
      * Donne le nombre de points de la team donnée pour cette partie (SANS
      * compter le tour courant)
-     * 
+     *
      * @param t
      *            (TeamId) la team qui nous interesse
      * @return (int) le nombre de points de la partie
@@ -48,11 +57,16 @@ public final class Score {
         return PackedScore.gamePoints(mPackedScore, t);
     }
 
+    @Override
+    public int hashCode() {
+        return Long.hashCode(mPackedScore);
+    }
+
     /**
      * Retourne un Score mis à jour pour le tour prochain, càd avec les points
      * obtenus lors du tour ajoutés à ceux de la partie, ainsi que le nombre de
      * plis gagnés et de points pour le tour remis à 0
-     * 
+     *
      * @return (Score) le score du prochain tour
      */
     public Score nextTurn() {
@@ -61,17 +75,22 @@ public final class Score {
 
     /**
      * Getter pour la version empaquetée de ce Score
-     * 
+     *
      * @return (long) ce score empaqueté
      */
     public long packed() {
         return mPackedScore;
     }
 
+    @Override
+    public String toString() {
+        return PackedScore.toString(mPackedScore);
+    }
+
     /**
      * Donne le nombre de points TOTAL de la team donnée pour cette partie, càd
      * le nombre de points du tour ajouté au nombre de points de la partie
-     * 
+     *
      * @param t
      *            (TeamId) la team qui nous interesse
      * @return (int) le nombre de points TOTAL de la partie
@@ -82,7 +101,7 @@ public final class Score {
 
     /**
      * Donne le nombre de points de la team donnée dans le tour courant
-     * 
+     *
      * @param t
      *            (TeamId) la team qui nous interesse
      * @return (int) le nombre de points dans le tour courant
@@ -93,7 +112,7 @@ public final class Score {
 
     /**
      * Donne le nombre de plis remportés par la team donnée dans le tour courant
-     * 
+     *
      * @param t
      *            (TeamId) la team qui nous interesse
      * @return (int) le nombre de plis remportés
@@ -106,7 +125,7 @@ public final class Score {
      * Retourne un Score mis à jour pour le prochain pli, càd avec trickPoints
      * ajouté au nombre de points du tour, et un incrément du nombre de plis
      * remportés pour l'équipe gagnante
-     * 
+     *
      * @param winner
      *            (TeamId) la team qui a remporté le pli
      * @param trickPoints
@@ -120,25 +139,6 @@ public final class Score {
         Preconditions.checkArgument(trickPoints >= 0);
         return new Score(PackedScore.withAdditionalTrick(mPackedScore, winner,
                 trickPoints));
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (obj.getClass() == Score.class) {
-            Score objScore = (Score) obj;
-            return objScore.packed() == this.packed();
-        }
-        return false;
-    }
-    
-    @Override
-    public int hashCode() {
-        return Long.hashCode(mPackedScore);
-    }
-    
-    @Override
-    public String toString() {
-        return PackedScore.toString(mPackedScore);
     }
 
 }

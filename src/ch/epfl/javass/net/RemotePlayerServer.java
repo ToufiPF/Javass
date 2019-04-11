@@ -39,7 +39,7 @@ public final class RemotePlayerServer implements Runnable {
     /**
      * Construit un RemotePlayerServer, avec le joueur donné, et connecté au
      * port par default
-     * 
+     *
      * @param p
      *            (Player) player jouant dans le serveur
      */
@@ -50,7 +50,7 @@ public final class RemotePlayerServer implements Runnable {
     /**
      * Construit un RemotePlayerServer, avec le joueur donné, et connecté au
      * port spécifié
-     * 
+     *
      * @param p
      *            (Player) player jouant dans le serveur
      * @param port
@@ -63,57 +63,11 @@ public final class RemotePlayerServer implements Runnable {
 
     /**
      * Donne le port auquel le serveur s'est branché
-     * 
+     *
      * @return (int) port du serveur
      */
     public int getPort() {
         return effectivePort;
-    }
-
-    private void onCardToPlay(String args, BufferedWriter output)
-            throws IOException {
-        TurnState state = StringSerializer
-                .deserializeTurnState(args.substring(0, args.indexOf(' ')));
-        final long pkHand = StringSerializer
-                .deserializeLong(args.substring(args.indexOf(' ') + 1));
-        Card card = subPlayer.cardToPlay(state, CardSet.ofPacked(pkHand));
-
-        output.write(StringSerializer.serializeInt(card.packed()));
-        output.write('\n');
-        output.flush();
-    }
-
-    private void onSetPlayer(String args) {
-        int id = StringSerializer
-                .deserializeInt(args.substring(0, args.indexOf(' ')));
-        Map<PlayerId, String> map = StringSerializer
-                .deserializeMapNames(args.substring(args.indexOf(' ') + 1));
-        subPlayer.setPlayers(PlayerId.ALL.get(id), map);
-    }
-
-    private void onSetTrump(String args) {
-        int color = StringSerializer.deserializeInt(args);
-        subPlayer.setTrump(Card.Color.ALL.get(color));
-    }
-
-    private void onSetWinningTeam(String args) {
-        final int winningTeam = StringSerializer.deserializeInt(args);
-        subPlayer.setWinningTeam(TeamId.ALL.get(winningTeam));
-    }
-
-    private void onUpdateHand(String args) {
-        final long pkHand = StringSerializer.deserializeLong(args);
-        subPlayer.updateHand(CardSet.ofPacked(pkHand));
-    }
-
-    private void onUpdateScore(String args) {
-        final long pkScore = StringSerializer.deserializeLong(args);
-        subPlayer.updateScore(Score.ofPacked(pkScore));
-    }
-
-    private void onUpdateTrick(String args) {
-        final int pkTrick = StringSerializer.deserializeInt(args);
-        subPlayer.updateTrick(Trick.ofPacked(pkTrick));
     }
 
     @Override
@@ -164,5 +118,51 @@ public final class RemotePlayerServer implements Runnable {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    private void onCardToPlay(String args, BufferedWriter output)
+            throws IOException {
+        TurnState state = StringSerializer
+                .deserializeTurnState(args.substring(0, args.indexOf(' ')));
+        final long pkHand = StringSerializer
+                .deserializeLong(args.substring(args.indexOf(' ') + 1));
+        Card card = subPlayer.cardToPlay(state, CardSet.ofPacked(pkHand));
+
+        output.write(StringSerializer.serializeInt(card.packed()));
+        output.write('\n');
+        output.flush();
+    }
+
+    private void onSetPlayer(String args) {
+        int id = StringSerializer
+                .deserializeInt(args.substring(0, args.indexOf(' ')));
+        Map<PlayerId, String> map = StringSerializer
+                .deserializeMapNames(args.substring(args.indexOf(' ') + 1));
+        subPlayer.setPlayers(PlayerId.ALL.get(id), map);
+    }
+
+    private void onSetTrump(String args) {
+        int color = StringSerializer.deserializeInt(args);
+        subPlayer.setTrump(Card.Color.ALL.get(color));
+    }
+
+    private void onSetWinningTeam(String args) {
+        final int winningTeam = StringSerializer.deserializeInt(args);
+        subPlayer.setWinningTeam(TeamId.ALL.get(winningTeam));
+    }
+
+    private void onUpdateHand(String args) {
+        final long pkHand = StringSerializer.deserializeLong(args);
+        subPlayer.updateHand(CardSet.ofPacked(pkHand));
+    }
+
+    private void onUpdateScore(String args) {
+        final long pkScore = StringSerializer.deserializeLong(args);
+        subPlayer.updateScore(Score.ofPacked(pkScore));
+    }
+
+    private void onUpdateTrick(String args) {
+        final int pkTrick = StringSerializer.deserializeInt(args);
+        subPlayer.updateTrick(Trick.ofPacked(pkTrick));
     }
 }

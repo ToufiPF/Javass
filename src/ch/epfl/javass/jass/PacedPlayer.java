@@ -21,7 +21,7 @@ public final class PacedPlayer implements Player {
      * Construit un PacedPlayer se comportant de la même manière que
      * underlyingPlayer, à l'exception que la méthode cardToPlay met toujours un
      * temps minimum avant de retourner sa carte
-     * 
+     *
      * @param underlyingPlayer
      *            (Player) le joueur sous-jacent
      * @param minTimeInSecs

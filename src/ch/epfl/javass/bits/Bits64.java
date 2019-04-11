@@ -10,15 +10,6 @@ import ch.epfl.javass.Preconditions;
  * @author Aurélien Clergeot (302592)
  */
 public final class Bits64 {
-    private static void checkValidity(long v, int s)
-            throws IllegalArgumentException {
-        Preconditions.checkArgument(s >= 0 && s <= Long.SIZE);
-        if (s == Long.SIZE)
-            Preconditions.checkArgument(v <= -1L);
-        else
-            Preconditions.checkArgument(v <= ((1L << s) - 1L));
-    }
-
     /**
      * Extrait de bits le long composé par l'ensemble des bits commençant en
      * start et de taille size
@@ -73,7 +64,7 @@ public final class Bits64 {
      *            (long) long n°2 à packer
      * @param s2
      *            (int) nombre de bits alloués pour packer v2
-     * 
+     *
      * @return (long) un long composé de v1 occupant les s1 bits de poids faible
      *         et de v2 occupant les s2 bits suivants
      * @throws IllegalArgumentException
@@ -89,6 +80,15 @@ public final class Bits64 {
         long l2 = v2 & mask(0, s2);
 
         return l1 | (l2 << s1);
+    }
+
+    private static void checkValidity(long v, int s)
+            throws IllegalArgumentException {
+        Preconditions.checkArgument(s >= 0 && s <= Long.SIZE);
+        if (s == Long.SIZE)
+            Preconditions.checkArgument(v <= -1L);
+        else
+            Preconditions.checkArgument(v <= ((1L << s) - 1L));
     }
 
     private Bits64() {

@@ -22,7 +22,7 @@ public enum TeamId {
 
     /**
      * Methode permettant de retourner l'équipe adverse à celle-ci
-     * 
+     *
      * @return (TeamId) l'équipe adverse
      */
     public TeamId other() {

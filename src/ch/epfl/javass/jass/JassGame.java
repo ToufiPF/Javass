@@ -30,7 +30,7 @@ public final class JassGame {
     /**
      * Construit un JassGame à partir de la seed et des joueurs donnés en
      * argument
-     * 
+     *
      * @param rngSeed
      *            (long) la seed du générateur pseudo-aléatoire
      * @param players
@@ -115,6 +115,15 @@ public final class JassGame {
         }
     }
 
+    /**
+     * Vérifie si la partie est terminée
+     *
+     * @return (boolean) true ssi la partie est finie
+     */
+    public boolean isGameOver() {
+        return mGameIsOver;
+    }
+
     private void dealCardsToPlayers() {
         List<Card> shuffled = getShuffledCards();
 
@@ -125,7 +134,7 @@ public final class JassGame {
 
     /**
      * Genere aléatoirement une couleur pour les cartes d'atout
-     * 
+     *
      * @return (Card.Color) la nouvelle couleur pour les atouts
      */
     private Card.Color generateTrump() {
@@ -135,7 +144,7 @@ public final class JassGame {
     /**
      * Donne l'index de la main qui contient la carte donnée Retourne -1 si
      * aucune main ne la possède
-     * 
+     *
      * @param card
      *            (Card) la carte à chercher
      * @return (int) l'index de la main
@@ -149,7 +158,7 @@ public final class JassGame {
 
     /**
      * Retourne le joueur qui possède le 7 de carreaux
-     * 
+     *
      * @return (PlayerId) le joueur avec le 7 de carreaux
      * @throws IllegalStateException
      *             si aucun joueur ne le possède
@@ -177,7 +186,7 @@ public final class JassGame {
     /**
      * Donne la team avec le plus de points au total (Dans le cas où le nb de
      * points est égal, retourne TEAM_1)
-     * 
+     *
      * @return (TeamId) la team avec le plus de points
      */
     private TeamId getTeamWithMostPoints() {
@@ -185,15 +194,6 @@ public final class JassGame {
                 .totalPoints(TeamId.TEAM_2))
             return TeamId.TEAM_1;
         return TeamId.TEAM_2;
-    }
-
-    /**
-     * Vérifie si la partie est terminée
-     * 
-     * @return (boolean) true ssi la partie est finie
-     */
-    public boolean isGameOver() {
-        return mGameIsOver;
     }
 
     private void setTrumpForAll(Card.Color trump) {

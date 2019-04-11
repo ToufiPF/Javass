@@ -10,7 +10,7 @@ import javafx.beans.property.SimpleObjectProperty;
 
 /**
  * ScoreBean Un bean JavaFX contenant (principalement) les scores
- * 
+ *
  * @author Amaury Pierre (296498)
  * @author Aurélien Clergeot (302592)
  */
@@ -26,7 +26,7 @@ public final class ScoreBean {
     /**
      * Méthode publique retournant la propriété contenant les points de la
      * partie de l'équipe donnée
-     * 
+     *
      * @param team
      *            (TeamId) l'équipe dont on veut connaitre la propriété
      *            contenant les points de la partie
@@ -50,7 +50,7 @@ public final class ScoreBean {
     /**
      * Méthode publique modifiant les points de la partie contenu dans la
      * propriété de l'équipe donnée
-     * 
+     *
      * @param team
      *            (TeamId) l'équipe dont on veut modifier les points de la
      *            partie
@@ -74,7 +74,7 @@ public final class ScoreBean {
     /**
      * Méthode publique modifiant les points totaux contenu dans la propriété de
      * l'équipe donnée
-     * 
+     *
      * @param team
      *            (TeamId) l'équipe dont on veut modifier les points totaux
      * @param newTotalPoints
@@ -97,7 +97,7 @@ public final class ScoreBean {
     /**
      * Méthode publique modifiant les points du tour contenu dans la propriété
      * de l'équipe donnée
-     * 
+     *
      * @param team
      *            (TeamId) l'équipe dont on veut modifier les points du tour
      * @param newTurnPoints
@@ -120,7 +120,7 @@ public final class ScoreBean {
     /**
      * Méthode publique permettant de modifier la propriété contenant l'équipe
      * victorieuse
-     * 
+     *
      * @param winTeam
      *            (TeamId) l'équipe victorieuse
      */
@@ -131,7 +131,7 @@ public final class ScoreBean {
     /**
      * Méthode publique retournant la propriété contenant les points totaux de
      * l'équipe donnée
-     * 
+     *
      * @param team
      *            (TeamId) l'équipe dont on veut connaitre la propriété
      *            contenant les points totaux
@@ -155,7 +155,7 @@ public final class ScoreBean {
     /**
      * Méthode publique retournant la propriété contenant les points du tour de
      * l'équipe donnée
-     * 
+     *
      * @param team
      *            (TeamId) l'équipe dont on veut connaitre la propriété
      *            contenant les points du tour
@@ -178,7 +178,7 @@ public final class ScoreBean {
 
     /**
      * Méthode publique retournant la propriété contenant l'équipe victorieuse
-     * 
+     *
      * @return (ReadOnlyObjectProperty) la propriété contenant l'équipe
      *         victorieuse
      */

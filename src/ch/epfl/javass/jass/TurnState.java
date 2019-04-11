@@ -67,16 +67,6 @@ public final class TurnState {
         this.actualTrick = actualTrick;
     }
 
-    private void exceptionIfTrickFull() throws IllegalStateException {
-        if (PackedTrick.isFull(actualTrick))
-            throw new IllegalStateException();
-    }
-
-    private void exceptionIfTrickNotFull() throws IllegalStateException {
-        if (!PackedTrick.isFull(actualTrick))
-            throw new IllegalStateException();
-    }
-
     /**
      * Retourne si l'état est terminal, càd si le dernier pli du tour a été joué
      *
@@ -218,5 +208,15 @@ public final class TurnState {
         int newTrick = PackedTrick.nextEmpty(actualTrick);
 
         return new TurnState(newScore, unplayedCards, newTrick);
+    }
+
+    private void exceptionIfTrickFull() throws IllegalStateException {
+        if (PackedTrick.isFull(actualTrick))
+            throw new IllegalStateException();
+    }
+
+    private void exceptionIfTrickNotFull() throws IllegalStateException {
+        if (!PackedTrick.isFull(actualTrick))
+            throw new IllegalStateException();
     }
 }

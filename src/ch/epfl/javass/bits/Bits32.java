@@ -12,24 +12,6 @@ import ch.epfl.javass.Preconditions;
 public final class Bits32 {
 
     /**
-     * Méthode utilitaire permettant de vérifier si un couple d'entiers est
-     * valide
-     *
-     * @throws IllegalArgumentException
-     *             si s1 n'est pas valide ou si la représentation en bits de v1
-     *             est de taille supérieure à s1
-     */
-    private static void checkValidity(int v, int s)
-            throws IllegalArgumentException {
-
-        Preconditions.checkArgument(s >= 0 && s <= Integer.SIZE);
-        if (s == Integer.SIZE)
-            Preconditions.checkArgument(v <= -1);
-        else
-            Preconditions.checkArgument(v <= ((1 << s) - 1));
-    };
-
-    /**
      * Extrait de bits l'entier composé par l'ensemble des bits commençant en
      * start et de taille size
      *
@@ -47,7 +29,7 @@ public final class Bits32 {
     public static int extract(int bits, int start, int size)
             throws IllegalArgumentException {
         return (bits & mask(start, size)) >>> start;
-    }
+    };
 
     /**
      * Crée un masque sur un int, de taille size, et commençant au start-ième
@@ -86,7 +68,7 @@ public final class Bits32 {
      *            (int) entier n°2 à packer
      * @param s2
      *            (int) nombre de bits alloués pour packer v2
-     * 
+     *
      * @return (int) un entier composé de v1 occupant les s1 bits de poids
      *         faible et de v2 occupant les s2 bits suivants
      * @throws IllegalArgumentException
@@ -120,7 +102,7 @@ public final class Bits32 {
      *            (int) entier n°3 à packer
      * @param s3
      *            (int) nombre de bits alloués pour packer v3
-     * 
+     *
      * @return (int) un entier composé de v1 occupant les s1 bits de poids
      *         faible, de v2 occupant les s2 bits suivants et de v3 occupant les
      *         s3 bits suivants
@@ -165,6 +147,24 @@ public final class Bits32 {
 
         return entier1 | (entier2 << (s1 + s2 + s3))
                 | (entier3 << (s1 + s2 + s3 + s4 + s5));
+    }
+
+    /**
+     * Méthode utilitaire permettant de vérifier si un couple d'entiers est
+     * valide
+     *
+     * @throws IllegalArgumentException
+     *             si s1 n'est pas valide ou si la représentation en bits de v1
+     *             est de taille supérieure à s1
+     */
+    private static void checkValidity(int v, int s)
+            throws IllegalArgumentException {
+
+        Preconditions.checkArgument(s >= 0 && s <= Integer.SIZE);
+        if (s == Integer.SIZE)
+            Preconditions.checkArgument(v <= -1);
+        else
+            Preconditions.checkArgument(v <= ((1 << s) - 1));
     }
 
     private Bits32() {

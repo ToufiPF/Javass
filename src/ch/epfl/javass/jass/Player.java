@@ -13,7 +13,7 @@ import java.util.Map;
 public interface Player {
     /**
      * Donne la carte que le joueur souhaite jouer
-     * 
+     *
      * @param state
      *            (TurnState) l'état du tour actuel
      * @param hand
@@ -25,7 +25,7 @@ public interface Player {
     /**
      * Informe le joueur de son Id, et de ce nom ainsi que celui de ses
      * adversaires. A appeler une fois, en début de partie
-     * 
+     *
      * @param ownId
      *            (PlayerId) l'id du joueur
      * @param mapNames
@@ -40,7 +40,7 @@ public interface Player {
     /**
      * Informe le joueur du changement de couleur des atouts. A appeler quand
      * l'atout est changé (à chaque début de tour)
-     * 
+     *
      * @param trump
      *            (Card.Color) la nouvelle couleur atout
      */
@@ -51,7 +51,7 @@ public interface Player {
     /**
      * Informe le joueur de l'équipe gagnante A appeler une seule fois, quand
      * une équipe dépasse le seuil des 1000 pts
-     * 
+     *
      * @param winningTeam
      *            (TeamId) l'équipe gagnante
      */
@@ -62,7 +62,7 @@ public interface Player {
     /**
      * Informe le joueur de sa nouvelle main. A appeler dès que la main du
      * joueur change (en début de tour, ou après avoir joué une carte)
-     * 
+     *
      * @param newHand
      */
     public default void updateHand(CardSet newHand) {
@@ -72,7 +72,7 @@ public interface Player {
     /**
      * Informe le joueur du score de la partie. A appeler chaque fois que le
      * score change (quand le pli est ramassé)
-     * 
+     *
      * @param newScore
      *            (Score) le nouveau Score
      */
@@ -83,7 +83,7 @@ public interface Player {
     /**
      * Informe le joueur de l'état du pli. A appeler chaque fois que le pli
      * change (après qu'une carte soit jouée, ou après un nouveau pli)
-     * 
+     *
      * @param newTrick
      *            (Trick) le nouveau pli
      */

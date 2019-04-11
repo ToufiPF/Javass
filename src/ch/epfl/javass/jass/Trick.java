@@ -77,19 +77,18 @@ public final class Trick {
         return Card.ofPacked(PackedTrick.card(pkTrick, index));
     }
 
-    private void exceptionIfEmpty() throws IllegalStateException {
-        if (isEmpty())
-            throw new IllegalStateException();
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() == Trick.class) {
+            Trick otherTrick = (Trick) obj;
+            return this.packed() == otherTrick.packed();
+        }
+        return false;
     }
 
-    private void exceptionIfFull() throws IllegalStateException {
-        if (isFull())
-            throw new IllegalStateException();
-    }
-
-    private void exceptionIfNotFull() throws IllegalStateException {
-        if (!isFull())
-            throw new IllegalStateException();
+    @Override
+    public int hashCode() {
+        return this.packed();
     }
 
     /**
@@ -199,6 +198,11 @@ public final class Trick {
         return PackedTrick.size(pkTrick);
     }
 
+    @Override
+    public String toString() {
+        return PackedTrick.toString(pkTrick);
+    }
+
     /**
      * Méthode publique retournant la couleur d'atout
      *
@@ -233,23 +237,19 @@ public final class Trick {
         exceptionIfFull();
         return ofPacked(PackedTrick.withAddedCard(pkTrick, c.packed()));
     }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (obj.getClass() == Trick.class) {
-            Trick otherTrick = (Trick) obj;
-            return this.packed() == otherTrick.packed();
-        }
-        return false;
+
+    private void exceptionIfEmpty() throws IllegalStateException {
+        if (isEmpty())
+            throw new IllegalStateException();
     }
-    
-    @Override
-    public int hashCode() {
-        return this.packed();
+
+    private void exceptionIfFull() throws IllegalStateException {
+        if (isFull())
+            throw new IllegalStateException();
     }
-    
-    @Override
-    public String toString() {
-        return PackedTrick.toString(pkTrick);
+
+    private void exceptionIfNotFull() throws IllegalStateException {
+        if (!isFull())
+            throw new IllegalStateException();
     }
 }

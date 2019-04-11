@@ -22,7 +22,7 @@ import ch.epfl.javass.jass.TurnState;
 /**
  * RemotePlayerClient Classe publique et finale représentant le client d'un
  * joueur
- * 
+ *
  * @author Amaury Pierre (296498)
  * @author Aurélien Clergeot (302592)
  */
@@ -34,7 +34,7 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
     /**
      * Constructeur se connectant au serveur du joueur distant grâce au nom de
      * l'hôte, avec le port par default
-     * 
+     *
      * @param hostName
      *            (String) le nom de l'hôte
      * @throws IOException
@@ -47,7 +47,7 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
     /**
      * Constructeur se connectant au serveur du joueur distant grâce au nom de
      * l'hôte et au port donné
-     * 
+     *
      * @param hostName
      *            (String) le nom de l'hôte
      * @param port
@@ -86,16 +86,6 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
         w.close();
         r.close();
         s.close();
-    }
-
-    private void sendString(String toSend) {
-        try {
-            w.write(toSend);
-            w.write('\n');
-            w.flush();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
     }
 
     @Override
@@ -146,6 +136,16 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
                 JassCommand.UPDATE_TRICK.command(),
                 StringSerializer.serializeInt(newTrick.packed()));
         sendString(toSend);
+    }
+
+    private void sendString(String toSend) {
+        try {
+            w.write(toSend);
+            w.write('\n');
+            w.flush();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
 }

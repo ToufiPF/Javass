@@ -17,23 +17,22 @@ public final class PackedTrick {
      * possible)
      */
     public static final int INVALID = 0xFFFF_FFFF; // -1, tous les bits à 1
-    
+
     private static final int MAX_VALID_INDEX_TRICK = Jass.TRICKS_PER_TURN - 1;
     private static final int CARD_SIZE = 6;
 
-    private static final int CARD_SIZE = 6;
-    
     private static final int INDEX_START = 24;
     private static final int INDEX_SIZE = 4;
-    
+
     private static final int PLAYER1_START = 28;
     private static final int PLAYER1_SIZE = 2;
-    
+
     private static final int TRUMP_START = 30;
     private static final int TRUMP_SIZE = 2;
+
     /**
      * Donne la couleur de la première carte du pli
-     * 
+     *
      * @param pkTrick
      *            (int) le pli, supposé non vide
      * @return (Card.Color) la couleur de la 1ere carte
@@ -44,38 +43,9 @@ public final class PackedTrick {
         return PackedCard.color(card(pkTrick, 0));
     }
 
-    private static int bestCard(int pkTrick) {
-        return card(pkTrick, bestCardIndex(pkTrick));
-    }
-
-    /**
-     * Donne l'index de la meilleur carte du pli
-     * 
-     * @param pkTrick
-     *            (int) le pli
-     * @return (int) l'index dans le pli de la meilleure carte
-     */
-    private static int bestCardIndex(int pkTrick) {
-        assert !isEmpty(pkTrick);
-
-        final int sizeTrick = size(pkTrick);
-        final Card.Color trump = trump(pkTrick);
-
-        int bestCard = card(pkTrick, 0);
-        int bestCardID = 0;
-        for (int i = 1; i < sizeTrick; ++i) {
-            int card_i = card(pkTrick, i);
-            if (PackedCard.isBetter(trump, card_i, bestCard)) {
-                bestCard = card_i;
-                bestCardID = i;
-            }
-        }
-        return bestCardID;
-    }
-
     /**
      * Donne la carte (en version empaquetée) à l'index donné
-     * 
+     *
      * @param pkTrick
      *            (int) le pli
      * @param indexCard
@@ -92,7 +62,7 @@ public final class PackedTrick {
     /**
      * Donne le pli empaqueté vide (le premier du tour) avec l'atout et le 1er
      * joueur donnés
-     * 
+     *
      * @param trump
      *            (Card.Color) couleur de l'atout
      * @param firstPlayer
@@ -105,7 +75,7 @@ public final class PackedTrick {
 
     /**
      * Donne l'index du pli, càd le numero du pli dans le tour
-     * 
+     *
      * @param pkTrick
      *            (int) le pli en question
      * @return (int) l'index du pli
@@ -118,7 +88,7 @@ public final class PackedTrick {
     /**
      * Vérifie si le pli donné est vide, càd qu'aucune carte n'est encore été
      * jouée
-     * 
+     *
      * @param pkTrick
      *            (int) le pli à vérifier, supposé valide
      * @return (boolean) true ssi le pli est vide
@@ -131,7 +101,7 @@ public final class PackedTrick {
 
     /**
      * Vérifie si le pli donné est plein, càd que chaque joueur a joué une carte
-     * 
+     *
      * @param pkTrick
      *            (int) le pli à vérifier, supposé valide
      * @return (boolean) true ssi le pli est plein
@@ -144,7 +114,7 @@ public final class PackedTrick {
 
     /**
      * Vérifie si le pli donné est le dernier du tour (si son index vaut 8)
-     * 
+     *
      * @param pkTrick
      *            (int) le pli à vérifier
      * @return (boolean) true ssi pkTrick est le dernier pli
@@ -158,7 +128,7 @@ public final class PackedTrick {
      * Vérifie si le pli empaqueté donné est valide, càd que : son index soit
      * compris entre 0 et 8 inclus, si une carte invalide est trouvée, toutes
      * les cartes suivantes sont également invalides
-     * 
+     *
      * @param pkTrick
      *            (int) le pli empaqueté à valider
      * @return (boolean) true ssi le pli est valide
@@ -172,9 +142,11 @@ public final class PackedTrick {
         // si la carte est invalide, les prochaines doivent
         // l'être aussi, sinon le pli est invalide
         for (int i = 0; i < PlayerId.COUNT; ++i) {
-            if (!PackedCard.isValid(Bits32.extract(pkTrick, i * CARD_SIZE, CARD_SIZE))) {
+            if (!PackedCard.isValid(
+                    Bits32.extract(pkTrick, i * CARD_SIZE, CARD_SIZE))) {
                 for (int j = i + 1; j < PlayerId.COUNT; ++j) {
-                    if (PackedCard.isValid(Bits32.extract(pkTrick, j * CARD_SIZE, CARD_SIZE)))
+                    if (PackedCard.isValid(
+                            Bits32.extract(pkTrick, j * CARD_SIZE, CARD_SIZE)))
                         return false;
                 }
                 return true;
@@ -189,7 +161,7 @@ public final class PackedTrick {
      * Donne le pli empaqueté vide suivant celui donné, càd avec l'index
      * suivant, le joueur gagnant dans pkTrick commençant le prochain, et la
      * même couleur d'atout Si le pli donné est le dernier, retourne INVALID
-     * 
+     *
      * @param pkTrick
      *            (int) l'ancien pli, supposé plein
      * @return (int) le pli suivant, vide (ou INVALID si pkTrick est le dernier
@@ -206,51 +178,8 @@ public final class PackedTrick {
     }
 
     /**
-     * Pack un pli vide selon les arguments donnés
-     * 
-     * @param indexTrick
-     *            (int) l'index du pli
-     * @param player
-     *            (PlayerId) le joueur commençant le pli
-     * @param trump
-     *            (Card.Color) la couleur des atouts
-     * @return (int) un pli vide avec les arguments donnés
-     */
-    private static int packEmptyTrick(int indexTrick, PlayerId player,
-            Card.Color trump) {
-        return packTrick(PackedCard.INVALID, PackedCard.INVALID,
-                PackedCard.INVALID, PackedCard.INVALID, indexTrick, player,
-                trump);
-    }
-
-    /**
-     * Pack un pli avec les arguments donnés
-     * 
-     * @param card0
-     *            (int) la carte 0
-     * @param card1
-     *            (int) la carte 1
-     * @param card2
-     *            (int) la carte 2
-     * @param card3
-     *            (int) la carte 3
-     * @param indexTrick
-     *            (int) l'index du pli
-     * @param player
-     *            (PlayerId) le joueur commençant le pli
-     * @param trump
-     *            (Card.Color) la couleur des atouts
-     * @return (int) un pli avec les arguments donnés
-     */
-    private static int packTrick(int card0, int card1, int card2, int card3,
-            int indexTrick, PlayerId player, Card.Color trump) {
-        return Bits32.pack(card0, CARD_SIZE, card1, CARD_SIZE, card2, CARD_SIZE, card3, CARD_SIZE, indexTrick,
-                4, player.ordinal(), 2, trump.ordinal(), 2);
-    }
-
-    /**
      * Donne l'ensemble de cartes jouables dans ce pli parmi les cartes données
-     * 
+     *
      * @param pkTrick
      *            (int) le pli, supposé non plein
      * @param pkHand
@@ -311,7 +240,7 @@ public final class PackedTrick {
     /**
      * Donne le joueur à l'index dans le pli donné, càd en comptant depuis le
      * premier joueur
-     * 
+     *
      * @param pkTrick
      *            (int) le pli en question
      * @param index
@@ -329,7 +258,7 @@ public final class PackedTrick {
     /**
      * Donne le nombre de points du pli, en comptant les 5 points bonus si le
      * pli est le dernier
-     * 
+     *
      * @param pkTrick
      *            (int) le pli en question
      * @return (int) la valeur en points du pli
@@ -347,7 +276,7 @@ public final class PackedTrick {
 
     /**
      * Donne la taille du pli donné, càd le nombre de cartes jouées
-     * 
+     *
      * @param pkTrick
      *            (int) le pli à mesurer
      * @return (int) la taille du pli
@@ -365,7 +294,7 @@ public final class PackedTrick {
     /**
      * Represente le pli donné dans un String de la forme (index_pli/8),
      * {cartes_jouées}, trump:, points_pli
-     * 
+     *
      * @param pkTrick
      *            (int) le pli à représenter
      * @return (String) une représentation de pkTrick
@@ -385,19 +314,20 @@ public final class PackedTrick {
 
     /**
      * Donne la couleur d'atout du pli (et donc du tour entier)
-     * 
+     *
      * @param pkTrick
      *            (int) le pli en question
      * @return (Card.Color) la couleur des atouts
      */
     public static Card.Color trump(int pkTrick) {
         assert isValid(pkTrick);
-        return Card.Color.ALL.get(Bits32.extract(pkTrick, TRUMP_START, TRUMP_SIZE));
+        return Card.Color.ALL
+                .get(Bits32.extract(pkTrick, TRUMP_START, TRUMP_SIZE));
     }
 
     /**
      * Donne le joueur qui remporte actuellement le pli
-     * 
+     *
      * @param pkTrick
      *            (int) le pli, supposé non vide
      * @return (PlayerId) le joueur gagnant le pli
@@ -411,7 +341,7 @@ public final class PackedTrick {
     /**
      * Retourne un pli identique à celui donné, mais auquel on a ajouté la carte
      * donnée
-     * 
+     *
      * @param pkTrick
      *            (int) le pli original, supposé non plein
      * @param pkCard
@@ -436,6 +366,79 @@ public final class PackedTrick {
 
         return packTrick(cards[0], cards[1], cards[2], cards[3], index(pkTrick),
                 player(pkTrick, 0), trump(pkTrick));
+    }
+
+    private static int bestCard(int pkTrick) {
+        return card(pkTrick, bestCardIndex(pkTrick));
+    }
+
+    /**
+     * Donne l'index de la meilleur carte du pli
+     *
+     * @param pkTrick
+     *            (int) le pli
+     * @return (int) l'index dans le pli de la meilleure carte
+     */
+    private static int bestCardIndex(int pkTrick) {
+        assert !isEmpty(pkTrick);
+
+        final int sizeTrick = size(pkTrick);
+        final Card.Color trump = trump(pkTrick);
+
+        int bestCard = card(pkTrick, 0);
+        int bestCardID = 0;
+        for (int i = 1; i < sizeTrick; ++i) {
+            int card_i = card(pkTrick, i);
+            if (PackedCard.isBetter(trump, card_i, bestCard)) {
+                bestCard = card_i;
+                bestCardID = i;
+            }
+        }
+        return bestCardID;
+    }
+
+    /**
+     * Pack un pli vide selon les arguments donnés
+     *
+     * @param indexTrick
+     *            (int) l'index du pli
+     * @param player
+     *            (PlayerId) le joueur commençant le pli
+     * @param trump
+     *            (Card.Color) la couleur des atouts
+     * @return (int) un pli vide avec les arguments donnés
+     */
+    private static int packEmptyTrick(int indexTrick, PlayerId player,
+            Card.Color trump) {
+        return packTrick(PackedCard.INVALID, PackedCard.INVALID,
+                PackedCard.INVALID, PackedCard.INVALID, indexTrick, player,
+                trump);
+    }
+
+    /**
+     * Pack un pli avec les arguments donnés
+     *
+     * @param card0
+     *            (int) la carte 0
+     * @param card1
+     *            (int) la carte 1
+     * @param card2
+     *            (int) la carte 2
+     * @param card3
+     *            (int) la carte 3
+     * @param indexTrick
+     *            (int) l'index du pli
+     * @param player
+     *            (PlayerId) le joueur commençant le pli
+     * @param trump
+     *            (Card.Color) la couleur des atouts
+     * @return (int) un pli avec les arguments donnés
+     */
+    private static int packTrick(int card0, int card1, int card2, int card3,
+            int indexTrick, PlayerId player, Card.Color trump) {
+        return Bits32.pack(card0, CARD_SIZE, card1, CARD_SIZE, card2, CARD_SIZE,
+                card3, CARD_SIZE, indexTrick, 4, player.ordinal(), 2,
+                trump.ordinal(), 2);
     }
 
     private PackedTrick() {

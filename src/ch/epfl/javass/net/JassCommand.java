@@ -17,7 +17,7 @@ public enum JassCommand {
 
     /**
      * Retourne l'enum correspondant à la commande donnée
-     * 
+     *
      * @param cmd
      *            (String) une commande du type "PLRS", "TRMP"...
      * @return (JassCommand) l'enum correspondant
@@ -42,7 +42,7 @@ public enum JassCommand {
     /**
      * Donne la commande correspondant à la valeur de l'enum (String de 4 char
      * du type "PLRS", "TRMP"...)
-     * 
+     *
      * @return (String) commande de l'enum
      */
     public String command() {

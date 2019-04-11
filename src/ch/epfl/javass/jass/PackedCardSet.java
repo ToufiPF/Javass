@@ -54,35 +54,6 @@ public final class PackedCardSet {
         return difference(ALL_CARDS, pkCardSet);
     }
 
-    private static long[] computeSubsetOfColor() {
-        long[] subsetOfColorTab = new long[Card.Color.COUNT];
-
-        for (int i = 0; i < Card.Color.COUNT; ++i) {
-            long allCardsOfOneColor = (1L << 9) - 1L;
-            allCardsOfOneColor <<= (i * 16);
-            subsetOfColorTab[i] = allCardsOfOneColor;
-        }
-        return subsetOfColorTab;
-    }
-
-    private static long[][] computeTrumpAbove() {
-        long[][] trumpAboveRank = new long[Card.Color.COUNT][Card.Rank.COUNT];
-
-        for (Card.Color color : Card.Color.ALL) {
-            for (Card.Rank rankL : Card.Rank.ALL) {
-                for (Card.Rank rankR : Card.Rank.ALL) {
-
-                    if (rankL.trumpOrdinal() < rankR.trumpOrdinal()) {
-                        trumpAboveRank[color.ordinal()][rankL
-                                .ordinal()] |= singleton(
-                                        PackedCard.pack(color, rankR));
-                    }
-                }
-            }
-        }
-        return trumpAboveRank;
-    }
-
     /**
      * Méthode publique retournant si la carte pkCard appartient à l'ensemble de
      * cartes pkCardSet
@@ -250,7 +221,7 @@ public final class PackedCardSet {
 
     /**
      * Represente l'ensemble de cartes donné sous forme de String
-     * 
+     *
      * @param pkCardSet
      *            (long) l'ensemble à représenter
      * @return (String) la représentation de l'ensemble de cartes
@@ -261,7 +232,7 @@ public final class PackedCardSet {
         StringJoiner j = new StringJoiner(",", "{", "}");
         for (int i = 0; i < size(pkCardSet); ++i)
             j.add(PackedCard.toString(get(pkCardSet, i)));
-        
+
         return j.toString();
     }
 
@@ -295,6 +266,35 @@ public final class PackedCardSet {
         assert isValid(pkCardSet2);
 
         return pkCardSet1 | pkCardSet2;
+    }
+
+    private static long[] computeSubsetOfColor() {
+        long[] subsetOfColorTab = new long[Card.Color.COUNT];
+
+        for (int i = 0; i < Card.Color.COUNT; ++i) {
+            long allCardsOfOneColor = (1L << 9) - 1L;
+            allCardsOfOneColor <<= (i * 16);
+            subsetOfColorTab[i] = allCardsOfOneColor;
+        }
+        return subsetOfColorTab;
+    }
+
+    private static long[][] computeTrumpAbove() {
+        long[][] trumpAboveRank = new long[Card.Color.COUNT][Card.Rank.COUNT];
+
+        for (Card.Color color : Card.Color.ALL) {
+            for (Card.Rank rankL : Card.Rank.ALL) {
+                for (Card.Rank rankR : Card.Rank.ALL) {
+
+                    if (rankL.trumpOrdinal() < rankR.trumpOrdinal()) {
+                        trumpAboveRank[color.ordinal()][rankL
+                                .ordinal()] |= singleton(
+                                        PackedCard.pack(color, rankR));
+                    }
+                }
+            }
+        }
+        return trumpAboveRank;
     }
 
     private PackedCardSet() {
