@@ -106,15 +106,6 @@ public final class CardSet {
                 PackedCardSet.difference(mPkCardSet, other.packed()));
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj.getClass() == CardSet.class) {
-            CardSet otherCardSet = (CardSet) obj;
-            return this.packed() == otherCardSet.packed();
-        }
-        return false;
-    }
-
     /**
      * Retourne la carte à l'index donné de ce CardSet
      * 
@@ -127,11 +118,6 @@ public final class CardSet {
     public Card get(int index) throws IndexOutOfBoundsException {
         Preconditions.checkIndex(index, size());
         return Card.ofPacked(PackedCardSet.get(mPkCardSet, index));
-    }
-
-    @Override
-    public int hashCode() {
-        return Long.hashCode(mPkCardSet);
     }
 
     /**
@@ -212,4 +198,19 @@ public final class CardSet {
     public CardSet union(CardSet other) {
         return new CardSet(PackedCardSet.union(mPkCardSet, other.packed()));
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() == CardSet.class) {
+            CardSet otherCardSet = (CardSet) obj;
+            return this.packed() == otherCardSet.packed();
+        }
+        return false;
+    }
+    
+    @Override
+    public int hashCode() {
+        return Long.hashCode(mPkCardSet);
+    }
+
 }

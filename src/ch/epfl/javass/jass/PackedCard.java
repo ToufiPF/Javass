@@ -1,6 +1,7 @@
 package ch.epfl.javass.jass;
 
 import ch.epfl.javass.bits.Bits32;
+import ch.epfl.javass.jass.Card.Rank;
 
 /**
  * PackedCard Une classe non instanciable qui fournit des méthodes statiques
@@ -15,6 +16,12 @@ public final class PackedCard {
      */
     public static final int INVALID = 0b11_1111;
 
+    private static final int RANK_START = 0;
+    private static final int RANK_SIZE = 4;
+    
+    private static final int COLOR_START = 4;
+    private static final int COLOR_SIZE = 2;
+
     /**
      * Donne la couleur d'une carte à partir de sa représentation en int
      * 
@@ -24,7 +31,19 @@ public final class PackedCard {
      */
     public static Card.Color color(int pkCard) {
         assert isValid(pkCard);
-        return Card.Color.ALL.get(Bits32.extract(pkCard, 4, 2));
+        return Card.Color.ALL.get(Bits32.extract(pkCard, COLOR_START, COLOR_SIZE));
+    }
+
+    /**
+     * Donne le rang d'une carte à partir de sa représentation en int
+     * 
+     * @param pkCard
+     *            (int) la représentation de la carte
+     * @return (Card.Rank) le rang de la carte
+     */
+    public static Card.Rank rank(int pkCard) {
+        assert isValid(pkCard);
+        return Card.Rank.ALL.get(Bits32.extract(pkCard, RANK_START, RANK_SIZE));
     }
 
     /**
@@ -77,8 +96,8 @@ public final class PackedCard {
         // - que l'id du rang soit inferieur ou égal à 8
         // (ie. Bits32.extract(packedCard, 0, 4) <= 8)
 
-        return Bits32.extract(packedCard, 6, 32 - 6) == 0
-                && Bits32.extract(packedCard, 0, 4) <= 8;
+        return Bits32.extract(packedCard, 6, 32-6) == 0
+                && Bits32.extract(packedCard, RANK_START, RANK_SIZE) < Rank.COUNT;
     }
 
     /**
@@ -91,7 +110,7 @@ public final class PackedCard {
      * @return (int) la representation en int de la carte
      */
     public static int pack(Card.Color c, Card.Rank r) {
-        return Bits32.pack(r.ordinal(), 4, c.ordinal(), 2);
+        return Bits32.pack(r.ordinal(), RANK_SIZE, c.ordinal(), COLOR_SIZE);
     }
 
     /**
@@ -139,18 +158,6 @@ public final class PackedCard {
         default:
             return 0;
         }
-    }
-
-    /**
-     * Donne le rang d'une carte à partir de sa représentation en int
-     * 
-     * @param pkCard
-     *            (int) la représentation de la carte
-     * @return (Card.Rank) le rang de la carte
-     */
-    public static Card.Rank rank(int pkCard) {
-        assert isValid(pkCard);
-        return Card.Rank.ALL.get(Bits32.extract(pkCard, 0, 4));
     }
 
     /**

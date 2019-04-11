@@ -19,6 +19,16 @@ public final class PackedTrick {
     public static final int INVALID = 0xFFFF_FFFF; // -1, tous les bits à 1
     private static final int MAX_VALID_INDEX_TRICK = Jass.TRICKS_PER_TURN - 1;
 
+    private static final int CARD_SIZE = 6;
+    
+    private static final int INDEX_START = 24;
+    private static final int INDEX_SIZE = 4;
+    
+    private static final int PLAYER1_START = 28;
+    private static final int PLAYER1_SIZE = 2;
+    
+    private static final int TRUMP_START = 30;
+    private static final int TRUMP_SIZE = 2;
     /**
      * Donne la couleur de la première carte du pli
      * 
@@ -74,7 +84,7 @@ public final class PackedTrick {
         assert isValid(pkTrick);
         assert indexCard >= 0;
         assert indexCard < 4;
-        return Bits32.extract(pkTrick, indexCard * 6, 6);
+        return Bits32.extract(pkTrick, indexCard * CARD_SIZE, CARD_SIZE);
     }
 
     /**
@@ -100,7 +110,7 @@ public final class PackedTrick {
      */
     public static int index(int pkTrick) {
         assert isValid(pkTrick);
-        return Bits32.extract(pkTrick, 24, 4);
+        return Bits32.extract(pkTrick, INDEX_START, INDEX_SIZE);
     }
 
     /**
@@ -152,7 +162,7 @@ public final class PackedTrick {
      * @return (boolean) true ssi le pli est valide
      */
     public static boolean isValid(int pkTrick) {
-        int index = Bits32.extract(pkTrick, 24, 4);
+        int index = Bits32.extract(pkTrick, INDEX_START, INDEX_SIZE);
         if (index < 0 || index > MAX_VALID_INDEX_TRICK)
             return false;
 
@@ -160,9 +170,9 @@ public final class PackedTrick {
         // si la carte est invalide, les prochaines doivent
         // l'être aussi, sinon le pli est invalide
         for (int i = 0; i < PlayerId.COUNT; ++i) {
-            if (!PackedCard.isValid(Bits32.extract(pkTrick, i * 6, 6))) {
+            if (!PackedCard.isValid(Bits32.extract(pkTrick, i * CARD_SIZE, CARD_SIZE))) {
                 for (int j = i + 1; j < PlayerId.COUNT; ++j) {
-                    if (PackedCard.isValid(Bits32.extract(pkTrick, j * 6, 6)))
+                    if (PackedCard.isValid(Bits32.extract(pkTrick, j * CARD_SIZE, CARD_SIZE)))
                         return false;
                 }
                 return true;
@@ -232,8 +242,8 @@ public final class PackedTrick {
      */
     private static int packTrick(int card0, int card1, int card2, int card3,
             int indexTrick, PlayerId player, Card.Color trump) {
-        return Bits32.pack(card0, 6, card1, 6, card2, 6, card3, 6, indexTrick,
-                4, player.ordinal(), 2, trump.ordinal(), 2);
+        return Bits32.pack(card0, CARD_SIZE, card1, CARD_SIZE, card2, CARD_SIZE, card3, CARD_SIZE, indexTrick,
+                INDEX_SIZE, player.ordinal(), PLAYER1_SIZE, trump.ordinal(), TRUMP_SIZE);
     }
 
     /**
@@ -310,7 +320,7 @@ public final class PackedTrick {
         assert isValid(pkTrick);
         assert index >= 0;
         assert index < PlayerId.COUNT;
-        int firstPlayer = Bits32.extract(pkTrick, 28, 2);
+        int firstPlayer = Bits32.extract(pkTrick, PLAYER1_START, PLAYER1_SIZE);
         return PlayerId.ALL.get((firstPlayer + index) % PlayerId.COUNT);
     }
 
@@ -380,7 +390,7 @@ public final class PackedTrick {
      */
     public static Card.Color trump(int pkTrick) {
         assert isValid(pkTrick);
-        return Card.Color.ALL.get(Bits32.extract(pkTrick, 30, 2));
+        return Card.Color.ALL.get(Bits32.extract(pkTrick, TRUMP_START, TRUMP_SIZE));
     }
 
     /**
