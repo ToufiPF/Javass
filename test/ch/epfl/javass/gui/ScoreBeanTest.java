@@ -29,11 +29,11 @@ class ScoreBeanTest {
                 ScoreBean sb = new ScoreBean();
 
                 sb.turnPointsProperty(team).addListener((o, oV, nV) -> System.out.println(nV));
-                
+
                 System.out.println("(Score :) TurnPoints initial de la " + team + " : " + s.turnPoints(team));
                 System.out.println("(Propriété :) TurnPoints initial de la " + team + " : ");
                 sb.setTurnPoints(team, s.turnPoints(team));  
-                
+
                 s = Score.ofPacked(randomPkScore(rng));
                 System.out.println("(Score :) TurnPoints après changement de la " + team + " : " + s.turnPoints(team));
                 System.out.println("(Propriété :) TurnPoints après changement de la " + team + " : ");
@@ -43,4 +43,55 @@ class ScoreBeanTest {
         }
     }
 
+    @Test
+    void testGamePoints() {
+        SplittableRandom rng = TestRandomizer.newRandom();
+        for(int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; ++i) {
+            Score s = Score.ofPacked(randomPkScore(rng));
+            for(TeamId team : TeamId.ALL) {
+                ScoreBean sb = new ScoreBean();
+
+                sb.gamePointsProperty(team).addListener((o, oV, nV) -> System.out.println(nV));
+
+                System.out.println("(Score :) GamePoints initial de la " + team + " : " + s.gamePoints(team));
+                System.out.println("(Propriété :) GamePoints initial de la " + team + " : ");
+                sb.setGamePoints(team, s.gamePoints(team));  
+
+                s = Score.ofPacked(randomPkScore(rng));
+                System.out.println("(Score :) GamePoints après changement de la " + team + " : " + s.gamePoints(team));
+                System.out.println("(Propriété :) GamePoints après changement de la " + team + " : ");
+                sb.setGamePoints(team, s.gamePoints(team));
+            }
+        }
+    }
+
+    @Test
+    void testTotalPoints() {
+        SplittableRandom rng = TestRandomizer.newRandom();
+        for(int i = 0; i < TestRandomizer.RANDOM_ITERATIONS; ++i) {
+            Score s = Score.ofPacked(randomPkScore(rng));
+            for(TeamId team : TeamId.ALL) {
+                ScoreBean sb = new ScoreBean();
+
+                sb.totalPointsProperty(team).addListener((o, oV, nV) -> System.out.println(nV));
+
+                System.out.println("(Score :) TotalPoints initial de la " + team + " : " + s.totalPoints(team));
+                System.out.println("(Propriété :) TotalPoints initial de la " + team + " : ");
+                sb.setTotalPoints(team, s.totalPoints(team));  
+
+                s = Score.ofPacked(randomPkScore(rng));
+                System.out.println("(Score :) TotalPoints après changement de la " + team + " : " + s.totalPoints(team));
+                System.out.println("(Propriété :) TotalPoints après changement de la " + team + " : ");
+                sb.setTotalPoints(team, s.totalPoints(team));
+            }
+        }
+    }
+    
+    @Test
+    void testWinningTeam() {
+        ScoreBean sb = new ScoreBean();
+        sb.winningTeamProperty().addListener((o, oV, nV) -> System.out.println(nV));
+        sb.setWinningTeam(TeamId.TEAM_1);
+        sb.setWinningTeam(TeamId.TEAM_2);
+    }
 }
