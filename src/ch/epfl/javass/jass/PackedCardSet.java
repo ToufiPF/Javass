@@ -13,14 +13,14 @@ import ch.epfl.javass.bits.Bits64;
  */
 public final class PackedCardSet {
 
-    // (long) représente l'ensemble des cartes vide
+    /** (long) représente l'ensemble des cartes vide */
     public static final long EMPTY = 0L;
 
-    // (long) représente l'ensemble des 36 cartes du Jass
-    public static final long ALL_CARDS = 0b0000000111111111_0000000111111111_0000000111111111_0000000111111111L;
+    /** (long) représente l'ensemble des 36 cartes du Jass */
+    // 0x01FF = 0b0000_0001_1111_1111
+    public static final long ALL_CARDS = 0x01FF_01FF_01FF_01FFL;
 
     private static long[][] trumpAboveTab = computeTrumpAbove();
-
     private static long[] subsetOfColorTab = computeSubsetOfColor();
 
     /**
@@ -259,9 +259,9 @@ public final class PackedCardSet {
         assert isValid(pkCardSet);
 
         StringJoiner j = new StringJoiner(",", "{", "}");
-        for (int i = 0; i < size(pkCardSet); ++i) {
+        for (int i = 0; i < size(pkCardSet); ++i)
             j.add(PackedCard.toString(get(pkCardSet, i)));
-        }
+        
         return j.toString();
     }
 

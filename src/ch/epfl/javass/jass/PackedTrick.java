@@ -17,7 +17,9 @@ public final class PackedTrick {
      * possible)
      */
     public static final int INVALID = 0xFFFF_FFFF; // -1, tous les bits à 1
+    
     private static final int MAX_VALID_INDEX_TRICK = Jass.TRICKS_PER_TURN - 1;
+    private static final int CARD_SIZE = 6;
 
     private static final int CARD_SIZE = 6;
     
@@ -83,7 +85,7 @@ public final class PackedTrick {
     public static int card(int pkTrick, int indexCard) {
         assert isValid(pkTrick);
         assert indexCard >= 0;
-        assert indexCard < 4;
+        assert indexCard < PlayerId.COUNT;
         return Bits32.extract(pkTrick, indexCard * CARD_SIZE, CARD_SIZE);
     }
 
@@ -242,8 +244,8 @@ public final class PackedTrick {
      */
     private static int packTrick(int card0, int card1, int card2, int card3,
             int indexTrick, PlayerId player, Card.Color trump) {
-        return Bits32.pack(card0, CARD_SIZE, card1, CARD_SIZE, card2, CARD_SIZE, card3, CARD_SIZE, indexTrick,
-                INDEX_SIZE, player.ordinal(), PLAYER1_SIZE, trump.ordinal(), TRUMP_SIZE);
+        return Bits32.pack(card0, 6, card1, 6, card2, 6, card3, 6, indexTrick,
+                4, player.ordinal(), 2, trump.ordinal(), 2);
     }
 
     /**

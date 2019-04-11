@@ -77,9 +77,9 @@ public final class HandBean {
      */
     public void setPlayableCards(CardSet newPlayableCards) {
         final int playableSize = newPlayableCards.size();
-        if (playableSize > Jass.HAND_SIZE) {
+        if (playableSize > Jass.HAND_SIZE)
             throw new IllegalArgumentException("Trop de cartes jouables.");
-        }
+        
         playableCards.clear();
         for (int i = 0; i < playableSize; ++i)
             playableCards.add(newPlayableCards.get(i));

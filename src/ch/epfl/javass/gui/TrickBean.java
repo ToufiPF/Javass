@@ -4,6 +4,7 @@ import ch.epfl.javass.jass.Card;
 import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.Trick;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
@@ -55,27 +56,27 @@ public final class TrickBean {
      * @return (ObservableMap<PlayerId, Card>) (UNMODIFIABLE) map décrivant le
      *         trick
      */
-    public ObservableMap<PlayerId, Card> trickProperty() {
+    public ObservableMap<PlayerId, Card> trick() {
         return FXCollections.unmodifiableObservableMap(trickProp);
     }
 
     /**
      * Getter pour la propriété trump (Card.Color) du Trick
      * 
-     * @return (ObjectProperty<Card.Color>) propriété trump
+     * @return (ReadOnlyObjectProperty<Card.Color>) propriété trump
      */
-    public ObjectProperty<Card.Color> trumpProperty() {
+    public ReadOnlyObjectProperty<Card.Color> trump() {
         return trumpProp;
     }
 
     /**
      * Getter pour le joueur en train de gagner le pli (celui avec la carte la
-     * plus forte). Si le pli est vide, retourne un ObjectProperty contenant
-     * null
+     * plus forte). Si le pli est vide, retourne un ReadOnlyObjectProperty
+     * contenant null
      * 
-     * @return (ObjectProperty<PlayerId>) joueur gagnant actuellement le pli
+     * @return (ReadOnlyObjectProperty<PlayerId>) joueur gagnant actuellement le pli
      */
-    public ObjectProperty<PlayerId> winningPlayerProperty() {
+    public ReadOnlyObjectProperty<PlayerId> winningPlayer() {
         return winningPlayer;
     }
 }

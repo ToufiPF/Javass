@@ -27,7 +27,7 @@ class HandBeanTest {
           .add(Card.of(Color.CLUB, Rank.TEN))
           .add(Card.of(Color.CLUB, Rank.QUEEN));
         hb.setHand(h);
-        while (! h.isEmpty()) {
+        while (!h.isEmpty()) {
           h = h.remove(h.get(0));
           hb.setHand(h);
         }
