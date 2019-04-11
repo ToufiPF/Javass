@@ -244,7 +244,7 @@ public final class PackedTrick {
      */
     private static int packTrick(int card0, int card1, int card2, int card3,
             int indexTrick, PlayerId player, Card.Color trump) {
-        return Bits32.pack(card0, 6, card1, 6, card2, 6, card3, 6, indexTrick,
+        return Bits32.pack(card0, CARD_SIZE, card1, CARD_SIZE, card2, CARD_SIZE, card3, CARD_SIZE, indexTrick,
                 4, player.ordinal(), 2, trump.ordinal(), 2);
     }
 
