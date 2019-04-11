@@ -134,7 +134,7 @@ public final class PackedTrick {
      * @return (boolean) true ssi le pli est valide
      */
     public static boolean isValid(int pkTrick) {
-        int index = Bits32.extract(pkTrick, INDEX_START, INDEX_SIZE);
+        final int index = Bits32.extract(pkTrick, INDEX_START, INDEX_SIZE);
         if (index < 0 || index > MAX_VALID_INDEX_TRICK)
             return false;
 
