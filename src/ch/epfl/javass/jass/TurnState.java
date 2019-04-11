@@ -12,30 +12,10 @@ import ch.epfl.javass.jass.Card.Color;
  */
 public final class TurnState {
 
-    private final long actualScore;
-    private final long unplayedCards;
-    private final int actualTrick;
-
-    private TurnState(long actualScore, long unplayedCards, int actualTrick) {
-        this.actualScore = actualScore;
-        this.unplayedCards = unplayedCards;
-        this.actualTrick = actualTrick;
-    }
-
-    private void exceptionIfTrickFull() throws IllegalStateException {
-        if (PackedTrick.isFull(actualTrick))
-            throw new IllegalStateException();
-    }
-
-    private void exceptionIfTrickNotFull() throws IllegalStateException {
-        if (!PackedTrick.isFull(actualTrick))
-            throw new IllegalStateException();
-    }
-
     /**
      * Méthode publique et statique retournant l'état initial du tour d'atout,
      * score et premier joueur donnés
-     * 
+     *
      * @param trump
      *            (Color) la couleur de l'atout
      * @param score
@@ -54,7 +34,7 @@ public final class TurnState {
     /**
      * Méthode publique et statique retournant l'état dont les composantes sont
      * celles données
-     * 
+     *
      * @param pkScore
      *            (long) le score empaqueté du tour
      * @param pkUnplayedCards
@@ -75,63 +55,31 @@ public final class TurnState {
         return new TurnState(pkScore, pkUnplayedCards, pkTrick);
     }
 
-    /**
-     * Accesseur à la version empaquetée du score actuel du tour
-     * 
-     * @return (long) la version empaquetée du score su tour
-     */
-    public long packedScore() {
-        return actualScore;
+    private final long actualScore;
+
+    private final long unplayedCards;
+
+    private final int actualTrick;
+
+    private TurnState(long actualScore, long unplayedCards, int actualTrick) {
+        this.actualScore = actualScore;
+        this.unplayedCards = unplayedCards;
+        this.actualTrick = actualTrick;
     }
 
-    /**
-     * Accesseur à la version empaquetée des cartes non jouées du tour
-     * 
-     * @return (long) la version empaquetée des cartes non jouées du tour
-     */
-    public long packedUnplayedCards() {
-        return unplayedCards;
+    private void exceptionIfTrickFull() throws IllegalStateException {
+        if (PackedTrick.isFull(actualTrick))
+            throw new IllegalStateException();
     }
 
-    /**
-     * Accesseur à la version empaquetée du pli actuel du tour
-     * 
-     * @return (int) la version empaquetée du pli actuel du tour
-     */
-    public int packedTrick() {
-        return actualTrick;
-    }
-
-    /**
-     * Accesseur à la version objet du score actuel du tour
-     * 
-     * @return (Score) la version objet du score actuel du tour
-     */
-    public Score score() {
-        return Score.ofPacked(actualScore);
-    }
-
-    /**
-     * Accesseur à la version objet des cartes non jouées du tour
-     * 
-     * @return (CardSet) la version objet des cartes non jouées du tour
-     */
-    public CardSet unplayedCards() {
-        return CardSet.ofPacked(unplayedCards);
-    }
-
-    /**
-     * Accesseur à la version objet du pli actuel du tour
-     * 
-     * @return (Trick) la version objet du pli actuel du tour
-     */
-    public Trick trick() {
-        return Trick.ofPacked(actualTrick);
+    private void exceptionIfTrickNotFull() throws IllegalStateException {
+        if (!PackedTrick.isFull(actualTrick))
+            throw new IllegalStateException();
     }
 
     /**
      * Retourne si l'état est terminal, càd si le dernier pli du tour a été joué
-     * 
+     *
      * @return true (boolean) ssi l'état est terminal, càd si le pli actuel est
      *         invalide
      */
@@ -141,9 +89,10 @@ public final class TurnState {
 
     /**
      * Retourne le joueur devant jouer la prochaine carte
-     * 
+     *
      * @return (PlayerId) le joueur devant jouer la prochaine carte
-     * @throws IllegalStateException si le pli est plein
+     * @throws IllegalStateException
+     *             si le pli est plein
      */
     public PlayerId nextPlayer() throws IllegalStateException {
         exceptionIfTrickFull();
@@ -151,13 +100,68 @@ public final class TurnState {
     }
 
     /**
+     * Accesseur à la version empaquetée du score actuel du tour
+     *
+     * @return (long) la version empaquetée du score su tour
+     */
+    public long packedScore() {
+        return actualScore;
+    }
+
+    /**
+     * Accesseur à la version empaquetée du pli actuel du tour
+     *
+     * @return (int) la version empaquetée du pli actuel du tour
+     */
+    public int packedTrick() {
+        return actualTrick;
+    }
+
+    /**
+     * Accesseur à la version empaquetée des cartes non jouées du tour
+     *
+     * @return (long) la version empaquetée des cartes non jouées du tour
+     */
+    public long packedUnplayedCards() {
+        return unplayedCards;
+    }
+
+    /**
+     * Accesseur à la version objet du score actuel du tour
+     *
+     * @return (Score) la version objet du score actuel du tour
+     */
+    public Score score() {
+        return Score.ofPacked(actualScore);
+    }
+
+    /**
+     * Accesseur à la version objet du pli actuel du tour
+     *
+     * @return (Trick) la version objet du pli actuel du tour
+     */
+    public Trick trick() {
+        return Trick.ofPacked(actualTrick);
+    }
+
+    /**
+     * Accesseur à la version objet des cartes non jouées du tour
+     *
+     * @return (CardSet) la version objet des cartes non jouées du tour
+     */
+    public CardSet unplayedCards() {
+        return CardSet.ofPacked(unplayedCards);
+    }
+
+    /**
      * Retourne l'état correspondant à celui auquel on l'applique après avoir
      * joué la carte donnée
-     * 
+     *
      * @param card
      *            (Card) la carte à jouer dans l'état du tour
      * @return (TurnState) l'état du tour après avoir joué la carte card
-     * @throws IllegalStateException si le pli est plein 
+     * @throws IllegalStateException
+     *             si le pli est plein
      */
     public TurnState withNewCardPlayed(Card card) throws IllegalStateException {
         exceptionIfTrickFull();
@@ -174,31 +178,9 @@ public final class TurnState {
 
     /**
      * Retourne l'état correspondant à celui auquel on l'applique après que le
-     * pli courant ait été ramassé
-     * 
-     * @return (TurnState) l'état correspondant à celui auquel on l'applique
-     *         après que le pli courant ait été ramassé
-     *         @throws IllegalStateException si le pli n'est pas plein 
-     */
-    public TurnState withTrickCollected() throws IllegalStateException {
-        exceptionIfTrickNotFull();
-
-        // On met à jour le score actuel
-        long newScore = PackedScore.withAdditionalTrick(actualScore,
-                PackedTrick.winningPlayer(actualTrick).team(),
-                PackedTrick.points(actualTrick));
-
-        // On met à jour le pli actuel
-        int newTrick = PackedTrick.nextEmpty(actualTrick);
-
-        return new TurnState(newScore, unplayedCards, newTrick);
-    }
-
-    /**
-     * Retourne l'état correspondant à celui auquel on l'applique après que le
      * prochain joueur ait joué la carte donnée, et que le pli courant ait été
      * ramassé s'il est alors plein
-     * 
+     *
      * @param card
      *            (Card) la carte à ajouter au tour
      * @return (TurnState) l'état du tour après avoir ajouté la carte donnée et
@@ -213,5 +195,28 @@ public final class TurnState {
             updated = updated.withTrickCollected();
 
         return updated;
+    }
+
+    /**
+     * Retourne l'état correspondant à celui auquel on l'applique après que le
+     * pli courant ait été ramassé
+     *
+     * @return (TurnState) l'état correspondant à celui auquel on l'applique
+     *         après que le pli courant ait été ramassé
+     * @throws IllegalStateException
+     *             si le pli n'est pas plein
+     */
+    public TurnState withTrickCollected() throws IllegalStateException {
+        exceptionIfTrickNotFull();
+
+        // On met à jour le score actuel
+        long newScore = PackedScore.withAdditionalTrick(actualScore,
+                PackedTrick.winningPlayer(actualTrick).team(),
+                PackedTrick.points(actualTrick));
+
+        // On met à jour le pli actuel
+        int newTrick = PackedTrick.nextEmpty(actualTrick);
+
+        return new TurnState(newScore, unplayedCards, newTrick);
     }
 }

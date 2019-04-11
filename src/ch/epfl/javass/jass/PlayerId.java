@@ -6,8 +6,8 @@ import java.util.List;
 
 /**
  * Type énuméré permettant d'identifier les différents joueurs
- * 
- * @author Amaury Pierre (296498) 
+ *
+ * @author Amaury Pierre (296498)
  * @author Aurélien Clergeot (302592)
  */
 public enum PlayerId {
@@ -23,7 +23,7 @@ public enum PlayerId {
     /**
      * Méthode retournant l'équipe à laquelle appartient le joueur auquel on
      * l'applique.
-     * 
+     *
      * @return l'équipe à laquelle appartient le joueur à auquel on applique la
      *         méthode
      */

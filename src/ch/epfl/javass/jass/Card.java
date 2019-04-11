@@ -12,14 +12,14 @@ import ch.epfl.javass.Preconditions;
 
 /**
  * Card Une classe immuable représentant une carte
- * 
- * @author Amaury Pierre (296498) 
+ *
+ * @author Amaury Pierre (296498)
  * @author Aurélien Clergeot (302592)
  */
 public final class Card {
     /**
      * Color Une classe imbriquée énumérant les couleurs des cartes
-     * 
+     *
      * @author Amaury Pierre (296498)
      */
     public enum Color {
@@ -32,9 +32,8 @@ public final class Card {
         /** Constante du nombre de valeur du type énuméré Color */
         public static final int COUNT = values().length;
 
-
         private final String symbol;
-        
+
         private Color(String symbol) {
             this.symbol = symbol;
         }
@@ -47,25 +46,29 @@ public final class Card {
 
     /**
      * Rank Une classe imbriquée énumérant les rangs des cartes
-     * 
+     *
      * @author Amaury Pierre (296498)
      */
     public enum Rank {
         SIX("6"), SEVEN("7"), EIGHT("8"), NINE("9"), TEN("10"), JACK(
                 "J"), QUEEN("Q"), KING("K"), ACE("A");
-        
+
         /** Liste immuable contenant toutes les valeurs du type énuméré Rank */
         public static final List<Rank> ALL = Collections
                 .unmodifiableList(Arrays.asList(values()));
-        
+
         /** Constante du nombre de valeur du type énuméré Rank */
         public static final int COUNT = values().length;
 
-        
         private String rank;
-        
+
         private Rank(String rank) {
             this.rank = rank;
+        }
+
+        @Override
+        public String toString() {
+            return rank;
         }
 
         /**
@@ -90,23 +93,12 @@ public final class Card {
                 return ordinal();
             }
         }
-
-        @Override
-        public String toString() {
-            return rank;
-        }
-    }
-
-    private final int pkCard;
-
-    private Card(int pkCard) {
-        this.pkCard = pkCard;
     }
 
     /**
      * Méthode statique permettant de construire une carte à partir d'un rang et
      * d'une couleur
-     * 
+     *
      * @param c
      *            (Color)la couleur de la carte à construire
      * @param r
@@ -120,7 +112,7 @@ public final class Card {
 
     /**
      * Méthode statique construisant une carte à partir de sa version empaquetée
-     * 
+     *
      * @param packed
      *            (int) la valeur empaquetée de la carte à construire
      * @return (Card) la carte créée correspondant à la valeur packed
@@ -133,11 +125,10 @@ public final class Card {
         return card;
     }
 
-    /**
-     * @return (int) la valeur empaquetée de la carte
-     */
-    public int packed() {
-        return pkCard;
+    private final int pkCard;
+
+    private Card(int pkCard) {
+        this.pkCard = pkCard;
     }
 
     /**
@@ -147,17 +138,24 @@ public final class Card {
         return PackedCard.color(pkCard);
     }
 
-    /**
-     * @return (Rank) le rang de la carte
-     */
-    public Rank rank() {
-        return PackedCard.rank(pkCard);
+    @Override
+    public boolean equals(Object that0) {
+        if (that0.getClass() == Card.class) {
+            Card that0Card = (Card) that0;
+            return pkCard == that0Card.packed();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return packed();
     }
 
     /**
      * Méthode renvoyant true si et seulement si la carte that est meilleure que
      * le récepteur
-     * 
+     *
      * @param trump
      *            (Color) la couleur de l'atout
      * @param that
@@ -171,9 +169,16 @@ public final class Card {
     }
 
     /**
+     * @return (int) la valeur empaquetée de la carte
+     */
+    public int packed() {
+        return pkCard;
+    }
+
+    /**
      * Méthode renvoyant le nombre de points de la carte, en sachant que trump
      * est la couleur de l'atout
-     * 
+     *
      * @param trump
      *            (Color) la couleur de l'atout
      * @return (int) le nombre de points de la carte, en sachant que trump est
@@ -182,19 +187,12 @@ public final class Card {
     public int points(Color trump) {
         return PackedCard.points(trump, pkCard);
     }
-    
-    @Override
-    public boolean equals(Object that0) {
-        if (that0.getClass() == Card.class) {
-            Card that0Card = (Card) that0;
-            return pkCard == that0Card.packed();
-        }
-        return false;
-    }
 
-    @Override
-    public int hashCode() {
-        return packed();
+    /**
+     * @return (Rank) le rang de la carte
+     */
+    public Rank rank() {
+        return PackedCard.rank(pkCard);
     }
 
     @Override

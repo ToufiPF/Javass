@@ -20,108 +20,63 @@ import ch.epfl.javass.jass.Trick;
 import ch.epfl.javass.jass.TurnState;
 
 /**
- * RemotePlayerClient 
- * Classe publique et finale représentant le client d'un joueur
- * @author Amaury Pierre (296498) 
+ * RemotePlayerClient Classe publique et finale représentant le client d'un
+ * joueur
+ * 
+ * @author Amaury Pierre (296498)
  * @author Aurélien Clergeot (302592)
  */
-public final class RemotePlayerClient implements Player, AutoCloseable{
+public final class RemotePlayerClient implements Player, AutoCloseable {
     BufferedWriter w;
     BufferedReader r;
     Socket s;
 
     /**
-     * Constructeur se connectant au serveur du joueur distant 
-     * grâce au nom de l'hôte, avec le port par default
-     * @param hostName (String) le nom de l'hôte
-     * @throws IOException si les flots ne peuvent pas se créer
+     * Constructeur se connectant au serveur du joueur distant grâce au nom de
+     * l'hôte, avec le port par default
+     * 
+     * @param hostName
+     *            (String) le nom de l'hôte
+     * @throws IOException
+     *             si les flots ne peuvent pas se créer
      */
     public RemotePlayerClient(String hostName) throws IOException {
         this(hostName, RemotePlayerServer.DEFAULT_PORT);
     }
-    
+
     /**
-     * Constructeur se connectant au serveur du joueur distant grâce au nom de l'hôte et au port donné
-     * @param hostName (String) le nom de l'hôte
-     * @param port (int) le port sur lequel se connecter
-     * @throws IOException si les flots ne peuvent pas se créer
+     * Constructeur se connectant au serveur du joueur distant grâce au nom de
+     * l'hôte et au port donné
+     * 
+     * @param hostName
+     *            (String) le nom de l'hôte
+     * @param port
+     *            (int) le port sur lequel se connecter
+     * @throws IOException
+     *             si les flots ne peuvent pas se créer
      */
     public RemotePlayerClient(String hostName, int port) throws IOException {
         s = new Socket(hostName, port);
-        r = new BufferedReader(
-                new InputStreamReader(s.getInputStream(),
-                        StandardCharsets.US_ASCII));
-        w = new BufferedWriter(
-                new OutputStreamWriter(s.getOutputStream(),
-                        StandardCharsets.US_ASCII));
-    }
-    
-    private void sendString(String toSend) {
-        try{
-            w.write(toSend);
-            w.write('\n');
-            w.flush();
-        }
-        catch(IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-    
-    @Override
-    public void setPlayers(PlayerId ownId, Map<PlayerId, String> mapNames) {
-        String toSend = StringSerializer.join(" ", JassCommand.SET_PLAYERS.command(), StringSerializer.serializeInt(ownId.ordinal()),
-                StringSerializer.serializeMapNames(mapNames));
-        sendString(toSend);
+        r = new BufferedReader(new InputStreamReader(s.getInputStream(),
+                StandardCharsets.US_ASCII));
+        w = new BufferedWriter(new OutputStreamWriter(s.getOutputStream(),
+                StandardCharsets.US_ASCII));
     }
 
-    @Override
-    public void updateHand(CardSet newHand) {
-        String toSend = StringSerializer.join(" ", JassCommand.UPDATE_HAND.command(),
-                StringSerializer.serializeLong(newHand.packed()));
-        sendString(toSend);
-    }
-
-    @Override
-    public void setTrump(Card.Color trump) {
-        String toSend = StringSerializer.join(" ", JassCommand.SET_TRUMP.command(),
-                StringSerializer.serializeInt(trump.ordinal()));
-        sendString(toSend);
-
-    }
-
-    @Override
-    public void updateTrick(Trick newTrick) {
-        String toSend = StringSerializer.join(" ", JassCommand.UPDATE_TRICK.command(),
-                StringSerializer.serializeInt(newTrick.packed()));
-        sendString(toSend);
-    }
-
-    @Override
-    public void updateScore(Score newScore) {
-        String toSend = StringSerializer.join(" ", JassCommand.UPDATE_SCORE.command(),
-                StringSerializer.serializeLong(newScore.packed())); 
-        sendString(toSend);
-    }
-
-    @Override
-    public void setWinningTeam(TeamId winningTeam) {
-        String toSend = StringSerializer.join(" ", JassCommand.SET_WINNING_TEAM.command(),
-                StringSerializer.serializeInt(winningTeam.ordinal()));
-        sendString(toSend);
-    }
-    
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
-        String toSend = StringSerializer.join(" ", JassCommand.CARD_TO_PLAY.command(),
-                StringSerializer.serializeTurnState(state), StringSerializer.serializeLong(hand.packed()));
+        String toSend = StringSerializer.join(" ",
+                JassCommand.CARD_TO_PLAY.command(),
+                StringSerializer.serializeTurnState(state),
+                StringSerializer.serializeLong(hand.packed()));
         sendString(toSend);
-        
+
         try {
-        String cardString = r.readLine().trim();
-        Card card = Card.ofPacked(StringSerializer.deserializeInt(cardString));
-        return card;
-        }
-        catch(IOException e) {
+            String cardString = r.readLine().trim();
+            Card card = Card
+                    .ofPacked(StringSerializer.deserializeInt(cardString));
+            return card;
+        } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
@@ -131,6 +86,66 @@ public final class RemotePlayerClient implements Player, AutoCloseable{
         w.close();
         r.close();
         s.close();
+    }
+
+    private void sendString(String toSend) {
+        try {
+            w.write(toSend);
+            w.write('\n');
+            w.flush();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    @Override
+    public void setPlayers(PlayerId ownId, Map<PlayerId, String> mapNames) {
+        String toSend = StringSerializer.join(" ",
+                JassCommand.SET_PLAYERS.command(),
+                StringSerializer.serializeInt(ownId.ordinal()),
+                StringSerializer.serializeMapNames(mapNames));
+        sendString(toSend);
+    }
+
+    @Override
+    public void setTrump(Card.Color trump) {
+        String toSend = StringSerializer.join(" ",
+                JassCommand.SET_TRUMP.command(),
+                StringSerializer.serializeInt(trump.ordinal()));
+        sendString(toSend);
+
+    }
+
+    @Override
+    public void setWinningTeam(TeamId winningTeam) {
+        String toSend = StringSerializer.join(" ",
+                JassCommand.SET_WINNING_TEAM.command(),
+                StringSerializer.serializeInt(winningTeam.ordinal()));
+        sendString(toSend);
+    }
+
+    @Override
+    public void updateHand(CardSet newHand) {
+        String toSend = StringSerializer.join(" ",
+                JassCommand.UPDATE_HAND.command(),
+                StringSerializer.serializeLong(newHand.packed()));
+        sendString(toSend);
+    }
+
+    @Override
+    public void updateScore(Score newScore) {
+        String toSend = StringSerializer.join(" ",
+                JassCommand.UPDATE_SCORE.command(),
+                StringSerializer.serializeLong(newScore.packed()));
+        sendString(toSend);
+    }
+
+    @Override
+    public void updateTrick(Trick newTrick) {
+        String toSend = StringSerializer.join(" ",
+                JassCommand.UPDATE_TRICK.command(),
+                StringSerializer.serializeInt(newTrick.packed()));
+        sendString(toSend);
     }
 
 }

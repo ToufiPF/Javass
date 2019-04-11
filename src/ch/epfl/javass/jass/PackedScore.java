@@ -6,29 +6,36 @@ import ch.epfl.javass.bits.Bits64;
 /**
  * PackedScore Classe finale non instanciable permettant de manipuler les scores
  * d'une partie
- * 
- * @author Amaury Pierre (296498) 
+ *
+ * @author Amaury Pierre (296498)
  * @author Aurélien Clergeot (302592)
  */
 public final class PackedScore {
 
-    private PackedScore() {
-    }
-
     // constante permettant d'initialiser les scores
     public static final long INITIAL = 0L;
 
-    private static boolean isValid32(int pkScore32) {
-        return Bits32.extract(pkScore32, 0, 4) <= 9
-                && Bits32.extract(pkScore32, 4, 9) <= 257
-                && Bits32.extract(pkScore32, 13, 11) <= 2000
-                && Bits32.extract(pkScore32, 24, 8) == 0;
+    /**
+     * Méthode publique et statique retournant le nombre total de points
+     * remportés par l'équipe t dans les tours précédents
+     *
+     * @param pkScore
+     *            (long) le score empaqueté du tour courant
+     * @param t
+     *            (TeamId) l'équipe dont on veut connaitre le nombre total de
+     *            points remportés dans les tours précédents
+     * @return (int) le nombre total de points remportés par l'équipe t dans les
+     *         tours précédents
+     */
+    public static int gamePoints(long pkScore, TeamId t) {
+        assert isValid(pkScore);
+        return (int) Bits64.extract(pkScore, 13 + t.ordinal() * 32, 11);
     }
 
     /**
      * Méthode publique statique permettant de vérifier si les scores des 2
      * équipes sont valides
-     * 
+     *
      * @param pkScore
      *            (long) les scores des deux équipes empaquetées
      * @return (boolean) true ssi les scores des deux équipes sont valides
@@ -39,16 +46,30 @@ public final class PackedScore {
         return isValid32(pkScore1) && isValid32(pkScore2);
     }
 
-    private static int pack32(int turnTricks, int turnPoints, int gamePoints) {
-        assert isValid32(
-                Bits32.pack(turnTricks, 4, turnPoints, 9, gamePoints, 11));
-        return Bits32.pack(turnTricks, 4, turnPoints, 9, gamePoints, 11);
+    private static boolean isValid32(int pkScore32) {
+        return Bits32.extract(pkScore32, 0, 4) <= 9
+                && Bits32.extract(pkScore32, 4, 9) <= 257
+                && Bits32.extract(pkScore32, 13, 11) <= 2000
+                && Bits32.extract(pkScore32, 24, 8) == 0;
+    }
+
+    /**
+     * Méthode publique statique retournant les scores empaquetés donnés mis à
+     * jour pour le prochain tour
+     *
+     * @param pkScore
+     *            (long) les scores empaquetés à mettre à jour
+     * @return (long) les scores empaquetés mis à jour
+     */
+    public static long nextTurn(long pkScore) {
+        return pack(0, 0, totalPoints(pkScore, TeamId.TEAM_1), 0, 0,
+                totalPoints(pkScore, TeamId.TEAM_2));
     }
 
     /**
      * Méthode publique statique permettant de créer un long contenant les
      * scores des deux équipes
-     * 
+     *
      * @param turnTricks1
      *            (int) le nombre de plis remportés par l'équipe 1 dans le tour
      *            courant
@@ -75,60 +96,36 @@ public final class PackedScore {
                 pack32(turnTricks2, turnPoints2, gamePoints2), 32);
     }
 
-    /**
-     * Méthode publique statique retournant le nombre de plis remportés par
-     * l'équipe t dans le tour courant
-     * 
-     * @param pkScore
-     *            (long) le score empaqueté du tour courant
-     * @param t
-     *            (TeamId) l'équipe dont on veut connaitre le nombre de plis
-     *            remportés
-     * @return le nombre de plis remportés par l'équipe t dans le tour courant
-     */
-    public static int turnTricks(long pkScore, TeamId t) {
-        assert isValid(pkScore);
-        return (int) Bits64.extract(pkScore, 0 + t.ordinal() * 32, 4);
+    private static int pack32(int turnTricks, int turnPoints, int gamePoints) {
+        assert isValid32(
+                Bits32.pack(turnTricks, 4, turnPoints, 9, gamePoints, 11));
+        return Bits32.pack(turnTricks, 4, turnPoints, 9, gamePoints, 11);
     }
 
     /**
-     * Méthode publique et statique retournant le nombre de points remportés par
-     * l'équipe t dans le tour courant
+     * Méthode retournant une représentation des scores sous la forme
+     * (Plis_remportés,Points_du_tour,Points_de_la_partie,Points_totaux), et ce
+     * pour chaque équipe
      * 
      * @param pkScore
-     *            (long) le score empaqueté du tour courant
-     * @param t
-     *            (TeamId) l'équipe dont on veut connaitre le nombre de points
-     *            remportés lors du tour courant
-     * @return (int) le nombre de points remportés par l'équipe t dans le tour
-     *         courant
+     *            (long) les scores à représenter
+     * @return (String) la représentation des scores
      */
-    public static int turnPoints(long pkScore, TeamId t) {
-        assert isValid(pkScore);
-        return (int) Bits64.extract(pkScore, 4 + t.ordinal() * 32, 9);
-    }
-
-    /**
-     * Méthode publique et statique retournant le nombre total de points
-     * remportés par l'équipe t dans les tours précédents
-     * 
-     * @param pkScore
-     *            (long) le score empaqueté du tour courant
-     * @param t
-     *            (TeamId) l'équipe dont on veut connaitre le nombre total de
-     *            points remportés dans les tours précédents
-     * @return (int) le nombre total de points remportés par l'équipe t dans les
-     *         tours précédents
-     */
-    public static int gamePoints(long pkScore, TeamId t) {
-        assert isValid(pkScore);
-        return (int) Bits64.extract(pkScore, 13 + t.ordinal() * 32, 11);
+    public static String toString(long pkScore) {
+        return "(" + turnTricks(pkScore, TeamId.TEAM_1) + ","
+                + turnPoints(pkScore, TeamId.TEAM_1) + ","
+                + gamePoints(pkScore, TeamId.TEAM_1) + ","
+                + totalPoints(pkScore, TeamId.TEAM_1) + ")/("
+                + turnTricks(pkScore, TeamId.TEAM_2) + ","
+                + turnPoints(pkScore, TeamId.TEAM_2) + ","
+                + gamePoints(pkScore, TeamId.TEAM_2) + ","
+                + totalPoints(pkScore, TeamId.TEAM_2) + ")";
     }
 
     /**
      * Méthode publique et statique retournant le nombre total de points de
      * l'équipe t dans le tour courant
-     * 
+     *
      * @param (long)
      *            pkScore le score empaqueté du tour courant
      * @param t
@@ -143,8 +140,41 @@ public final class PackedScore {
     }
 
     /**
+     * Méthode publique et statique retournant le nombre de points remportés par
+     * l'équipe t dans le tour courant
+     *
+     * @param pkScore
+     *            (long) le score empaqueté du tour courant
+     * @param t
+     *            (TeamId) l'équipe dont on veut connaitre le nombre de points
+     *            remportés lors du tour courant
+     * @return (int) le nombre de points remportés par l'équipe t dans le tour
+     *         courant
+     */
+    public static int turnPoints(long pkScore, TeamId t) {
+        assert isValid(pkScore);
+        return (int) Bits64.extract(pkScore, 4 + t.ordinal() * 32, 9);
+    }
+
+    /**
+     * Méthode publique statique retournant le nombre de plis remportés par
+     * l'équipe t dans le tour courant
+     *
+     * @param pkScore
+     *            (long) le score empaqueté du tour courant
+     * @param t
+     *            (TeamId) l'équipe dont on veut connaitre le nombre de plis
+     *            remportés
+     * @return le nombre de plis remportés par l'équipe t dans le tour courant
+     */
+    public static int turnTricks(long pkScore, TeamId t) {
+        assert isValid(pkScore);
+        return (int) Bits64.extract(pkScore, 0 + t.ordinal() * 32, 4);
+    }
+
+    /**
      * Méthode retournant les scores empaquetés pkScore mis à jour
-     * 
+     *
      * @param pkScore
      *            (long) les scores empaquetés à mettre à jour
      * @param winningTeam
@@ -167,46 +197,18 @@ public final class PackedScore {
         // si le nombre de plis gagnés est de 9, le score du tour augment de 100
         if (tricksWon == Jass.TRICKS_PER_TURN)
             scoreTurn += Jass.MATCH_ADDITIONAL_POINTS;
-        
 
         // on pack les nouveaux scores dans un long
         if (winningTeam == TeamId.TEAM_1) {
             return Bits64.pack(
-                    pack32(tricksWon, scoreTurn, gamePoints(pkScore, TeamId.TEAM_1)), 32, 
-                    Bits64.extract(pkScore, 32, 32), 32);
+                    pack32(tricksWon, scoreTurn,
+                            gamePoints(pkScore, TeamId.TEAM_1)),
+                    32, Bits64.extract(pkScore, 32, 32), 32);
         }
-        return Bits64.pack(Bits64.extract(pkScore, 0, 32), 32,
-                pack32(tricksWon, scoreTurn, gamePoints(pkScore, TeamId.TEAM_2)), 32);
+        return Bits64.pack(Bits64.extract(pkScore, 0, 32), 32, pack32(tricksWon,
+                scoreTurn, gamePoints(pkScore, TeamId.TEAM_2)), 32);
     }
 
-    /**
-     * Méthode publique statique retournant les scores empaquetés donnés mis à
-     * jour pour le prochain tour
-     * 
-     * @param pkScore
-     *            (long) les scores empaquetés à mettre à jour
-     * @return (long) les scores empaquetés mis à jour
-     */
-    public static long nextTurn(long pkScore) {
-        return pack(0, 0, totalPoints(pkScore, TeamId.TEAM_1), 
-                0, 0, totalPoints(pkScore, TeamId.TEAM_2));
-    }
-
-    /**
-     * Méthode retournant une représentation des scores
-     * sous la forme (Plis_remportés,Points_du_tour,Points_de_la_partie,Points_totaux),
-     * et ce pour chaque équipe
-     * @param pkScore (long) les scores à représenter 
-     * @return (String) la représentation des scores
-     */
-    public static String toString(long pkScore) {
-        return "(" + turnTricks(pkScore, TeamId.TEAM_1) + ","
-                + turnPoints(pkScore, TeamId.TEAM_1) + ","
-                + gamePoints(pkScore, TeamId.TEAM_1) + ","
-                + totalPoints(pkScore, TeamId.TEAM_1) + ")/("
-                + turnTricks(pkScore, TeamId.TEAM_2) + ","
-                + turnPoints(pkScore, TeamId.TEAM_2) + ","
-                + gamePoints(pkScore, TeamId.TEAM_2) + ","
-                + totalPoints(pkScore, TeamId.TEAM_2) + ")";
+    private PackedScore() {
     }
 }
