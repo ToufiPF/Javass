@@ -133,7 +133,7 @@ public final class JassGame {
     }
 
     /**
-     * Genere aléatoirement une couleur pour les cartes d'atout
+     * Génère aléatoirement une couleur pour les cartes d'atout
      *
      * @return (Card.Color) la nouvelle couleur pour les atouts
      */
@@ -142,7 +142,7 @@ public final class JassGame {
     }
 
     /**
-     * Donne l'index de la main qui contient la carte donnée Retourne -1 si
+     * Donne l'index de la main qui contient la carte donnée. Retourne -1 si
      * aucune main ne la possède
      *
      * @param card
