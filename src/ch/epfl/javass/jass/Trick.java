@@ -77,20 +77,6 @@ public final class Trick {
         return Card.ofPacked(PackedTrick.card(pkTrick, index));
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj != null && obj.getClass() == Trick.class) {
-            Trick otherTrick = (Trick) obj;
-            return this.packed() == otherTrick.packed();
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return this.packed();
-    }
-
     /**
      * Méthode publique retournant l'index du pli
      *
@@ -198,11 +184,6 @@ public final class Trick {
         return PackedTrick.size(pkTrick);
     }
 
-    @Override
-    public String toString() {
-        return PackedTrick.toString(pkTrick);
-    }
-
     /**
      * Méthode publique retournant la couleur d'atout
      *
@@ -252,4 +233,24 @@ public final class Trick {
         if (!isFull())
             throw new IllegalStateException();
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && obj.getClass() == Trick.class) {
+            Trick otherTrick = (Trick) obj;
+            return this.packed() == otherTrick.packed();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.packed();
+    }
+    
+    @Override
+    public String toString() {
+        return PackedTrick.toString(pkTrick);
+    }
+
 }

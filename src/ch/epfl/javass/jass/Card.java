@@ -1,7 +1,3 @@
-/*
- * Auteur : Amaury Pierre
- * Date :   18 févr. 2019
- */
 package ch.epfl.javass.jass;
 
 import java.util.Arrays;
@@ -138,20 +134,6 @@ public final class Card {
         return PackedCard.color(pkCard);
     }
 
-    @Override
-    public boolean equals(Object that0) {
-        if (that0 != null && that0.getClass() == Card.class) {
-            Card that0Card = (Card) that0;
-            return pkCard == that0Card.packed();
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return packed();
-    }
-
     /**
      * Méthode renvoyant true si et seulement si la carte that est meilleure que
      * le récepteur
@@ -193,6 +175,20 @@ public final class Card {
      */
     public Rank rank() {
         return PackedCard.rank(pkCard);
+    }
+
+    @Override
+    public boolean equals(Object that0) {
+        if (that0 != null && that0.getClass() == Card.class) {
+            Card that0Card = (Card) that0;
+            return pkCard == that0Card.packed();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return packed();
     }
 
     @Override
