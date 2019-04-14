@@ -16,14 +16,18 @@ import javafx.collections.ObservableMap;
  * @author Aurélien Clergeot (302592)
  */
 public final class TrickBean {
-    private final ObjectProperty<Card.Color> trumpProp = new SimpleObjectProperty<Card.Color>();
+    private final ObjectProperty<Card.Color> trumpProp;
     private final ObservableMap<PlayerId, Card> trickProp;
-    private final ObjectProperty<PlayerId> winningPlayer = new SimpleObjectProperty<PlayerId>();
+    private final ObjectProperty<PlayerId> winningPlayer;
     
     public TrickBean() {
+        trumpProp = new SimpleObjectProperty<Card.Color>();
+        
         trickProp = FXCollections.observableHashMap();
         for (PlayerId p : PlayerId.ALL)
             trickProp.put(p, null);
+        
+        winningPlayer = new SimpleObjectProperty<PlayerId>();
     }
     
     /**

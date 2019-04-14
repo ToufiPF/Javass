@@ -61,7 +61,7 @@ public final class HandBean {
         } else if (handSize == Jass.HAND_SIZE) {
             for (int i = 0; i < handSize; ++i)
                 hand.set(i, newHand.get(i));
-        } else if (handSize < Jass.HAND_SIZE) {
+        } else {
             for (int i = 0; i < Jass.HAND_SIZE; ++i)
                 if (hand.get(i) != null && !newHand.contains(hand.get(i)))
                     hand.set(i, null);

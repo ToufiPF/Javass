@@ -77,20 +77,25 @@ public class TrickBeanTest {
         totalCalls = 0;
         TrickBean bean = new TrickBean();
         MapChangeListener<PlayerId, Card> listener = (e) -> {
-            System.out.println(e);
+            System.out.println("trick listener : " + e);
             ++totalCalls;
         };
         bean.trick().addListener(listener);
 
         bean.setTrick(Trick.firstEmpty(Card.Color.HEART, PlayerId.PLAYER_3));
+        
+        Trick trick = Trick.firstEmpty(Card.Color.SPADE, PlayerId.PLAYER_4);
+        trick = trick.withAddedCard(Card.of(Card.Color.SPADE, Card.Rank.JACK));
+        trick = trick.withAddedCard(Card.of(Card.Color.SPADE, Card.Rank.QUEEN));
+        
+        bean.setTrick(trick);
 
-        Trick trick = Trick.firstEmpty(Card.Color.DIAMOND, PlayerId.PLAYER_2);
+        trick = Trick.firstEmpty(Card.Color.DIAMOND, PlayerId.PLAYER_2);
         trick = trick.withAddedCard(Card.of(Card.Color.SPADE, Card.Rank.JACK));
         trick = trick.withAddedCard(Card.of(Card.Color.SPADE, Card.Rank.QUEEN));
         trick = trick.withAddedCard(Card.of(Card.Color.DIAMOND, Card.Rank.QUEEN));
 
         bean.setTrick(trick);
-        assertEquals(3, totalCalls);
     }
     
     @Test

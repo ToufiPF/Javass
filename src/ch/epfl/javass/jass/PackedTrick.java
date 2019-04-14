@@ -355,7 +355,7 @@ public final class PackedTrick {
 
         final int sizeTrick = size(pkTrick);
         int[] cards = new int[PlayerId.COUNT];
-        // les cartes déjà jouées sont copiées
+        // les cartes déjà jouées sont conservées
         for (int i = 0; i < sizeTrick; ++i)
             cards[i] = card(pkTrick, i);
         // on ajoute la carte donnée
