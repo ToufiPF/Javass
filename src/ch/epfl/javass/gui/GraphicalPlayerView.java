@@ -4,9 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ch.epfl.javass.jass.Card;
+import ch.epfl.javass.jass.Card.Color;
 import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.TeamId;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -59,22 +62,33 @@ public final class GraphicalPlayerView {
         }
         return FXCollections.unmodifiableObservableMap(FXCollections.observableMap(map));
     }
+
+    private static ObservableMap<Color, Image> computeMapImagesTrumps() {
+        Map<Card.Color, Image> map = new HashMap<>();
+        for (Card.Color c : Card.Color.ALL)
+            map.put(c, new Image(pathToTrump(c)));
+        
+        return FXCollections.unmodifiableObservableMap(FXCollections.observableMap(map));
+    }
     public static final ObservableMap<Card, Image> mapImagesCards = computeMapImagesCards();
+    public static final ObservableMap<Card.Color, Image> mapImagesTrumps = computeMapImagesTrumps();
     
     //Graphics :
     private final Scene scene;
 
     public GraphicalPlayerView(PlayerId ownId, Map<PlayerId, String> nameMap, ScoreBean sb, TrickBean tb) {
         
-        GridPane score = createScorePanes(nameMap, sb);
-        GridPane trickPane = new GridPane();
+        GridPane scorePane = createScorePanes(nameMap, sb);
+        GridPane trickPane = createTrickPane(ownId, tb);
         BorderPane winTeam1Pane = new BorderPane(), winTeam2Pane = new BorderPane();
 
 
-        StackPane principalPane = new StackPane();
+        BorderPane gamePane = new BorderPane(trickPane);
+        gamePane.setTop(scorePane);
+
+        StackPane principalPane = new StackPane(gamePane);
         this.scene = new Scene(principalPane);
     }
-
     public Stage createStage() {
         Stage st = new Stage();
         st.setScene(scene);
@@ -118,12 +132,29 @@ public final class GraphicalPlayerView {
         trickPane.setStyle("-fx-background-color: whitesmoke; -fx-padding: 5px; -fx-border-width: 3px 0px; " + 
                 "-fx-border-style: solid; -fx-border-color: gray; -fx-alignment: center;");
         
+        //Création des cartes
+        ImageView[] imagesCards = new ImageView[PlayerId.COUNT];
         for (int i = 0 ; i < PlayerId.COUNT ; ++i) {
-            ImageView cardView = new ImageView();
-            cardView.setFitWidth(120);
-            cardView.setFitHeight(180);
-            cardView.imageProperty().bind(Bindings.valueAt(mapImagesCards, tb.trick().get(PlayerId.ALL.get(i))));
+            imagesCards[i] = new ImageView();
+            imagesCards[i].setFitWidth(120);
+            imagesCards[i].setFitHeight(180);
+            imagesCards[i].imageProperty().bind(Bindings.valueAt(mapImagesCards, Bindings.valueAt(tb.trick(), PlayerId.ALL.get(i))));
         }
+        
+        ImageView trumpImage = new ImageView();
+        trumpImage.setFitWidth(101);
+        trumpImage.setFitHeight(101);
+        trumpImage.imageProperty().bind(Bindings.valueAt(mapImagesTrumps, tb.trump()));
+
+        //Placement des cartes:
+        final int ownIndex = ownId.ordinal();
+        trickPane.add(imagesCards[ownIndex], 1, 2);
+        trickPane.add(imagesCards[(ownIndex + 1) % PlayerId.COUNT], 2, 0, 1, 3);
+        trickPane.add(imagesCards[(ownIndex + 2) % PlayerId.COUNT], 1, 0);
+        trickPane.add(imagesCards[(ownIndex + 3) % PlayerId.COUNT], 0, 0, 1, 3);
+        
+        trickPane.add(trumpImage, 1, 1);
+        
         return trickPane;
     }
 } 
