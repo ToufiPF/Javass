@@ -12,9 +12,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
-import javafx.geometry.HPos;
-import javafx.geometry.VPos;
-import javafx.scene.Node;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
@@ -230,6 +228,7 @@ public final class GraphicalPlayerView {
                         " ont gagné avec %d points contre %d.", 
                         sb.gamePointsProperty(id), sb.gamePointsProperty(id.other())));
         
+        winPane.getChildren().add(txt);
         return winPane;
     }
 }
