@@ -12,7 +12,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
@@ -193,8 +192,9 @@ public final class GraphicalPlayerView {
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             Text txt = new Text(nameMap.get(PlayerId.ALL.get(i)));
             txt.setStyle("-fx-font: 14 Optima;");
-            cardBoxes[i] = new VBox(10);
-
+            cardBoxes[i] = new VBox();
+            cardBoxes[i].setStyle(" -fx-alignment: center;");
+            
             if (i == ownIndex) {
                 cardBoxes[i].getChildren().add(imagesPanes[i]);
                 cardBoxes[i].getChildren().add(txt);
@@ -210,7 +210,6 @@ public final class GraphicalPlayerView {
         trickPane.add(cardBoxes[(ownIndex + 1) % PlayerId.COUNT], 2, 0, 1, 3);
         trickPane.add(cardBoxes[(ownIndex + 2) % PlayerId.COUNT], 1, 0);
         trickPane.add(cardBoxes[(ownIndex + 3) % PlayerId.COUNT], 0, 0, 1, 3);
-
         return trickPane;
     }
     
