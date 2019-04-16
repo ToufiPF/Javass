@@ -14,9 +14,9 @@ class HandBeanTest {
     void testEnonce() {
         HandBean hb = new HandBean();
         ListChangeListener<Card> listener = e -> System.out.println(e);
-        hb.hand().addListener(listener);
+        hb.handProperty().addListener(listener);
 
-        System.out.println(hb.hand());
+        System.out.println(hb.handProperty());
 
         CardSet h = CardSet.EMPTY
           .add(Card.of(Color.SPADE, Rank.SIX))
@@ -30,13 +30,13 @@ class HandBeanTest {
           .add(Card.of(Color.CLUB, Rank.QUEEN));
         hb.setHand(h);
 
-        System.out.println(hb.hand());
+        System.out.println(hb.handProperty());
         
         while (!h.isEmpty()) {
           h = h.remove(h.get(0));
           hb.setHand(h);
         }
-        System.out.println(hb.hand());
+        System.out.println(hb.handProperty());
     }
 
 }

@@ -21,22 +21,22 @@ public class TrickBeanTest {
     @Test
     void trumpWorks() {
         TrickBean bean = new TrickBean();
-        assertNull(bean.trump().get());
+        assertNull(bean.trumpProperty().get());
         bean.setTrick(Trick.firstEmpty(Card.Color.SPADE, PlayerId.PLAYER_3));
-        assertNull(bean.trump().get());
+        assertNull(bean.trumpProperty().get());
 
         bean.setTrump(Card.Color.DIAMOND);
-        assertEquals(Card.Color.DIAMOND, bean.trump().get());
+        assertEquals(Card.Color.DIAMOND, bean.trumpProperty().get());
     }
 
     @Test
     void winningPlayerIsNullWhenTrickEmpty() {
         TrickBean bean = new TrickBean();
-        assertNull(bean.winningPlayer().get());
+        assertNull(bean.winningPlayerProperty().get());
         bean.setTrump(Card.Color.CLUB);
-        assertNull(bean.winningPlayer().get());
+        assertNull(bean.winningPlayerProperty().get());
         bean.setTrick(Trick.firstEmpty(Card.Color.DIAMOND, PlayerId.PLAYER_2));
-        assertNull(bean.winningPlayer().get());
+        assertNull(bean.winningPlayerProperty().get());
     }
 
     @Test
@@ -45,7 +45,7 @@ public class TrickBeanTest {
 
         bean.setTrick(Trick.firstEmpty(Card.Color.HEART, PlayerId.PLAYER_3));
         for (PlayerId p : PlayerId.ALL)
-            assertNull(bean.trick().get(p));
+            assertNull(bean.trickProperty().get(p));
 
         Trick trick = Trick.firstEmpty(Card.Color.DIAMOND, PlayerId.PLAYER_2);
         trick = trick.withAddedCard(Card.of(Card.Color.SPADE, Card.Rank.JACK));
@@ -53,7 +53,7 @@ public class TrickBeanTest {
         trick = trick.withAddedCard(Card.of(Card.Color.SPADE, Card.Rank.TEN));
 
         bean.setTrick(trick);
-        ObservableMap<PlayerId, Card> cards = bean.trick();
+        ObservableMap<PlayerId, Card> cards = bean.trickProperty();
         for (Map.Entry<PlayerId, Card> e : cards.entrySet()) {
             int index = e.getKey().ordinal() - trick.player(0).ordinal();
             if (index < 0)
@@ -69,7 +69,7 @@ public class TrickBeanTest {
 
         bean.setTrick(Trick.firstEmpty(Card.Color.HEART, PlayerId.PLAYER_3));
         for (PlayerId p : PlayerId.ALL)
-            assertNull(bean.trick().get(p));
+            assertNull(bean.trickProperty().get(p));
     }
 
     @Test
@@ -80,7 +80,7 @@ public class TrickBeanTest {
             System.out.println("trick listener : " + e);
             ++totalCalls;
         };
-        bean.trick().addListener(listener);
+        bean.trickProperty().addListener(listener);
 
         bean.setTrick(Trick.firstEmpty(Card.Color.HEART, PlayerId.PLAYER_3));
         
@@ -102,12 +102,12 @@ public class TrickBeanTest {
     void trumpListener() {
         totalCalls = 0;
         TrickBean bean = new TrickBean();
-        bean.trump().addListener((e) -> {
+        bean.trumpProperty().addListener((e) -> {
             System.out.println(e);
             ++totalCalls;
         });
         bean.setTrump(Card.Color.DIAMOND);
-        assertEquals(Card.Color.DIAMOND, bean.trump().get());
+        assertEquals(Card.Color.DIAMOND, bean.trumpProperty().get());
         bean.setTrump(Card.Color.SPADE);
         bean.setTrump(Card.Color.SPADE);
         assertEquals(2, totalCalls);

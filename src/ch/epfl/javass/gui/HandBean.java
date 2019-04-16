@@ -33,7 +33,7 @@ public final class HandBean {
      *
      * @return (ObservableList<Card>) la propriété de la main
      */
-    public ObservableList<Card> hand() {
+    public ObservableList<Card> handProperty() {
         return FXCollections.unmodifiableObservableList(hand);
     }
 
@@ -42,7 +42,7 @@ public final class HandBean {
      *
      * @return (ObservableSet<Card>) la propriété des cartes jouables
      */
-    public ObservableSet<Card> playableCards() {
+    public ObservableSet<Card> playableCardsProperty() {
         return FXCollections.unmodifiableObservableSet(playableCards);
     }
 

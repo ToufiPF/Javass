@@ -66,7 +66,7 @@ public final class TrickBean {
      * @return (ObservableMap<PlayerId, Card>) (UNMODIFIABLE) map décrivant le
      *         trick
      */
-    public ObservableMap<PlayerId, Card> trick() {
+    public ObservableMap<PlayerId, Card> trickProperty() {
         return FXCollections.unmodifiableObservableMap(trickProp);
     }
 
@@ -75,7 +75,7 @@ public final class TrickBean {
      *
      * @return (ReadOnlyObjectProperty<Card.Color>) propriété trump
      */
-    public ReadOnlyObjectProperty<Card.Color> trump() {
+    public ReadOnlyObjectProperty<Card.Color> trumpProperty() {
         return trumpProp;
     }
 
@@ -87,7 +87,7 @@ public final class TrickBean {
      * @return (ReadOnlyObjectProperty<PlayerId>) joueur gagnant actuellement le
      *         pli
      */
-    public ReadOnlyObjectProperty<PlayerId> winningPlayer() {
+    public ReadOnlyObjectProperty<PlayerId> winningPlayerProperty() {
         return winningPlayer;
     }
 }
