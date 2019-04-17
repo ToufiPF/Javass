@@ -8,8 +8,6 @@ import ch.epfl.javass.jass.Card.Color;
 import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.TeamId;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.geometry.HPos;
@@ -28,26 +26,21 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
+/**
+ * GraphicalPlayerView Une classe qui permet de gérer la partie graphique du
+ * jeu, en ayant la vue du joueur donné en paramêtre
+ *
+ * @author Amaury Pierre (296498)
+ * @author Aurélien Clergeot (302592)
+ */
 public final class GraphicalPlayerView {
-    private static String pathToCard(Card c, int width) {
-        return "/card_" + c.color().ordinal() + "_" + c.rank().ordinal() + "_"
-                + width + ".png";
-    }
-
-    /**
-     * Donne le chemin vers l'image de la carte donnée, en version 240x360px
-     * 
-     * @param c
-     *            (Card)
-     * @return (String) le chemin vers la carte donnée
-     */
-    public static String pathToCard240px(Card c) {
-        return pathToCard(c, 240);
-    }
+    
+    private static final ObservableMap<Card, Image> mapImagesCards = computeMapImagesCards();
+    private static final ObservableMap<Card.Color, Image> mapImagesTrumps = computeMapImagesTrumps();
 
     /**
      * Donne le chemin vers l'image de la carte donnée, en version 160x240px
-     * 
+     *
      * @param c
      *            (Card)
      * @return (String) le chemin vers la carte donnée
@@ -57,8 +50,19 @@ public final class GraphicalPlayerView {
     }
 
     /**
+     * Donne le chemin vers l'image de la carte donnée, en version 240x360px
+     *
+     * @param c
+     *            (Card)
+     * @return (String) le chemin vers la carte donnée
+     */
+    public static String pathToCard240px(Card c) {
+        return pathToCard(c, 240);
+    }
+
+    /**
      * Donne le chemin vers l'image de l'atout de la couleur donnée
-     * 
+     *
      * @param trump
      *            (Card.Color)
      * @return (String) le chemin vers la couleur donnée
@@ -87,59 +91,8 @@ public final class GraphicalPlayerView {
         return FXCollections
                 .unmodifiableObservableMap(FXCollections.observableMap(map));
     }
-
-    private static final ObservableMap<Card, Image> mapImagesCards = computeMapImagesCards();
-    private static final ObservableMap<Card.Color, Image> mapImagesTrumps = computeMapImagesTrumps();
-
-    // Graphics :
-    private final Scene scene;
-
-    /**
-     * Construit un nouveau GraphicalPlayerView
-     * 
-     * @param ownId
-     *            (PlayerId) Id du joueur à qui appartient la vue
-     * @param nameMap
-     *            (Map<PlayerId, String>) map des noms des joueurs
-     * @param sb
-     *            (ScoreBean) le bean des scores
-     * @param tb
-     *            (TrickBean) le bean des plis
-     */
-    public GraphicalPlayerView(PlayerId ownId, Map<PlayerId, String> nameMap,
-            ScoreBean sb, TrickBean tb) {
-
-        GridPane score = createScorePanes(nameMap, sb);
-        GridPane trick = createTrickPane(ownId, nameMap, tb);
-        BorderPane winT1 = createWinningTeamPane(TeamId.TEAM_1, nameMap, sb);
-        BorderPane winT2 = createWinningTeamPane(TeamId.TEAM_2, nameMap, sb);
-
-        BorderPane gamePane = new BorderPane(trick);
-        gamePane.setTop(score);
-
-        StackPane principalPane = new StackPane(gamePane);
-        principalPane.getChildren().add(winT1);
-        principalPane.getChildren().add(winT2);
-        this.scene = new Scene(principalPane);
-    }
-
-    /**
-     * Crée un nouveau Stage et le retourne après lui avoir appliqué la Scene du
-     * GraphicalPlayerView
-     * 
-     * @return (Stage) stage auquel la scène de ce GraphicalPlayerView a été
-     *         donnée
-     * @throws IllegalStateException
-     *             si la méthode est appelée dans un Thread différent de celui
-     *             de l'Application JavaFX
-     */
-    public Stage createStage() throws IllegalStateException {
-        Stage st = new Stage();
-        st.setScene(scene);
-        return st;
-    }
-
-    private static GridPane createScorePanes(Map<PlayerId, String> nameMap,
+    
+    private static GridPane createScorePane(Map<PlayerId, String> nameMap,
             ScoreBean sb) {
         GridPane scorePane = new GridPane();
         scorePane.setStyle(
@@ -234,7 +187,7 @@ public final class GraphicalPlayerView {
             }
         }
 
-        trickPane.add(trumpImage, 1, 1);      
+        trickPane.add(trumpImage, 1, 1);
         GridPane.setHalignment(trumpImage, HPos.CENTER);
         GridPane.setValignment(trumpImage, VPos.CENTER);
         // Placement des boxes:
@@ -252,25 +205,77 @@ public final class GraphicalPlayerView {
         BorderPane winPane = new BorderPane();
         winPane.visibleProperty().bind(sb.winningTeamProperty().isEqualTo(id));
         winPane.setStyle("-fx-font: 16 Optima; -fx-background-color: white;");
-        
+
         PlayerId pA, pB;
         if (id.equals(TeamId.TEAM_1)) {
             pA = PlayerId.PLAYER_1;
             pB = PlayerId.PLAYER_3;
-        }
-        else {
+        } else {
             pA = PlayerId.PLAYER_2;
             pB = PlayerId.PLAYER_4;
         }
 
         Text txt = new Text();
         txt.setTextAlignment(TextAlignment.CENTER);
-        txt.textProperty().bind(
-                Bindings.format(nameMap.get(pA) + " et " + nameMap.get(pB)
+        txt.textProperty().bind(Bindings.format(
+                nameMap.get(pA) + " et " + nameMap.get(pB)
                         + " ont gagné\navec %d points contre %d.",
                 sb.gamePointsProperty(id), sb.gamePointsProperty(id.other())));
-        
+
         winPane.setCenter(txt);
         return winPane;
+    }
+
+    private static String pathToCard(Card c, int width) {
+        return "/card_" + c.color().ordinal() + "_" + c.rank().ordinal() + "_"
+                + width + ".png";
+    }
+
+    // Graphics :
+    private final Scene scene;
+
+    /**
+     * Construit un nouveau GraphicalPlayerView
+     *
+     * @param ownId
+     *            (PlayerId) Id du joueur à qui appartient la vue
+     * @param nameMap
+     *            (Map<PlayerId, String>) map des noms des joueurs
+     * @param sb
+     *            (ScoreBean) le bean des scores
+     * @param tb
+     *            (TrickBean) le bean des plis
+     */
+    public GraphicalPlayerView(PlayerId ownId, Map<PlayerId, String> nameMap,
+            ScoreBean sb, TrickBean tb) {
+
+        GridPane score = createScorePane(nameMap, sb);
+        GridPane trick = createTrickPane(ownId, nameMap, tb);
+        BorderPane winT1 = createWinningTeamPane(TeamId.TEAM_1, nameMap, sb);
+        BorderPane winT2 = createWinningTeamPane(TeamId.TEAM_2, nameMap, sb);
+
+        BorderPane gamePane = new BorderPane(trick);
+        gamePane.setTop(score);
+
+        StackPane principalPane = new StackPane(gamePane);
+        principalPane.getChildren().add(winT1);
+        principalPane.getChildren().add(winT2);
+        this.scene = new Scene(principalPane);
+    }
+
+    /**
+     * Crée un nouveau Stage et le retourne après lui avoir appliqué la Scene du
+     * GraphicalPlayerView
+     *
+     * @return (Stage) stage auquel la scène de ce GraphicalPlayerView a été
+     *         donnée
+     * @throws IllegalStateException
+     *             si la méthode est appelée dans un Thread différent de celui
+     *             de l'Application JavaFX
+     */
+    public Stage createStage() throws IllegalStateException {
+        Stage st = new Stage();
+        st.setScene(scene);
+        return st;
     }
 }
