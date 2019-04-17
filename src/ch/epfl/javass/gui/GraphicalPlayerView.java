@@ -25,6 +25,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public final class GraphicalPlayerView {
@@ -263,6 +264,7 @@ public final class GraphicalPlayerView {
         }
 
         Text txt = new Text();
+        txt.setTextAlignment(TextAlignment.CENTER);
         txt.textProperty().bind(
                 Bindings.format(nameMap.get(pA) + " et " + nameMap.get(pB)
                         + " ont gagné\navec %d points contre %d.",
