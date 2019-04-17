@@ -13,6 +13,8 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
@@ -154,14 +156,14 @@ public final class GraphicalPlayerView {
             scorePane.add(turnScoreTxt, 1, i);
 
             Text lastTrickScore = new Text();
-            StringProperty lastTrickProp = new SimpleStringProperty();
             sb.turnPointsProperty(TeamId.ALL.get(i))
                     .addListener((e, oldVal, newVal) -> {
-                        lastTrickProp.set(
-                                "(+" + (newVal.intValue() - oldVal.intValue())
-                                        + ")");
+                        int deltaScore = newVal.intValue() - oldVal.intValue();
+                        // Dans le cas où on change de tour
+                        if (deltaScore < 0)
+                            deltaScore = 0;
+                        lastTrickScore.setText("(+" + deltaScore + ")");
                     });
-            lastTrickScore.textProperty().bind(lastTrickProp);
             scorePane.add(lastTrickScore, 2, i);
 
             Text totalTxt = new Text(" / Total : ");
@@ -198,9 +200,9 @@ public final class GraphicalPlayerView {
             imagesPanes[i] = new StackPane();
 
             Rectangle halo = new Rectangle(120, 180);
-            halo.setStyle(
-                    "-fx-arc-width: 20; -fx-arc-height: 20; -fx-fill: transparent; "
-                            + "-fx-stroke: lightpink; -fx-stroke-width: 5; -fx-opacity: 0.5;");
+            halo.setStyle("-fx-arc-width: 20; -fx-arc-height: 20;"
+                    + " -fx-fill: transparent; -fx-stroke: lightpink;"
+                    + " -fx-stroke-width: 5; -fx-opacity: 0.5;");
             halo.setEffect(new GaussianBlur(4));
             halo.visibleProperty().bind(
                     tb.winningPlayerProperty().isEqualTo(PlayerId.ALL.get(i)));
@@ -220,7 +222,7 @@ public final class GraphicalPlayerView {
             Text txt = new Text(nameMap.get(PlayerId.ALL.get(i)));
             txt.setStyle("-fx-font: 14 Optima;");
             cardBoxes[i] = new VBox(10);
-            cardBoxes[i].setStyle("-fx-alignment: center;");
+            cardBoxes[i].setAlignment(Pos.CENTER);
 
             if (i == ownIndex) {
                 cardBoxes[i].getChildren().add(imagesPanes[i]);
@@ -230,9 +232,10 @@ public final class GraphicalPlayerView {
                 cardBoxes[i].getChildren().add(imagesPanes[i]);
             }
         }
-        
-        GridPane.setHalignment(trumpImage, HPos.CENTER);
+
         trickPane.add(trumpImage, 1, 1);      
+        GridPane.setHalignment(trumpImage, HPos.CENTER);
+        GridPane.setValignment(trumpImage, VPos.CENTER);
         // Placement des boxes:
         trickPane.add(cardBoxes[ownIndex], 1, 2);
         trickPane.add(cardBoxes[(ownIndex + 1) % PlayerId.COUNT], 2, 0, 1, 3);
@@ -244,10 +247,11 @@ public final class GraphicalPlayerView {
 
     private static BorderPane createWinningTeamPane(TeamId id,
             Map<PlayerId, String> nameMap, ScoreBean sb) {
+
         BorderPane winPane = new BorderPane();
         winPane.visibleProperty().bind(sb.winningTeamProperty().isEqualTo(id));
         winPane.setStyle("-fx-font: 16 Optima; -fx-background-color: white;");
-
+        
         PlayerId pA, pB;
         if (id.equals(TeamId.TEAM_1)) {
             pA = PlayerId.PLAYER_1;
@@ -261,10 +265,10 @@ public final class GraphicalPlayerView {
         Text txt = new Text();
         txt.textProperty().bind(
                 Bindings.format(nameMap.get(pA) + " et " + nameMap.get(pB)
-                        + " ont gagné avec %d points contre %d.",
+                        + " ont gagné\navec %d points contre %d.",
                 sb.gamePointsProperty(id), sb.gamePointsProperty(id.other())));
-
-        winPane.getChildren().add(txt);
+        
+        winPane.setCenter(txt);
         return winPane;
     }
 }
