@@ -4,6 +4,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import ch.epfl.javass.jass.Card.Color;
+import ch.epfl.javass.jass.Card;
 import ch.epfl.javass.jass.CardSet;
 import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.Score;
@@ -35,9 +36,16 @@ public final class GuiTest extends Application {
 
             @Override
             public void handle(long now) {
-                if (now - now0 < 1_000_000_000L || s.isTerminal())
+                if (now - now0 < 1_000_000_000L / 10)
                     return;
                 now0 = now;
+                if (s.isTerminal()) {
+                    for (TeamId t: TeamId.ALL)
+                        sB.setGamePoints(t, s.score().gamePoints(t));
+                    s = TurnState.initial(Card.Color.ALL.get((int) (now % 4)), 
+                            s.score().nextTurn(), PlayerId.ALL.get((int) (now % 4)));
+                    d = CardSet.ALL_CARDS;
+                }
 
                 s = s.withNewCardPlayed(d.get(0));
                 d = d.remove(d.get(0));
