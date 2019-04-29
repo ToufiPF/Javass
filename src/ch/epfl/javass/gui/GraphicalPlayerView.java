@@ -15,6 +15,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
@@ -43,6 +44,14 @@ public final class GraphicalPlayerView {
     private static final ObservableMap<Card, Image> mapImagesCards240 = computeMapImagesCards240();
     private static final ObservableMap<Card, Image> mapImagesCards160 = computeMapImagesCards160();
     private static final ObservableMap<Card.Color, Image> mapImagesTrumps = computeMapImagesTrumps();
+    
+    private static final int WIDTH_CARD_IMAGE = 240;
+    private static final int HEIGHT_CARD_IMAGE = 360;
+    private static final int SIZE_TRUMP_IMAGE = 202;
+    
+    private static final int GAUSSIAN_BLUR_HALO_BEST_CARD = 4;
+    private static final int SPACING_PLAYER_CARD = 10;
+    private static final int TRUMP_MARGIN = 25;
 
     /**
      * Donne le chemin vers l'image de la carte donnée, en version 160x240px
@@ -161,8 +170,8 @@ public final class GraphicalPlayerView {
         final int ownIndex = ownId.ordinal();
 
         ImageView trumpImage = new ImageView();
-        trumpImage.setFitWidth(101);
-        trumpImage.setFitHeight(101);
+        trumpImage.setFitWidth(SIZE_TRUMP_IMAGE / 2);
+        trumpImage.setFitHeight(SIZE_TRUMP_IMAGE / 2);
         trumpImage.imageProperty()
         .bind(Bindings.valueAt(mapImagesTrumps, tb.trumpProperty()));
 
@@ -171,17 +180,18 @@ public final class GraphicalPlayerView {
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             imagesPanes[i] = new StackPane();
 
-            Rectangle halo = new Rectangle(120, 180);
+            Rectangle halo = new Rectangle(WIDTH_CARD_IMAGE / 2, HEIGHT_CARD_IMAGE / 2);
             halo.setStyle("-fx-arc-width: 20; -fx-arc-height: 20;"
                     + " -fx-fill: transparent; -fx-stroke: lightpink;"
                     + " -fx-stroke-width: 5; -fx-opacity: 0.5;");
-            halo.setEffect(new GaussianBlur(4));
+            
+            halo.setEffect(new GaussianBlur(GAUSSIAN_BLUR_HALO_BEST_CARD));
             halo.visibleProperty().bind(
                     tb.winningPlayerProperty().isEqualTo(PlayerId.ALL.get(i)));
 
             ImageView img = new ImageView();
-            img.setFitWidth(120);
-            img.setFitHeight(180);
+            img.setFitWidth(WIDTH_CARD_IMAGE / 2);
+            img.setFitHeight(HEIGHT_CARD_IMAGE / 2);
             img.imageProperty().bind(Bindings.valueAt(mapImagesCards240,
                     Bindings.valueAt(tb.trickProperty(), PlayerId.ALL.get(i))));
 
@@ -193,7 +203,8 @@ public final class GraphicalPlayerView {
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             Text txt = new Text(nameMap.get(PlayerId.ALL.get(i)));
             txt.setStyle("-fx-font: 14 Optima;");
-            cardBoxes[i] = new VBox(10);
+            
+            cardBoxes[i] = new VBox(SPACING_PLAYER_CARD);
             cardBoxes[i].setAlignment(Pos.CENTER);
 
             if (i == ownIndex) {
@@ -208,6 +219,8 @@ public final class GraphicalPlayerView {
         trickPane.add(trumpImage, 1, 1);
         GridPane.setHalignment(trumpImage, HPos.CENTER);
         GridPane.setValignment(trumpImage, VPos.CENTER);
+        GridPane.setMargin(trumpImage, new Insets(TRUMP_MARGIN));
+        
         // Placement des boxes:
         trickPane.add(cardBoxes[ownIndex], 1, 2);
         trickPane.add(cardBoxes[(ownIndex + 1) % PlayerId.COUNT], 2, 0, 1, 3);
@@ -237,7 +250,7 @@ public final class GraphicalPlayerView {
         txt.setTextAlignment(TextAlignment.CENTER);
         txt.textProperty().bind(Bindings.format(
                 nameMap.get(pA) + " et " + nameMap.get(pB)
-                + " ont gagné\navec %d points contre %d.",
+                        + " ont gagné\navec %d points contre %d.",
                 sb.gamePointsProperty(id), sb.gamePointsProperty(id.other())));
 
         winPane.setCenter(txt);

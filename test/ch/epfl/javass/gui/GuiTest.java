@@ -42,12 +42,13 @@ public final class GuiTest extends Application {
             public void handle(long now) {
                 if (now - now0 < 1_000_000_000L / 10)
                     return;
-                if (sB.winningTeamProperty().get() != null)
-                    return;
 
                 for (TeamId t : TeamId.ALL)
                     if (s.score().totalPoints(t) >= Jass.WINNING_POINTS)
                         sB.setWinningTeam(t);
+                
+                if (sB.winningTeamProperty().get() != null)
+                    return;
 
                 now0 = now;
                 if (s.isTerminal()) {                    
@@ -66,8 +67,10 @@ public final class GuiTest extends Application {
 
                 if (s.trick().isFull()) {
                     s = s.withTrickCollected();
-                    for (TeamId t: TeamId.ALL)
+                    for (TeamId t: TeamId.ALL) {
                         sB.setTurnPoints(t, s.score().turnPoints(t));
+                        sB.setTotalPoints(t, s.score().totalPoints(t));
+                    }
                 }
             }
         }.start();
