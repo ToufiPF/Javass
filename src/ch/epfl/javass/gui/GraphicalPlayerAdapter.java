@@ -12,7 +12,6 @@ import ch.epfl.javass.jass.TeamId;
 import ch.epfl.javass.jass.Trick;
 import ch.epfl.javass.jass.TurnState;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 
 public final class GraphicalPlayerAdapter implements Player {
     private final HandBean hb = new HandBean();
@@ -23,7 +22,10 @@ public final class GraphicalPlayerAdapter implements Player {
 
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
-        return cardQueue.poll();
+        Card c;
+        hb.setPlayableCards(state.trick().playableCards(hand));
+        do { c = cardQueue.poll(); } while (c == null);
+        return c;
     }
 
     @Override

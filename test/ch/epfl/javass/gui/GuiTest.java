@@ -40,7 +40,7 @@ public final class GuiTest extends Application {
 
             @Override
             public void handle(long now) {
-                if (now - now0 < 1_000_000_000L / 10)
+                if (now - now0 < 1_000_000_000L)
                     return;
 
                 for (TeamId t : TeamId.ALL)

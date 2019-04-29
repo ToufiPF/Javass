@@ -10,8 +10,7 @@ import ch.epfl.javass.jass.Jass;
 import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.TeamId;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.geometry.HPos;
@@ -41,38 +40,23 @@ import javafx.stage.Stage;
  */
 public final class GraphicalPlayerView {
 
-    private static final ObservableMap<Card, Image> mapImagesCards240 = computeMapImagesCards240();
-    private static final ObservableMap<Card, Image> mapImagesCards160 = computeMapImagesCards160();
+    private static final ObservableMap<Card, Image> mapLargeCardsImages = computeMapLargeCardsImages();
+    private static final ObservableMap<Card, Image> mapSmallCardsImages = computeMapSmallCardsImages();
     private static final ObservableMap<Card.Color, Image> mapImagesTrumps = computeMapImagesTrumps();
-    
-    private static final int WIDTH_CARD_IMAGE = 240;
-    private static final int HEIGHT_CARD_IMAGE = 360;
+
+    private static final int WIDTH_SMALL_CARD_IMAGE = 160;
+    private static final int HEIGHT_SMALL_CARD_IMAGE = 240;
+    private static final int WIDTH_LARGE_CARD_IMAGE = 240;
+    private static final int HEIGHT_LARGE_CARD_IMAGE = 360;
     private static final int SIZE_TRUMP_IMAGE = 202;
-    
+
     private static final int GAUSSIAN_BLUR_HALO_BEST_CARD = 4;
     private static final int SPACING_PLAYER_CARD = 10;
     private static final int TRUMP_MARGIN = 25;
 
-    /**
-     * Donne le chemin vers l'image de la carte donnée, en version 160x240px
-     *
-     * @param c
-     *            (Card)
-     * @return (String) le chemin vers la carte donnée
-     */
-    public static String pathToCard160px(Card c) {
-        return pathToCard(c, 160);
-    }
-
-    /**
-     * Donne le chemin vers l'image de la carte donnée, en version 240x360px
-     *
-     * @param c
-     *            (Card)
-     * @return (String) le chemin vers la carte donnée
-     */
-    public static String pathToCard240px(Card c) {
-        return pathToCard(c, 240);
+    public static String pathToCard(Card c, int width) {
+        return "/card_" + c.color().ordinal() + "_" + c.rank().ordinal() + "_"
+                + width + ".png";
     }
 
     /**
@@ -86,24 +70,24 @@ public final class GraphicalPlayerView {
         return "/trump_" + trump.ordinal() + ".png";
     }
 
-    private static ObservableMap<Card, Image> computeMapImagesCards240() {
+    private static ObservableMap<Card, Image> computeMapSmallCardsImages() {
         Map<Card, Image> map = new HashMap<>();
         for (Card.Color c : Card.Color.ALL) {
             for (Card.Rank r : Card.Rank.ALL) {
                 Card card = Card.of(c, r);
-                map.put(card, new Image(pathToCard240px(card)));
+                map.put(card, new Image(pathToCard(card, WIDTH_SMALL_CARD_IMAGE)));
             }
         }
         return FXCollections
                 .unmodifiableObservableMap(FXCollections.observableMap(map));
     }
 
-    private static ObservableMap<Card, Image> computeMapImagesCards160() {
+    private static ObservableMap<Card, Image> computeMapLargeCardsImages() {
         Map<Card, Image> map = new HashMap<>();
         for (Card.Color c : Card.Color.ALL) {
             for (Card.Rank r : Card.Rank.ALL) {
                 Card card = Card.of(c, r);
-                map.put(card, new Image(pathToCard160px(card)));
+                map.put(card, new Image(pathToCard(card, WIDTH_LARGE_CARD_IMAGE)));
             }
         }
         return FXCollections
@@ -117,6 +101,33 @@ public final class GraphicalPlayerView {
 
         return FXCollections
                 .unmodifiableObservableMap(FXCollections.observableMap(map));
+    }
+
+    private static HBox createHandPane(HandBean hb,
+            ArrayBlockingQueue<Card> cardQueue) {
+        HBox handPane = new HBox();
+        handPane.setStyle("-fx-background-color: lightgray; "
+                + "-fx-spacing: 5px; -fx-padding: 5px;");
+
+        for (int i = 0; i < Jass.HAND_SIZE; ++i) {
+            final int iConst = i;
+            ImageView img = new ImageView();
+            img.setFitWidth(WIDTH_SMALL_CARD_IMAGE / 2);
+            img.setFitHeight(HEIGHT_SMALL_CARD_IMAGE / 2);
+            img.imageProperty().bind(Bindings.valueAt(mapSmallCardsImages,
+                    Bindings.valueAt(hb.handProperty(), i)));
+
+            BooleanBinding isPlayable = Bindings.createBooleanBinding(
+                    () -> hb.playableCardsProperty().contains(hb.handProperty().get(iConst)));
+            img.opacityProperty().bind(Bindings.when(isPlayable).then(1.0).otherwise(0.2));
+            img.disableProperty().bind(Bindings.not(isPlayable));
+            img.setOnMouseClicked(e -> {
+                cardQueue.add(hb.handProperty().get(iConst));
+            });
+
+            handPane.getChildren().add(img);
+        }
+        return handPane;
     }
 
     private static GridPane createScorePane(Map<PlayerId, String> nameMap,
@@ -180,19 +191,20 @@ public final class GraphicalPlayerView {
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             imagesPanes[i] = new StackPane();
 
-            Rectangle halo = new Rectangle(WIDTH_CARD_IMAGE / 2, HEIGHT_CARD_IMAGE / 2);
+            Rectangle halo = new Rectangle(WIDTH_LARGE_CARD_IMAGE / 2,
+                    HEIGHT_LARGE_CARD_IMAGE / 2);
             halo.setStyle("-fx-arc-width: 20; -fx-arc-height: 20;"
                     + " -fx-fill: transparent; -fx-stroke: lightpink;"
                     + " -fx-stroke-width: 5; -fx-opacity: 0.5;");
-            
+
             halo.setEffect(new GaussianBlur(GAUSSIAN_BLUR_HALO_BEST_CARD));
             halo.visibleProperty().bind(
                     tb.winningPlayerProperty().isEqualTo(PlayerId.ALL.get(i)));
 
             ImageView img = new ImageView();
-            img.setFitWidth(WIDTH_CARD_IMAGE / 2);
-            img.setFitHeight(HEIGHT_CARD_IMAGE / 2);
-            img.imageProperty().bind(Bindings.valueAt(mapImagesCards240,
+            img.setFitWidth(WIDTH_LARGE_CARD_IMAGE / 2);
+            img.setFitHeight(HEIGHT_LARGE_CARD_IMAGE / 2);
+            img.imageProperty().bind(Bindings.valueAt(mapLargeCardsImages,
                     Bindings.valueAt(tb.trickProperty(), PlayerId.ALL.get(i))));
 
             imagesPanes[i].getChildren().add(halo);
@@ -203,7 +215,7 @@ public final class GraphicalPlayerView {
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             Text txt = new Text(nameMap.get(PlayerId.ALL.get(i)));
             txt.setStyle("-fx-font: 14 Optima;");
-            
+
             cardBoxes[i] = new VBox(SPACING_PLAYER_CARD);
             cardBoxes[i].setAlignment(Pos.CENTER);
 
@@ -220,7 +232,7 @@ public final class GraphicalPlayerView {
         GridPane.setHalignment(trumpImage, HPos.CENTER);
         GridPane.setValignment(trumpImage, VPos.CENTER);
         GridPane.setMargin(trumpImage, new Insets(TRUMP_MARGIN));
-        
+
         // Placement des boxes:
         trickPane.add(cardBoxes[ownIndex], 1, 2);
         trickPane.add(cardBoxes[(ownIndex + 1) % PlayerId.COUNT], 2, 0, 1, 3);
@@ -250,39 +262,16 @@ public final class GraphicalPlayerView {
         txt.setTextAlignment(TextAlignment.CENTER);
         txt.textProperty().bind(Bindings.format(
                 nameMap.get(pA) + " et " + nameMap.get(pB)
-                        + " ont gagné\navec %d points contre %d.",
+                + " ont gagné\navec %d points contre %d.",
                 sb.gamePointsProperty(id), sb.gamePointsProperty(id.other())));
 
         winPane.setCenter(txt);
         return winPane;
     }
 
-    private static String pathToCard(Card c, int width) {
-        return "/card_" + c.color().ordinal() + "_" + c.rank().ordinal() + "_"
-                + width + ".png";
-    }
-
-    private static HBox createHandPane(HandBean hb, ArrayBlockingQueue<Card> cardQueue) {
-        HBox handPane = new HBox();
-        handPane.setStyle("-fx-background-color: lightgray;\r\n" + 
-                "-fx-spacing: 5px;\r\n" + 
-                "-fx-padding: 5px;");
-        for(int i = 0; i < Jass.HAND_SIZE; ++ i) {
-            ImageView img = new ImageView();
-            img.setFitWidth(80);
-            img.setFitHeight(120);
-            img.imageProperty().bind(Bindings.valueAt(mapImagesCards160, 
-                    Bindings.valueAt(hb.handProperty(), i)));
-            
-            img.setOnMouseClicked(e -> {cardQueue.add(hb.handProperty().get(i)); });
-            
-            handPane.getChildren().add(img);
-        }
-        return handPane;
-    }
-
     // Graphics :
     private final Scene scene;
+    private final String ownName;
 
     /**
      * Construit un nouveau GraphicalPlayerView
@@ -297,7 +286,8 @@ public final class GraphicalPlayerView {
      *            (TrickBean) le bean des plis
      */
     public GraphicalPlayerView(PlayerId ownId, Map<PlayerId, String> nameMap,
-            ScoreBean sb, TrickBean tb, HandBean hb, ArrayBlockingQueue<Card> cardQueue) {
+            ScoreBean sb, TrickBean tb, HandBean hb,
+            ArrayBlockingQueue<Card> cardQueue) {
 
         GridPane score = createScorePane(nameMap, sb);
         GridPane trick = createTrickPane(ownId, nameMap, tb);
@@ -313,6 +303,7 @@ public final class GraphicalPlayerView {
         principalPane.getChildren().add(winT1);
         principalPane.getChildren().add(winT2);
         this.scene = new Scene(principalPane);
+        this.ownName = nameMap.get(ownId);
     }
 
     /**
@@ -328,6 +319,7 @@ public final class GraphicalPlayerView {
     public Stage createStage() throws IllegalStateException {
         Stage st = new Stage();
         st.setScene(scene);
+        st.setTitle("Javass - " + ownName);
         return st;
     }
 }
