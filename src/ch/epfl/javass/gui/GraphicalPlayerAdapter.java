@@ -18,18 +18,18 @@ public final class GraphicalPlayerAdapter implements Player {
     private final HandBean hb = new HandBean();
     private final ScoreBean sb = new ScoreBean();
     private final TrickBean tb = new TrickBean();
-    private final ArrayBlockingQueue<Card> cardToPlayQueue = new ArrayBlockingQueue<>(1);
+    private final ArrayBlockingQueue<Card> cardQueue = new ArrayBlockingQueue<>(1);
     private GraphicalPlayerView graphicalInterface;
 
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
-        return cardToPlayQueue.poll();
+        return cardQueue.poll();
     }
 
     @Override
     public void setPlayers(PlayerId ownId,
             Map<PlayerId, String> mapNames) {
-        graphicalInterface = new GraphicalPlayerView(ownId, mapNames, sb, tb);
+        graphicalInterface = new GraphicalPlayerView(ownId, mapNames, sb, tb, hb, cardQueue);
         Platform.runLater(() -> { graphicalInterface.createStage().show(); });
     }
 

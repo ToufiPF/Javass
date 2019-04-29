@@ -2,9 +2,10 @@ package ch.epfl.javass.gui;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
 
-import ch.epfl.javass.jass.Card.Color;
 import ch.epfl.javass.jass.Card;
+import ch.epfl.javass.jass.Card.Color;
 import ch.epfl.javass.jass.CardSet;
 import ch.epfl.javass.jass.Jass;
 import ch.epfl.javass.jass.PlayerId;
@@ -24,8 +25,10 @@ public final class GuiTest extends Application {
         PlayerId.ALL.forEach(p -> ns.put(p, p.name()));
         ScoreBean sB = new ScoreBean();
         TrickBean tB = new TrickBean();
+        HandBean hB = new HandBean();
+        ArrayBlockingQueue<Card> cardQueue = new ArrayBlockingQueue<>(1);
         GraphicalPlayerView g =
-                new GraphicalPlayerView(PlayerId.PLAYER_2, ns, sB, tB);
+                new GraphicalPlayerView(PlayerId.PLAYER_2, ns, sB, tB, hB, cardQueue);
         g.createStage().show();
 
         new AnimationTimer() {
