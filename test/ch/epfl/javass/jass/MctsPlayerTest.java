@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import ch.epfl.javass.gametest.PrintingPlayer;
@@ -42,6 +43,7 @@ class MctsPlayerTest {
         assertEquals(Card.of(Card.Color.SPADE, Card.Rank.EIGHT), player.cardToPlay(state, hand));
     }
     
+    @Disabled
     @Test
     void test4Mcts() {
         final int seed = 2019;

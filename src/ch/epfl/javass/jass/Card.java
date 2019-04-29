@@ -61,7 +61,7 @@ public final class Card {
         private Rank(String rank) {
             this.rank = rank;
         }
-
+        
         @Override
         public String toString() {
             return rank;

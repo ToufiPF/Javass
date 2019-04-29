@@ -45,11 +45,8 @@ public final class CardSet {
      * @param pkCardSet
      *            (long) la version paquetée du CardSet
      * @return (CardSet) l'ensemble correspondant à pkCardSet
-     * @throws IllegalArgumentException
-     *             si pkCardSet est invalide
      */
-    public static CardSet ofPacked(long pkCardSet)
-            throws IllegalArgumentException {
+    public static CardSet ofPacked(long pkCardSet) {
         Preconditions.checkArgument(PackedCardSet.isValid(pkCardSet));
         return new CardSet(pkCardSet);
     }

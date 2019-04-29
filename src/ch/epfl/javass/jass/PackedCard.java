@@ -2,6 +2,7 @@ package ch.epfl.javass.jass;
 
 import ch.epfl.javass.bits.Bits32;
 import ch.epfl.javass.jass.Card.Rank;
+import oracle.jrockit.jfr.events.Bits;
 
 /**
  * PackedCard Une classe non instanciable qui fournit des méthodes statiques
@@ -85,7 +86,7 @@ public final class PackedCard {
         // - que l'id du rang soit inferieur ou égal à 8
         // (ie. Bits32.extract(packedCard, 0, 4) <= 8)
 
-        return Bits32.extract(packedCard, 6, 32 - 6) == 0 && Bits32
+        return Bits32.extract(packedCard, RANK_SIZE + COLOR_SIZE, Integer.SIZE - (RANK_SIZE + COLOR_SIZE)) == 0 && Bits32
                 .extract(packedCard, RANK_START, RANK_SIZE) < Rank.COUNT;
     }
 

@@ -112,11 +112,8 @@ public final class Score {
      * @param trickPoints
      *            (int) le nombre de points du pli
      * @return (Score) le score du prochain pli
-     * @throws IllegalArgumentException
-     *             si trickPoints < 0
      */
-    public Score withAdditionalTrick(TeamId winner, int trickPoints)
-            throws IllegalArgumentException {
+    public Score withAdditionalTrick(TeamId winner, int trickPoints) {
         Preconditions.checkArgument(trickPoints >= 0);
         return new Score(PackedScore.withAdditionalTrick(mPackedScore, winner,
                 trickPoints));
@@ -124,7 +121,7 @@ public final class Score {
     
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj.getClass() == Score.class) {
+        if (obj instanceof Score) {
             Score objScore = (Score) obj;
             return objScore.packed() == this.packed();
         }
