@@ -118,7 +118,7 @@ public final class GraphicalPlayerView {
                     Bindings.valueAt(hb.handProperty(), i)));
 
             BooleanBinding isPlayable = Bindings.createBooleanBinding(
-                    () -> hb.playableCardsProperty().contains(hb.handProperty().get(iConst)));
+                    () -> hb.playableCardsProperty().contains(hb.handProperty().get(iConst)), hb.playableCardsProperty(), hb.handProperty());
             img.opacityProperty().bind(Bindings.when(isPlayable).then(1.0).otherwise(0.2));
             img.disableProperty().bind(Bindings.not(isPlayable));
             img.setOnMouseClicked(e -> {

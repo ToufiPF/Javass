@@ -25,6 +25,7 @@ public final class GraphicalPlayerAdapter implements Player {
         Card c;
         hb.setPlayableCards(state.trick().playableCards(hand));
         do { c = cardQueue.poll(); } while (c == null);
+        hb.setPlayableCards(CardSet.EMPTY);
         return c;
     }
 
