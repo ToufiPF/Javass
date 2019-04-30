@@ -81,21 +81,19 @@ public final class MctsPlayer implements Player {
             // gênant
             final double logNbTours = Math.log(nbTours);
 
+            int bestIndex = 0;
+            double maxScore = 0;
+
             for (int i = 0; i < children.length; ++i) {
                 // Si l'enfant n'a pas été créé : on le retourne directement
                 if (children[i] == null)
                     return i;
                 else
                     scoresChilds[i] = (double) children[i].totalPoints
-                            / children[i].nbTours
-                            + c * Math
-                                    .sqrt(2 * logNbTours / children[i].nbTours);
-            }
+                    / children[i].nbTours
+                    + c * Math
+                    .sqrt(2 * logNbTours / children[i].nbTours);
 
-            // On choisit le meilleur enfant
-            int bestIndex = 0;
-            double maxScore = 0;
-            for (int i = 0; i < scoresChilds.length; ++i) {
                 if (scoresChilds[i] > maxScore) {
                     maxScore = scoresChilds[i];
                     bestIndex = i;
@@ -145,13 +143,13 @@ public final class MctsPlayer implements Player {
             long cardsetChild = chState.nextPlayer() == idMcts
                     ? PackedTrick.playableCards(chState.packedTrick(),
                             unplayedCardsInHand(chState, handOfMcts))
-                    : PackedTrick.playableCards(chState.packedTrick(),
-                            unplayedCardsForOther(chState, handOfMcts));
+                            : PackedTrick.playableCards(chState.packedTrick(),
+                                    unplayedCardsForOther(chState, handOfMcts));
 
-            n.children[id] = new Node(chState, cardsetChild);
-            pathToNewNode.add(n.children[id]);
+                    n.children[id] = new Node(chState, cardsetChild);
+                    pathToNewNode.add(n.children[id]);
 
-            return pathToNewNode;
+                    return pathToNewNode;
         }
     }
 
@@ -170,7 +168,7 @@ public final class MctsPlayer implements Player {
     private final SplittableRandom mRng;
 
     public MctsPlayer(PlayerId ownId, long rngSeed, int iterations) {
-        Preconditions.checkArgument(iterations >= 9);
+        Preconditions.checkArgument(iterations >= Jass.HAND_SIZE);
         mOwnId = ownId;
         mRng = new SplittableRandom(rngSeed);
         mIterations = iterations;
@@ -218,16 +216,16 @@ public final class MctsPlayer implements Player {
         while (!state.isTerminal()) {
             long playable = state.nextPlayer() == mOwnId
                     ? PackedTrick.playableCards(state.packedTrick(), mctsCards)
-                    : PackedTrick.playableCards(state.packedTrick(),
-                            otherCards);
+                            : PackedTrick.playableCards(state.packedTrick(),
+                                    otherCards);
 
-            final int pkCard = PackedCardSet.get(playable,
-                    mRng.nextInt(PackedCardSet.size(playable)));
-            state = state
-                    .withNewCardPlayedAndTrickCollected(Card.ofPacked(pkCard));
+                    final int pkCard = PackedCardSet.get(playable,
+                            mRng.nextInt(PackedCardSet.size(playable)));
+                    state = state
+                            .withNewCardPlayedAndTrickCollected(Card.ofPacked(pkCard));
 
-            mctsCards = PackedCardSet.remove(mctsCards, pkCard);
-            otherCards = PackedCardSet.remove(otherCards, pkCard);
+                    mctsCards = PackedCardSet.remove(mctsCards, pkCard);
+                    otherCards = PackedCardSet.remove(otherCards, pkCard);
         }
         return state.packedScore();
     }

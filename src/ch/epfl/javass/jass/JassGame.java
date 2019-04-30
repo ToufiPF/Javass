@@ -61,8 +61,10 @@ public final class JassGame {
      * partie est terminée (ne ramasse PAS le pli courant)
      */
     public void advanceToEndOfNextTrick() {
-        if (isGameOver())
+        if (isGameOver()) {
             return;
+        }
+
 
         // On est au 1er pli du 1er tour de la partie
         if (mTurnState == null) {

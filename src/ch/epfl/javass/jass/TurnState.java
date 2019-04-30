@@ -155,8 +155,9 @@ public final class TurnState {
      *             si le pli est plein
      */
     public TurnState withNewCardPlayed(Card card) throws IllegalStateException {
+        assert(PackedCardSet.contains(unplayedCards, card.packed()));
         exceptionIfTrickFull();
-
+        
         // On ajoute la carte card au pli actuel
         int newActualTrick = PackedTrick.withAddedCard(actualTrick,
                 card.packed());
