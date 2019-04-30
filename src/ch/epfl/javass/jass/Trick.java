@@ -14,6 +14,12 @@ public final class Trick {
     /** Représente un pli invalide (non unique) */
     public final static Trick INVALID = new Trick(PackedTrick.INVALID);
 
+    private final int pkTrick;
+
+    private Trick(int pkTrick) {
+        this.pkTrick = pkTrick;
+    }
+    
     /**
      * Méthode publique statique retournant le pli vide d'index 0, d'atout et de
      * premier joueur donnés
@@ -36,29 +42,20 @@ public final class Trick {
      * @param packed
      *            (int) la version empaquetée du pli à créer
      * @return (Trick) le pli correspondant à la version empaquetée packed
-     * @throws IllegalArgumentException
-     *             si packed est invalide
      */
-    public static Trick ofPacked(int packed) throws IllegalArgumentException {
+    public static Trick ofPacked(int packed) {
         Preconditions.checkArgument(PackedTrick.isValid(packed));
         return new Trick(packed);
     }
 
-    private final int pkTrick;
-
-    private Trick(int pkTrick) {
-        this.pkTrick = pkTrick;
-    }
 
     /**
      * Méthode publique retournant la couleur de base du pli
      *
      * @return (Color) la couleur de base du pli, càd la couleur de la première
      *         carte jouée
-     * @throws IllegalStateException
-     *             si le pli est vide
      */
-    public Color baseColor() throws IllegalStateException {
+    public Color baseColor() {
         exceptionIfEmpty();
         return PackedTrick.baseColor(pkTrick);
     }
@@ -69,10 +66,8 @@ public final class Trick {
      * @param index
      *            (int) l'index de la carte à retourner
      * @return (Card) la carte du pli à'index donné
-     * @throws IllegalArgumentException
-     *             si l'index est invalide
      */
-    public Card card(int index) throws IndexOutOfBoundsException {
+    public Card card(int index) {
         Preconditions.checkIndex(index, size());
         return Card.ofPacked(PackedTrick.card(pkTrick, index));
     }
@@ -143,10 +138,8 @@ public final class Trick {
      *            être jouées
      * @return (CardSet) l'ensemble des cartes de la main pouvant être jouées
      *         comme prochaine carte du pli
-     * @throws IllegalStateException
-     *             si le pli est plein
      */
-    public CardSet playableCards(CardSet hand) throws IllegalStateException {
+    public CardSet playableCards(CardSet hand) {
         exceptionIfFull();
         return CardSet
                 .ofPacked(PackedTrick.playableCards(pkTrick, hand.packed()));
@@ -158,10 +151,8 @@ public final class Trick {
      * @param index
      *            (int) l'index du joueur à retourner
      * @return (PlayerId) le joueur d'index donné dans le pli
-     * @throws IndexOutOfBoundsException
-     *             si l'index est invalide
      */
-    public PlayerId player(int index) throws IndexOutOfBoundsException {
+    public PlayerId player(int index) {
         Preconditions.checkIndex(index, PlayerId.COUNT);
         return PackedTrick.player(pkTrick, index);
     }
@@ -197,10 +188,8 @@ public final class Trick {
      * Méthode publique retournant le joueur menant le pli
      *
      * @return (PlayerId) le joueur menant le pli
-     * @throws IllegalStateException
-     *             si le pli est vide
      */
-    public PlayerId winningPlayer() throws IllegalStateException {
+    public PlayerId winningPlayer() {
         exceptionIfEmpty();
         return PackedTrick.winningPlayer(pkTrick);
     }
@@ -211,10 +200,8 @@ public final class Trick {
      * @param c
      *            (Card) la carte que l'on veut ajouter au pli
      * @return (Trick) le pli auquel on a ajouté la carte c
-     * @throws IllegalStateException
-     *             si le pli est déjà plein
      */
-    public Trick withAddedCard(Card c) throws IllegalStateException {
+    public Trick withAddedCard(Card c) {
         exceptionIfFull();
         return ofPacked(PackedTrick.withAddedCard(pkTrick, c.packed()));
     }

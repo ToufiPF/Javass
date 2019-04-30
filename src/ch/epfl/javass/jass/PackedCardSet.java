@@ -20,8 +20,8 @@ public final class PackedCardSet {
     // 0x01FF = 0b0000_0001_1111_1111
     public static final long ALL_CARDS = 0x01FF_01FF_01FF_01FFL;
 
-    private static long[][] trumpAboveTab = computeTrumpAbove();
-    private static long[] subsetOfColorTab = computeSubsetOfColor();
+    private static long[][] TRUMP_ABOVE_TAB = computeTrumpAbove();
+    private static long[] SUBSET_OF_COLOR_TAB = computeSubsetOfColor();
 
     /**
      * Méthode publique permettant d'ajouter une carte à un ensemble de cartes
@@ -216,7 +216,7 @@ public final class PackedCardSet {
     public static long subsetOfColor(long pkCardSet, Card.Color color) {
         assert isValid(pkCardSet);
 
-        return pkCardSet & subsetOfColorTab[color.ordinal()];
+        return pkCardSet & SUBSET_OF_COLOR_TAB[color.ordinal()];
     }
 
     /**
@@ -248,8 +248,8 @@ public final class PackedCardSet {
      */
     public static long trumpAbove(int pkCard) {
         assert PackedCard.isValid(pkCard);
-        return trumpAboveTab[PackedCard.color(pkCard).ordinal()][PackedCard
-                .rank(pkCard).ordinal()];
+        return TRUMP_ABOVE_TAB[PackedCard.color(pkCard).ordinal()][PackedCard
+                                                                   .rank(pkCard).ordinal()];
     }
 
     /**
@@ -271,10 +271,12 @@ public final class PackedCardSet {
     private static long[] computeSubsetOfColor() {
         long[] subsetOfColorTab = new long[Card.Color.COUNT];
 
-        for (int i = 0; i < Card.Color.COUNT; ++i) {
-            long allCardsOfOneColor = (1L << 9) - 1L;
-            allCardsOfOneColor <<= (i * 16);
-            subsetOfColorTab[i] = allCardsOfOneColor;
+        for (Card.Color c : Card.Color.ALL) {
+            long allCardsOfOneColor = 0L;
+            for(Card.Rank r : Card.Rank.ALL) {
+                allCardsOfOneColor = add(allCardsOfOneColor, PackedCard.pack(c, r));
+            }
+            subsetOfColorTab[c.ordinal()] = allCardsOfOneColor;
         }
         return subsetOfColorTab;
     }
@@ -286,10 +288,10 @@ public final class PackedCardSet {
             for (Card.Rank rankL : Card.Rank.ALL) {
                 for (Card.Rank rankR : Card.Rank.ALL) {
 
-                    if (rankL.trumpOrdinal() < rankR.trumpOrdinal()) {
+                    if (PackedCard.isBetter(color, PackedCard.pack(color, rankR), PackedCard.pack(color, rankL))) {
                         trumpAboveRank[color.ordinal()][rankL
-                                .ordinal()] |= singleton(
-                                        PackedCard.pack(color, rankR));
+                                                        .ordinal()] |= singleton(
+                                                                PackedCard.pack(color, rankR));
                     }
                 }
             }

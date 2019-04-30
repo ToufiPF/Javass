@@ -23,11 +23,8 @@ public final class Bits32 {
      *            (int) la taille de la chaîne de bits à extraire
      * @return (int) un entier composé de la chaîne de bit extraite en poids
      *         faible
-     * @throws IllegalArgumentException
-     *             lorsque start et size ne désignent pas une plage valide
      */
-    public static int extract(int bits, int start, int size)
-            throws IllegalArgumentException {
+    public static int extract(int bits, int start, int size) {
         return (bits & mask(start, size)) >>> start;
     };
 
@@ -40,11 +37,8 @@ public final class Bits32 {
      * @param size
      *            (int) la taille du masque à créer
      * @return (int) un masque de taille size et de bit de départ start
-     * @throws IllegalArgumentException
-     *             lorsque start et size ne désignent pas une plage valide
      */
-    public static int mask(int start, int size)
-            throws IllegalArgumentException {
+    public static int mask(int start, int size) {
 
         Preconditions.checkArgument(
                 start >= 0 && size >= 0 && start + size <= Integer.SIZE);
@@ -71,12 +65,8 @@ public final class Bits32 {
      *
      * @return (int) un entier composé de v1 occupant les s1 bits de poids
      *         faible et de v2 occupant les s2 bits suivants
-     * @throws IllegalArgumentException
-     *             si la somme de s1 et s2 dépasse la taille d'un int, ou si
-     *             v1/v2 ne sont pas representables en s1/s2 bits
      */
-    public static int pack(int v1, int s1, int v2, int s2)
-            throws IllegalArgumentException {
+    public static int pack(int v1, int s1, int v2, int s2) {
 
         Preconditions.checkArgument((s1 + s2) <= Integer.SIZE);
         checkValidity(v1, s1);
@@ -106,13 +96,8 @@ public final class Bits32 {
      * @return (int) un entier composé de v1 occupant les s1 bits de poids
      *         faible, de v2 occupant les s2 bits suivants et de v3 occupant les
      *         s3 bits suivants
-     * @throws IllegalArgumentException
-     *             si la taille totale de l'entier créé est supérieure à la
-     *             taille d'un int, ou si les entiers vI donnés ne sont pas
-     *             représentables par le nombre de bits sI correspondant
      */
-    public static int pack(int v1, int s1, int v2, int s2, int v3, int s3)
-            throws IllegalArgumentException {
+    public static int pack(int v1, int s1, int v2, int s2, int v3, int s3) {
 
         Preconditions.checkArgument((s1 + s2 + s3) <= Integer.SIZE);
 
@@ -129,14 +114,9 @@ public final class Bits32 {
      * @return (int) un entier composé de v1 occupant les s1 bits de poids
      *         faible, de v2 occupant les s2 bits suivants, de v3 occupant les
      *         s3 bits suivants, etc.
-     * @throws IllegalArgumentException
-     *             si la taille totale de l'entier créé est supérieure à la
-     *             taille d'un int, ou si les entiers vI donnés ne sont pas
-     *             représentables par le nombre de bits sI correspondant
      */
     public static int pack(int v1, int s1, int v2, int s2, int v3, int s3,
-            int v4, int s4, int v5, int s5, int v6, int s6, int v7, int s7)
-            throws IllegalArgumentException {
+            int v4, int s4, int v5, int s5, int v6, int s6, int v7, int s7) {
 
         Preconditions.checkArgument(
                 (s1 + s2 + s3 + s4 + s5 + s6 + s7) <= Integer.SIZE);
@@ -152,13 +132,8 @@ public final class Bits32 {
     /**
      * Méthode utilitaire permettant de vérifier si un couple d'entiers est
      * valide
-     *
-     * @throws IllegalArgumentException
-     *             si s1 n'est pas valide ou si la représentation en bits de v1
-     *             est de taille supérieure à s1
      */
-    private static void checkValidity(int v, int s)
-            throws IllegalArgumentException {
+    private static void checkValidity(int v, int s) {
 
         Preconditions.checkArgument(s >= 0 && s <= Integer.SIZE);
         if (s == Integer.SIZE)

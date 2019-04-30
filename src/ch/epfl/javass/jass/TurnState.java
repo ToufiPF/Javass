@@ -12,6 +12,13 @@ import ch.epfl.javass.jass.Card.Color;
  */
 public final class TurnState {
 
+
+    private final long actualScore;
+
+    private final long unplayedCards;
+
+    private final int actualTrick;
+
     /**
      * Méthode publique et statique retournant l'état initial du tour d'atout,
      * score et premier joueur donnés
@@ -54,12 +61,6 @@ public final class TurnState {
 
         return new TurnState(pkScore, pkUnplayedCards, pkTrick);
     }
-
-    private final long actualScore;
-
-    private final long unplayedCards;
-
-    private final int actualTrick;
 
     private TurnState(long actualScore, long unplayedCards, int actualTrick) {
         this.actualScore = actualScore;

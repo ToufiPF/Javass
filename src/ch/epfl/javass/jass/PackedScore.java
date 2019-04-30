@@ -69,6 +69,7 @@ public final class PackedScore {
      * @return (long) les scores empaquetés mis à jour
      */
     public static long nextTurn(long pkScore) {
+        assert(turnTricks(pkScore, TeamId.TEAM_1) + turnTricks(pkScore, TeamId.TEAM_2) == Jass.TRICKS_PER_TURN);
         return pack(0, 0, totalPoints(pkScore, TeamId.TEAM_1), 0, 0,
                 totalPoints(pkScore, TeamId.TEAM_2));
     }
@@ -127,8 +128,8 @@ public final class PackedScore {
      * Méthode publique et statique retournant le nombre total de points de
      * l'équipe t dans le tour courant
      *
-     * @param (long)
-     *            pkScore le score empaqueté du tour courant
+     * @param pkScore (long)
+     *            le score empaqueté du tour courant
      * @param t
      *            (TeamId) l'équipe dont on veut connaitre le nombre total de
      *            points dans le tour courant
