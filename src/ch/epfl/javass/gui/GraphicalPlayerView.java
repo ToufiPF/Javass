@@ -263,7 +263,7 @@ public final class GraphicalPlayerView {
         txt.textProperty().bind(Bindings.format(
                 nameMap.get(pA) + " et " + nameMap.get(pB)
                 + " ont gagné\navec %d points contre %d.",
-                sb.gamePointsProperty(id), sb.gamePointsProperty(id.other())));
+                sb.totalPointsProperty(id), sb.totalPointsProperty(id.other())));
 
         winPane.setCenter(txt);
         return winPane;
