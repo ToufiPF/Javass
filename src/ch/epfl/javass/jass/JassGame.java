@@ -85,6 +85,7 @@ public final class JassGame {
         // On vérifie si une team a gagné
         if (mTurnState.score()
                 .totalPoints(getTeamWithMostPoints()) >= Jass.WINNING_POINTS) {
+            updateScoreForAll(mTurnState.score());
             setWinningTeamForAll(getTeamWithMostPoints());
             mGameIsOver = true;
             return;
@@ -99,6 +100,7 @@ public final class JassGame {
 
             mTurnState = TurnState.initial(generateTrump(),
                     mTurnState.score().nextTurn(), mFirstPlayer);
+            updateScoreForAll(mTurnState.score());
             setTrumpForAll(mTurnState.trick().trump());
         }
 
