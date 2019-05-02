@@ -54,7 +54,7 @@ public final class GraphicalPlayerView {
     private static final int SPACING_PLAYER_CARD = 10;
     private static final int TRUMP_MARGIN = 25;
 
-    public static String pathToCard(Card c, int width) {
+    private static String pathToCard(Card c, int width) {
         return "/card_" + c.color().ordinal() + "_" + c.rank().ordinal() + "_"
                 + width + ".png";
     }
