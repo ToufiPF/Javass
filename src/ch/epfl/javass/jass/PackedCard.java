@@ -2,7 +2,6 @@ package ch.epfl.javass.jass;
 
 import ch.epfl.javass.bits.Bits32;
 import ch.epfl.javass.jass.Card.Rank;
-import oracle.jrockit.jfr.events.Bits;
 
 /**
  * PackedCard Une classe non instanciable qui fournit des méthodes statiques

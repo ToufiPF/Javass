@@ -15,7 +15,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.effect.GaussianBlur;
@@ -217,7 +216,7 @@ public final class GraphicalPlayerView {
             txt.setStyle("-fx-font: 14 Optima;");
 
             cardBoxes[i] = new VBox(SPACING_PLAYER_CARD);
-            cardBoxes[i].setAlignment(Pos.CENTER);
+            cardBoxes[i].setStyle("-fx-padding: 5px; -fx-alignment: center;");
 
             if (i == ownIndex) {
                 cardBoxes[i].getChildren().add(imagesPanes[i]);
