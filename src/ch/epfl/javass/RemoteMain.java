@@ -5,7 +5,12 @@ import ch.epfl.javass.net.RemotePlayerServer;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-public final class RemoteMain extends Application {
+/**
+ * RemoteMain Une classe permettant de jouer à une partie distante
+ * @author Amaury Pierre (296498)
+ * @author Aurélien Clergeot (302592)
+ */
+public final class RemoteMain extends Application {   
     public static void main (String[] args) {
        Application.launch(args); 
     }
@@ -20,5 +25,4 @@ public final class RemoteMain extends Application {
         remoteThread.start();
         System.out.println("La partie commencera à la connexion du client...");
     }
-
 }
