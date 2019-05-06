@@ -13,6 +13,12 @@ import ch.epfl.javass.jass.Trick;
 import ch.epfl.javass.jass.TurnState;
 import javafx.application.Platform;
 
+/**
+ * GraphicalPlayerAdapter Une classe permettant d'adapter 
+ *      l'interface graphique pour en faire un joueur
+ * @author Amaury Pierre (296498)
+ * @author Aurélien Clergeot (302592)
+ */
 public final class GraphicalPlayerAdapter implements Player {
     private final HandBean hb = new HandBean();
     private final ScoreBean sb = new ScoreBean();
