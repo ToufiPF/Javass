@@ -223,7 +223,7 @@ public final class Trick {
     
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj.getClass() == Trick.class) {
+        if (obj instanceof Trick) {
             Trick otherTrick = (Trick) obj;
             return this.packed() == otherTrick.packed();
         }

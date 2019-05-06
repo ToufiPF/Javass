@@ -82,7 +82,7 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws IOException {
         w.close();
         r.close();
         s.close();

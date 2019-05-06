@@ -12,15 +12,13 @@ import javafx.stage.Stage;
  */
 public final class RemoteMain extends Application {   
     public static void main (String[] args) {
-       Application.launch(args); 
+       launch(args);
     }
     
     @Override
     public void start(Stage arg0) throws Exception {
-        Thread remoteThread = new Thread(() -> {
-            RemotePlayerServer server = new RemotePlayerServer(new GraphicalPlayerAdapter());
-            server.run();
-        });
+        //RemotePlayerServer implémente Runnable
+        Thread remoteThread = new Thread(new RemotePlayerServer(new GraphicalPlayerAdapter()));
         remoteThread.setDaemon(true);
         remoteThread.start();
         System.out.println("La partie commencera à la connexion du client...");
