@@ -1,6 +1,7 @@
 package ch.epfl;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -13,18 +14,21 @@ class Etape11Test {
                 "s::", "s::50000", "s:Dédé", "h", "165652"
         };
         try {
-            String line;
-            Process p = Runtime.getRuntime().exec("java RemoteMain");
+            System.out.println(new File("bin").getAbsolutePath());
+            ProcessBuilder pb = new ProcessBuilder("java", "ch/epfl/javass/RemoteMain");
+            pb.directory(new File("bin"));
+            Process p = pb.start();
             
+            String line;
             BufferedReader stdout = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((line = stdout.readLine()) != null) {
-                System.out.println("Standard Output : " + line);
+                System.out.println("Process Output : " + line);
             }
             stdout.close();
-            
+
             BufferedReader stderr = new BufferedReader(new InputStreamReader(p.getErrorStream()));
             while ((line = stderr.readLine()) != null) {
-                System.err.println("Standard Error : " + line);
+                System.err.println("Process Error : " + line);
             }
             stderr.close();
         }
