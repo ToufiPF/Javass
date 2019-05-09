@@ -11,10 +11,14 @@ class Etape11Test {
     public static void main(String[] args) throws IOException {
 
         String[] params = {
-                "s::", "s::50000", "s:Dédé", "h", "165652"
+                "s::", "s::50000", "r:Dédé", "h", "165652"
         };
+        //launchServer();
+        LocalMain.main(params);
+    }
+    
+    public static void launchServer() {
         try {
-            System.out.println(new File("bin").getAbsolutePath());
             ProcessBuilder pb = new ProcessBuilder("java", "ch/epfl/javass/RemoteMain");
             pb.directory(new File("bin"));
             Process p = pb.start();
@@ -35,6 +39,5 @@ class Etape11Test {
         catch (Exception err) {
             err.printStackTrace();
         }
-        LocalMain.main(params);
     }
 }
