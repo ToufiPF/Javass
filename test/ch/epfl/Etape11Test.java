@@ -2,13 +2,12 @@ package ch.epfl;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 
 import ch.epfl.javass.LocalMain;
 
 class Etape11Test {    
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         String[] params = {
                 "s::", "s::50000", "s:Dédé", "h", "165652"

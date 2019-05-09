@@ -77,5 +77,4 @@ public final class GraphicalPlayerAdapter implements Player {
     public void updateTrick(Trick newTrick) {
         Platform.runLater(() -> {tb.setTrick(newTrick); });
     }
-
 }

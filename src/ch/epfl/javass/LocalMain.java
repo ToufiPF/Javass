@@ -1,6 +1,5 @@
 package ch.epfl.javass;
 
-import java.io.IOError;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,7 +17,7 @@ import ch.epfl.javass.net.RemotePlayerClient;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-public class LocalMain extends Application {
+public final class LocalMain extends Application {
 
     private static enum PlayerType {
         HUMAN("h", 1, 2), SIMULATED("s", 1, 3), REMOTE("r", 1, 3);
@@ -45,15 +44,19 @@ public class LocalMain extends Application {
             return maxFields;
         }
     }
-
-    public static final double WAIT_TIME_MCTS_PLAYER = .5; // default:2.0
-
+    /** Temps d'attente minimum pour les joueurs simulés */
+    public static final double WAIT_TIME_MCTS_PLAYER = 2.; // default:2.0
+    
+    /** Temps d'attente à la fin d'un pli */
     public static final long WAIT_TIME_TRICK_END = 1000;
-
+    
+    /** Nom par défault des joueurs */
     public static final String[] DEFAULT_NAMES = {"Aline", "Bastien", "Colette", "David" };
-
+    
+    /** Nombre d'itérations par défault pour l'algorithme des joueurs simulés */
     public static final int DEFAULT_ITERATIONS = 10_000;
-
+    
+    /** Adresse IP par défault des joueurs distants */
     public static final String DEFAULT_IP = "localhost";
 
     public static void main(String[] args) {
@@ -64,19 +67,18 @@ public class LocalMain extends Application {
     public void start(Stage arg0) throws Exception {
         List<String> args = getParameters().getRaw();
         
+        // On commence par générer (ou récupérer, si elle a été fournie) la graine
         Random SEED_GENERATOR = null;
         if (args.size() == PlayerId.COUNT) {
-            //Graine aléatoire
             SEED_GENERATOR = new Random();
         }
         else if (args.size() == PlayerId.COUNT + 1) {
-            //Graine donnée
             try {
                 long seed = Long.parseLong(args.get(PlayerId.COUNT));
                 SEED_GENERATOR = new Random(seed);
             }
             catch (NumberFormatException e) {
-                System.err.println("Erreur : graine erronée : " + args.get(PlayerId.COUNT));
+                System.err.println("Erreur : la graine fournie n'est pas valide : " + args.get(PlayerId.COUNT));
                 System.err.println(e.toString());
                 System.exit(1);
             }
@@ -86,14 +88,17 @@ public class LocalMain extends Application {
             System.err.println(getHelpMessage());
             System.exit(1);
         }
-
+        
+        
         Map<PlayerId, String> mapNames = new HashMap<>();
         Map<PlayerId, Player> mapPlayers = new HashMap<>();
         final long gameSeed = SEED_GENERATOR.nextLong();
         
+        // On initialise chaque joueur :
         for (int i = 0 ; i < PlayerId.COUNT ; ++i) {
             String[] fields = args.get(i).split(":");
-
+            
+            // On détermine le type de joueur spécifié (premier "champ")
             PlayerType type = null;
             for (PlayerType t : PlayerType.ALL)
                 if (fields[0].equals(t.specificator()))
@@ -105,10 +110,12 @@ public class LocalMain extends Application {
             }
             checkNbFieldsForPlayerType(fields, type);
             
+            // On récupère le nom fourni (deuxieme "champ")
             String name = fields.length <= 1 || fields[1].isEmpty() ? DEFAULT_NAMES[i] : fields[1];
             Player player = null;
             long playerSeed = SEED_GENERATOR.nextLong();
             
+            // On analyse le troisième champ, qui dépend du type de joueur :
             switch (type) {
             case SIMULATED:
                 int iterations = DEFAULT_ITERATIONS;
@@ -131,11 +138,6 @@ public class LocalMain extends Application {
                     player = new RemotePlayerClient(hostName);
                 }
                 catch (IOException e) {
-                    System.err.println("Erreur : connexion au serveur " + hostName + " impossible.");
-                    System.err.println(e);
-                    System.exit(1);
-                }
-                catch (IOError e) {
                     System.err.println("Erreur : connexion au serveur " + hostName + " impossible.");
                     System.err.println(e);
                     System.exit(1);
@@ -167,16 +169,15 @@ public class LocalMain extends Application {
     }
 
     private static String getHelpMessage() {
-        StringBuilder b = new StringBuilder()
-                .append("Utilisation : java ch.epfl.javass.LocalMain <j1>...<j4> [<graine>]\n")
-                .append("où :\n").append("<jn> spécifie le joueur n ainsi :\n")
-                .append("  h:<nom>               -> un joueur humain, nommé <nom>\n")
-                .append("  s:<nom>:<iterations>  -> un joueur simulé, nommé <nom> avec <iterations> itérations\n")
-                .append("  r:<nom>:<adresse>     -> un joueur distant, nommé <nom> à l'adresse ip <adresse>\n")
-                .append("Remarque : les champs <nom>, <graine>, et <adresse> peuvent être omis dans les \n")
-                .append("arguments ci-dessus, ils sont alors remplacés par leur valeur par défaut (voir doc).\n")
-                .append("[<graine>] (optionnel) la graine utilisée pour générer la partie");
-        return b.toString();
+        String str = "Utilisation : java ch.epfl.javass.LocalMain <j1>...<j4> [<graine>]\n"
+                + "où :\n" + "<jn> spécifie le joueur n ainsi :\n"
+                + "  h:<nom>               -> un joueur humain, nommé <nom>\n"
+                + "  s:<nom>:<iterations>  -> un joueur simulé, nommé <nom> avec <iterations> itérations\n"
+                + "  r:<nom>:<adresse>     -> un joueur distant, nommé <nom> à l'adresse ip <adresse>\n"
+                + "Remarque : les champs <nom>, <graine>, et <adresse> peuvent être omis dans les \n"
+                + "arguments ci-dessus, ils sont alors remplacés par leur valeur par défaut (voir doc).\n"
+                + "[<graine>] (optionnel) la graine utilisée pour générer la partie.";
+        return str;
     }
 
     private static void checkNbFieldsForPlayerType(String[] fields, PlayerType type) {
