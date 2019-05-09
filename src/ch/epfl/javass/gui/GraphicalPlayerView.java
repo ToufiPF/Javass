@@ -58,14 +58,7 @@ public final class GraphicalPlayerView {
                 + width + ".png";
     }
 
-    /**
-     * Donne le chemin vers l'image de l'atout de la couleur donnée
-     *
-     * @param trump
-     *            (Card.Color)
-     * @return (String) le chemin vers la couleur donnée
-     */
-    public static String pathToTrump(Card.Color trump) {
+    private static String pathToTrump(Card.Color trump) {
         return "/trump_" + trump.ordinal() + ".png";
     }
 
@@ -101,7 +94,8 @@ public final class GraphicalPlayerView {
         return FXCollections
                 .unmodifiableObservableMap(FXCollections.observableMap(map));
     }
-
+    
+    
     private static HBox createHandPane(HandBean hb,
             ArrayBlockingQueue<Card> cardQueue) {
         HBox handPane = new HBox();
@@ -109,19 +103,20 @@ public final class GraphicalPlayerView {
                 + "-fx-spacing: 5px; -fx-padding: 5px;");
 
         for (int i = 0; i < Jass.HAND_SIZE; ++i) {
-            final int iConst = i;
+            final int idCard = i;
             ImageView img = new ImageView();
             img.setFitWidth(WIDTH_SMALL_CARD_IMAGE / 2);
             img.setFitHeight(HEIGHT_SMALL_CARD_IMAGE / 2);
             img.imageProperty().bind(Bindings.valueAt(mapSmallCardsImages,
-                    Bindings.valueAt(hb.handProperty(), i)));
+                    Bindings.valueAt(hb.handProperty(), idCard)));
 
             BooleanBinding isPlayable = Bindings.createBooleanBinding(
-                    () -> hb.playableCardsProperty().contains(hb.handProperty().get(iConst)), hb.playableCardsProperty(), hb.handProperty());
+                    () -> hb.playableCardsProperty().contains(hb.handProperty().get(idCard)),
+                    hb.playableCardsProperty(), hb.handProperty());
             img.opacityProperty().bind(Bindings.when(isPlayable).then(1.0).otherwise(0.2));
             img.disableProperty().bind(Bindings.not(isPlayable));
             img.setOnMouseClicked(e -> {
-                cardQueue.add(hb.handProperty().get(iConst));
+                cardQueue.add(hb.handProperty().get(idCard));
             });
 
             handPane.getChildren().add(img);

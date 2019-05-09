@@ -46,7 +46,7 @@ public class LocalMain extends Application {
         }
     }
 
-    public static final double WAIT_TIME_MCTS_PLAYER = 2.;
+    public static final double WAIT_TIME_MCTS_PLAYER = .5; // default:2.0
 
     public static final long WAIT_TIME_TRICK_END = 1000;
 

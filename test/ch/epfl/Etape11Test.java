@@ -11,7 +11,7 @@ class Etape11Test {
     public static void main(String[] args) throws IOException {
 
         String[] params = {
-                "s::", "s::50000", "r:Dédé", "h", "165652"
+                "s::", "s::50000", "s:Dédé", "h", "165652"
         };
         //launchServer();
         LocalMain.main(params);
