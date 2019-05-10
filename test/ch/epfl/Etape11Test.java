@@ -10,7 +10,7 @@ class Etape11Test {
     public static void main(String[] args) {
 
         String[] params = {
-                "s::", "s::50000", "r:Dédé:128.179.185.137", "h", "165652"
+                "s::", "s::50000", "h:Dédé", "h", "165652"
         };
         //launchServer();
         LocalMain.main(params);
