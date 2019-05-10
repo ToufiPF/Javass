@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import com.sun.javafx.stage.StageHelper;
+
 import ch.epfl.javass.jass.Card;
 import ch.epfl.javass.jass.Card.Color;
 import ch.epfl.javass.jass.Jass;
@@ -303,7 +305,11 @@ public final class GraphicalPlayerView {
         this.scene = new Scene(principalPane);
         this.ownName = nameMap.get(ownId);
     }
-
+    
+    public Scene getScene() {
+        return scene;
+    }
+    
     /**
      * Crée un nouveau Stage et le retourne après lui avoir appliqué la Scene du
      * GraphicalPlayerView
@@ -318,6 +324,10 @@ public final class GraphicalPlayerView {
         Stage st = new Stage();
         st.setScene(scene);
         st.setTitle("Javass - " + ownName);
+        st.setOnCloseRequest(e -> {
+            if (StageHelper.getStages().size() == 1)
+                System.exit(0);
+        });
         return st;
     }
 }

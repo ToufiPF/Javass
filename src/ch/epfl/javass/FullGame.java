@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import ch.epfl.javass.jass.PlayerId;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.scene.Scene;
@@ -22,7 +23,8 @@ public class FullGame extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
+    
+    private Stage stage;
     private final Scene scene;
     private final VBox mainMenu;
     private final VBox createGameMenu;
@@ -45,11 +47,13 @@ public class FullGame extends Application {
         principal.getChildren().add(joinGameMenu);
 
         scene = new Scene(principal);
+        stage = null;
     }
 
     @Override
     public void start(Stage arg0) throws Exception {
-        Stage stage = new Stage();
+        stage = new Stage();
+        Platform.setImplicitExit(false);
         stage.setTitle("Javass - FullGame");
         stage.setScene(scene);
         stage.show();
@@ -158,6 +162,7 @@ public class FullGame extends Application {
                 args.add(seedField.getText());
             
             LocalMain.startGameWithArguments(args);
+            stage.hide();
         });
         menu.getChildren().add(launchGameBtn);
 
