@@ -78,17 +78,12 @@ public final class LocalMain extends Application {
                 SEED_GENERATOR = new Random(seed);
             }
             catch (NumberFormatException e) {
-                System.err.println("Erreur : la graine fournie n'est pas valide : " + args.get(PlayerId.COUNT));
-                System.err.println(e.toString());
-                System.exit(1);
+                displayErrorAndExit(1, "Erreur : la graine fournie n'est pas valide : " + args.get(PlayerId.COUNT), e.toString());
             }
         }
         else {
-            System.err.println("Erreur : nombre d'arguments invalide");
-            System.err.println(getHelpMessage());
-            System.exit(1);
+            displayErrorAndExit(1, "Erreur : nombre d'arguments invalide.", getHelpMessage());
         }
-        
         
         Map<PlayerId, String> mapNames = new HashMap<>();
         Map<PlayerId, Player> mapPlayers = new HashMap<>();
@@ -104,11 +99,12 @@ public final class LocalMain extends Application {
                 if (fields[0].equals(t.specificator()))
                     type = t;
 
-            if (type == null) {
-                System.err.println("Erreur : spécificateur de joueur inconnu : '" + fields[0] + "'.");
-                System.exit(1);
-            }
-            checkNbFieldsForPlayerType(fields, type);
+            if (type == null)
+                displayErrorAndExit(1, "Erreur : spécificateur de joueur inconnu : '" + fields[0] + "'.");
+            
+            if (fields.length < type.minNbFields() || fields.length > type.maxNbFields())
+                displayErrorAndExit(1, "Erreur : nombre de champs entrés (" + fields.length + ") pour le spécificateur " + fields[0] + " invalide.");
+            
             
             // On récupère le nom fourni (deuxieme "champ")
             String name = fields.length <= 1 || fields[1].isEmpty() ? DEFAULT_NAMES[i] : fields[1];
@@ -124,9 +120,7 @@ public final class LocalMain extends Application {
                         iterations = Integer.parseInt(fields[2]);
                     }
                     catch (NumberFormatException e) {
-                        System.err.println("Erreur : nb d'iterations erroné : " + fields[2]);
-                        System.err.println(e.toString());
-                        System.exit(1);
+                        displayErrorAndExit(1, "Erreur : nb d'iterations erroné : " + fields[2], e.toString());
                     }
                 }
                 player = new PacedPlayer(new MctsPlayer(PlayerId.ALL.get(i), playerSeed, iterations), WAIT_TIME_MCTS_PLAYER);
@@ -134,13 +128,12 @@ public final class LocalMain extends Application {
                 
             case REMOTE:
                 String hostName = fields.length <= 2 || fields[2].isEmpty() ? DEFAULT_IP : fields[2];
+                
                 try {
                     player = new RemotePlayerClient(hostName);
                 }
                 catch (IOException e) {
-                    System.err.println("Erreur : connexion au serveur " + hostName + " impossible.");
-                    System.err.println(e);
-                    System.exit(1);
+                    displayErrorAndExit(1, "Erreur : connexion au serveur " + hostName + " impossible.", e.toString());
                 }
                 break;
                 
@@ -167,7 +160,18 @@ public final class LocalMain extends Application {
         gameThread.setDaemon(true);
         gameThread.start();
     }
-
+    
+    /**
+     * Affiche les erreurs fournies puis quitte le programme avec le statut exitStatus
+     * @param exitStatus (int) le statut de l'erreur
+     * @param errs (String...) les erreurs à afficher, une String par ligne
+     */
+    private static void displayErrorAndExit(int exitStatus, String... errs) {
+        for (String s : errs)
+            System.err.println(s);
+        System.exit(exitStatus);
+    }
+    
     private static String getHelpMessage() {
         String str = "Utilisation : java ch.epfl.javass.LocalMain <j1>...<j4> [<graine>]\n"
                 + "où :\n" + "<jn> spécifie le joueur n ainsi :\n"
@@ -179,16 +183,4 @@ public final class LocalMain extends Application {
                 + "[<graine>] (optionnel) la graine utilisée pour générer la partie.";
         return str;
     }
-
-    private static void checkNbFieldsForPlayerType(String[] fields, PlayerType type) {
-        if (fields.length < type.minNbFields() || fields.length > type.maxNbFields()) {
-            System.err.println("Erreur : nombre de champs invalide pour le spécificateur de joueur '" 
-                    + type.specificator() + "' (" + type.toString() + ").");
-            System.err.println("Nombre de champs attendu : entre " + type.minNbFields() + " et " + type.maxNbFields() + 
-                    ", (reçu : " + fields.length + ").");
-
-            System.exit(1);
-        }
-    }
-    
 }
