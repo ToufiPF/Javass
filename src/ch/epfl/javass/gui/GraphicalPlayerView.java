@@ -21,6 +21,7 @@ import javafx.scene.Scene;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -118,7 +119,8 @@ public final class GraphicalPlayerView {
             img.opacityProperty().bind(Bindings.when(isPlayable).then(1.0).otherwise(0.2));
             img.disableProperty().bind(Bindings.not(isPlayable));
             img.setOnMouseClicked(e -> {
-                cardQueue.add(hb.handProperty().get(idCard));
+                if (e.getButton().equals(MouseButton.PRIMARY))
+                    cardQueue.add(hb.handProperty().get(idCard));
             });
 
             handPane.getChildren().add(img);
