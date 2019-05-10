@@ -108,7 +108,7 @@ public final class LocalMain extends Application {
                 displayErrorAndExit(1, "Erreur : spécificateur de joueur inconnu : '" + fields[0] + "'.");
             
             if (fields.length < type.minNbFields() || fields.length > type.maxNbFields())
-                displayErrorAndExit(1, "Erreur : nombre de champs entrés (" + fields.length + ") pour le spécificateur " + fields[0] + " invalide.");
+                displayErrorAndExit(1, "Erreur : nombre de champs entrés (" + fields.length + ") invalide pour le spécificateur " + fields[0] + ".");
             
             
             // On récupère le nom fourni (deuxieme "champ")

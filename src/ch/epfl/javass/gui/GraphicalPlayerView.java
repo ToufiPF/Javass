@@ -15,6 +15,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.effect.GaussianBlur;
@@ -99,6 +100,7 @@ public final class GraphicalPlayerView {
     private static HBox createHandPane(HandBean hb,
             ArrayBlockingQueue<Card> cardQueue) {
         HBox handPane = new HBox();
+        handPane.setAlignment(Pos.BOTTOM_CENTER);
         handPane.setStyle("-fx-background-color: lightgray; "
                 + "-fx-spacing: 5px; -fx-padding: 5px;");
 
