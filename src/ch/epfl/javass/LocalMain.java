@@ -70,7 +70,10 @@ public final class LocalMain extends Application {
 
     @Override
     public void start(Stage arg0) throws Exception {
-        List<String> args = getParameters().getRaw();
+        startGameWithArguments(getParameters().getRaw());
+    }
+    
+    public static void startGameWithArguments(List<String> args) {
         
         // On commence par générer (ou récupérer, si elle a été fournie) la graine
         Random SEED_GENERATOR = null;

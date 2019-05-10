@@ -18,35 +18,35 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class FullGame extends Application {
-    
+
     public static void main(String[] args) {
         launch(args);
     }
-    
+
     private final Scene scene;
     private final VBox mainMenu;
     private final VBox createGameMenu;
     private final VBox joinGameMenu;
-    
+
     public FullGame() {
         mainMenu = createMainMenu();
         mainMenu.setVisible(true);
-        
+
         createGameMenu = createCreateGameMenu();
         createGameMenu.setVisible(false);
-        
+
         joinGameMenu = createJoinGameMenu();
         joinGameMenu.setVisible(false);
-        
+
         StackPane principal = new StackPane();
         principal.setMinSize(400, 600);
         principal.getChildren().add(mainMenu);
         principal.getChildren().add(createGameMenu);
         principal.getChildren().add(joinGameMenu);
-        
+
         scene = new Scene(principal);
     }
-    
+
     @Override
     public void start(Stage arg0) throws Exception {
         Stage stage = new Stage();
@@ -54,105 +54,125 @@ public class FullGame extends Application {
         stage.setScene(scene);
         stage.show();
     }
-    
+
     private VBox createMainMenu() {
         VBox menu = new VBox();
         menu.setStyle("-fx-font: 16 Optima; -fx-background-color: lightgray;" + 
                 " -fx-spacing: 15px; -fx-padding: 5px; -fx-alignment: center;");
-        
+
         Label title = new Label("Javass");
         title.setStyle("-fx-padding: 50px; "
                 + "-fx-font: 54 Cambria; -fx-underline: true; -fx-text-fill: forestgreen;");
-        
+
         Button createGameBtn = new Button("Créer une partie");
         createGameBtn.setOnMouseClicked(e -> {
             mainMenu.setVisible(false);
             createGameMenu.setVisible(true);
         });
-        
+
         Button joinGameBtn = new Button("Rejoindre une partie");
         joinGameBtn.setOnMouseClicked(e -> {
             mainMenu.setVisible(false);
             joinGameMenu.setVisible(true);
             //TODO : lancer le serveur
         });
-        
+
         Button quitBtn = new Button("Quitter");
         quitBtn.setOnMouseClicked(e -> System.exit(0));
-        
+
         menu.getChildren().add(title);
         menu.getChildren().add(createGameBtn);
         menu.getChildren().add(joinGameBtn);
         menu.getChildren().add(quitBtn);
-        
+
         return menu;
     }
-    
+
     private VBox createCreateGameMenu() {
         VBox menu = new VBox();
         menu.setStyle("-fx-font: 16 Optima; -fx-background-color: lightgray;" + 
                 " -fx-spacing: 15px; -fx-padding: 5px; -fx-alignment: center;");
-        
+
         Label lbl = new Label("Créer une partie : ");
         menu.getChildren().add(lbl);
-        
-        ArrayList<ChoiceBox<String>> typeChoices = new ArrayList<>(PlayerId.COUNT);
-        
+
+        ArrayList<ChoiceBox<String>> typeChoices = new ArrayList<>();
+        TextField[] nameFields = new TextField[PlayerId.COUNT];
+        ArrayList<Spinner<Integer>> IADifficultySpinners = new ArrayList<>();
+        TextField[] ipFields = new TextField[PlayerId.COUNT];
+
         for (int i = 0 ; i < PlayerId.COUNT ; ++i) {
             HBox box = new HBox();
 
-            ChoiceBox<String> typeChoice = new ChoiceBox<>(FXCollections.observableArrayList("Humain", "Simulé", "Distant"));
-            typeChoice.setValue("Simulé");
-            
-            TextField nameField = new TextField();
-            nameField.setText(LocalMain.DEFAULT_NAMES[i]);
-            
+            typeChoices.add(new ChoiceBox<>(FXCollections.observableArrayList("Humain", "Simulé", "Distant")));
+            typeChoices.get(i).setValue("Simulé");
+
+            nameFields[i] = new TextField();
+            nameFields[i].setText(LocalMain.DEFAULT_NAMES[i]);
+
             StackPane lastField = new StackPane();
-            
-            Spinner<Integer> difficultyIA = new Spinner<>(1, 10, 4);
-            difficultyIA.visibleProperty().bind(Bindings.equal("Simulé", typeChoice.valueProperty()));
-            
-            TextField ipField = new TextField(LocalMain.DEFAULT_IP);
-            ipField.visibleProperty().bind(Bindings.equal("Distant", typeChoice.valueProperty()));
-            
-            lastField.getChildren().add(difficultyIA);
-            lastField.getChildren().add(ipField);
-            
-            box.getChildren().add(typeChoice);
-            box.getChildren().add(nameField);
+
+            IADifficultySpinners.add(new Spinner<>(1, 10, 4));
+            IADifficultySpinners.get(i).visibleProperty().bind(Bindings.equal("Simulé", typeChoices.get(i).valueProperty()));
+
+            ipFields[i] = new TextField(LocalMain.DEFAULT_IP);
+            ipFields[i].visibleProperty().bind(Bindings.equal("Distant", typeChoices.get(i).valueProperty()));
+
+            lastField.getChildren().add(IADifficultySpinners.get(i));
+            lastField.getChildren().add(ipFields[i]);
+
+            box.getChildren().add(typeChoices.get(i));
+            box.getChildren().add(nameFields[i]);
             box.getChildren().add(lastField);
-            
+
             menu.getChildren().add(box);
         }
 
         HBox seedBox = new HBox();
-        {
-            Label seedLbl = new Label("Entrez la graîne de la partie : (laisser vide pour aléatoire) : ");
-            TextField seedField = new TextField();
-            seedBox.getChildren().add(seedLbl);
-            seedBox.getChildren().add(seedField);
-        }
-        menu.getChildren().add(seedBox);
+        Label seedLbl = new Label("Entrez la graîne de la partie : (laisser vide pour aléatoire) : ");
+        TextField seedField = new TextField();
+        seedBox.getChildren().add(seedLbl);
+        seedBox.getChildren().add(seedField);
         
+        menu.getChildren().add(seedBox);
+
         Button launchGameBtn = new Button("Lancer la partie");
         launchGameBtn.setOnMouseClicked(e -> {
-            String[] args = new String[PlayerId.COUNT];
+            ArrayList<String> args = new ArrayList<>();
+
+            for (int i = 0 ; i < PlayerId.COUNT ; ++i) {
+                String name = nameFields[i].getText().trim();
+                if (name.isEmpty())
+                    name = LocalMain.DEFAULT_NAMES[i];
+                if (typeChoices.get(i).getValue().equals("Humain")) {
+                    args.add("h:" + name);
+                }
+                else if (typeChoices.get(i).getValue().equals("Simulé")) {
+                    args.add("s:" + name + ":" + IADifficultySpinners.get(i).getValue() * 10_000);
+                }
+                else {
+                    args.add("r:" + name + ":" + ipFields[i].getText());
+                }
+            }
+            if (!seedField.getText().isEmpty())
+                args.add(seedField.getText());
             
+            LocalMain.startGameWithArguments(args);
         });
         menu.getChildren().add(launchGameBtn);
-        
+
         return menu;
     }
-    
+
     private VBox createJoinGameMenu() {
         VBox menu = new VBox();
         menu.setStyle("-fx-font: 16 Optima; -fx-background-color: lightgray;" + 
                 " -fx-spacing: 15px; -fx-padding: 5px; -fx-alignment: center;");
-        
+
         Label lbl = new Label("La partie commencera quand un client se connectera à votre serveur.");
         menu.getChildren().add(lbl);
-        
+
         return menu;
     }
-    
+
 }
