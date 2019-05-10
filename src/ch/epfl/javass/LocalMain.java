@@ -17,6 +17,11 @@ import ch.epfl.javass.net.RemotePlayerClient;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+/**
+ * LocalMain Une classe permettant de lancer une partie locale
+ * @author Amaury Pierre (296498)
+ * @author Aurélien Clergeot (302592)
+ */
 public final class LocalMain extends Application {
 
     private static enum PlayerType {
