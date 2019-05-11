@@ -83,4 +83,9 @@ public final class PacedPlayer implements Player {
     public void updateTrick(Trick newTrick) {
         mUnderPlayer.updateTrick(newTrick);
     }
+
+    @Override
+    public Color chooseTrump(CardSet hand) {
+        return mUnderPlayer.chooseTrump(hand);
+    }
 }

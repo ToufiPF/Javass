@@ -12,6 +12,7 @@ import java.net.SocketException;
 import java.util.Map;
 
 import ch.epfl.javass.jass.Card;
+import ch.epfl.javass.jass.Card.Color;
 import ch.epfl.javass.jass.CardSet;
 import ch.epfl.javass.jass.Player;
 import ch.epfl.javass.jass.PlayerId;
@@ -89,6 +90,9 @@ public final class RemotePlayerServer implements Runnable {
                 case CARD_TO_PLAY:
                     onCardToPlay(args, output);
                     break;
+                case CHOOSE_TRUMP:
+                    onChooseTrump(args, output);
+                    break;
                 case SET_PLAYERS:
                     onSetPlayer(args);
                     break;
@@ -133,6 +137,14 @@ public final class RemotePlayerServer implements Runnable {
         output.flush();
     }
 
+    private void onChooseTrump(String args, BufferedWriter output) throws IOException {
+        final long pkHand = StringSerializer.deserializeLong(args.substring(0, args.indexOf(' ')));
+        Color trump = subPlayer.chooseTrump(CardSet.ofPacked(pkHand));
+        output.write(StringSerializer.serializeInt(trump.ordinal()));
+        output.write('\n');
+        output.flush();
+    }
+    
     private void onSetPlayer(String args) {
         int id = StringSerializer
                 .deserializeInt(args.substring(0, args.indexOf(' ')));

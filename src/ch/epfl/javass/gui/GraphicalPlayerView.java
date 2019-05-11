@@ -99,6 +99,24 @@ public final class GraphicalPlayerView {
                 .unmodifiableObservableMap(FXCollections.observableMap(map));
     }
     
+    private static HBox createChooseTrumpPane(ArrayBlockingQueue<Color> trumpQueue, TrickBean tb) {
+        HBox trumpPane = new HBox();
+        trumpPane.setAlignment(Pos.CENTER);
+        trumpPane.setStyle("-fx-background-color: lightgray; "
+                + "-fx-spacing: 5px; -fx-padding: 5px;");
+        trumpPane.visibleProperty().bind(tb.trumpProperty().isNull());
+        for(int i = 0; i < Color.COUNT; ++i) {
+            final int indexTrump = i;
+            ImageView trumpImg = new ImageView();
+            trumpImg.setFitWidth(SIZE_TRUMP_IMAGE /2);
+            trumpImg.setFitHeight(SIZE_TRUMP_IMAGE/2);
+            trumpImg.imageProperty().bind(Bindings.valueAt(mapImagesTrumps, Card.Color.ALL.get(indexTrump)));
+            trumpImg.setOnMouseClicked(e -> {
+                trumpQueue.add(Color.ALL.get(indexTrump));
+            });
+        }
+        return trumpPane;
+    }
     
     private static HBox createHandPane(HandBean hb,
             ArrayBlockingQueue<Card> cardQueue) {
@@ -287,8 +305,9 @@ public final class GraphicalPlayerView {
      */
     public GraphicalPlayerView(PlayerId ownId, Map<PlayerId, String> nameMap,
             ScoreBean sb, TrickBean tb, HandBean hb,
-            ArrayBlockingQueue<Card> cardQueue) {
-
+            ArrayBlockingQueue<Card> cardQueue, ArrayBlockingQueue<Card.Color> trumpQueue) {
+        
+        HBox chooseTrump = createChooseTrumpPane(trumpQueue, tb);
         GridPane score = createScorePane(nameMap, sb);
         GridPane trick = createTrickPane(ownId, nameMap, tb);
         HBox hand = createHandPane(hb, cardQueue);
@@ -300,6 +319,7 @@ public final class GraphicalPlayerView {
         gamePane.setBottom(hand);
 
         StackPane principalPane = new StackPane(gamePane);
+        principalPane.getChildren().add(chooseTrump);
         principalPane.getChildren().add(winT1);
         principalPane.getChildren().add(winT2);
         this.scene = new Scene(principalPane);
