@@ -13,6 +13,8 @@ import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.TeamId;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.geometry.HPos;
@@ -98,13 +100,18 @@ public final class GraphicalPlayerView {
         return FXCollections
                 .unmodifiableObservableMap(FXCollections.observableMap(map));
     }
-    
-    private static HBox createChooseTrumpPane(ArrayBlockingQueue<Color> trumpQueue, TrickBean tb) {
+
+
+
+    private HBox createChooseTrumpPane(ArrayBlockingQueue<Color> trumpQueue, HandBean hb) {
         HBox trumpPane = new HBox();
+        trumpPane.setMaxHeight(SIZE_TRUMP_IMAGE);
         trumpPane.setAlignment(Pos.CENTER);
         trumpPane.setStyle("-fx-background-color: lightgray; "
                 + "-fx-spacing: 5px; -fx-padding: 5px;");
-        trumpPane.visibleProperty().bind(tb.trumpProperty().isNull());
+        
+        trumpPane.visibleProperty().bind(mustChooseProperty);
+        trumpPane.disableProperty().bind(mustChooseProperty.not());
         for(int i = 0; i < Color.COUNT; ++i) {
             final int indexTrump = i;
             ImageView trumpImg = new ImageView();
@@ -113,11 +120,13 @@ public final class GraphicalPlayerView {
             trumpImg.imageProperty().bind(Bindings.valueAt(mapImagesTrumps, Card.Color.ALL.get(indexTrump)));
             trumpImg.setOnMouseClicked(e -> {
                 trumpQueue.add(Color.ALL.get(indexTrump));
+                mustChooseProperty.set(false);
             });
+            trumpPane.getChildren().add(trumpImg);
         }
         return trumpPane;
     }
-    
+
     private static HBox createHandPane(HandBean hb,
             ArrayBlockingQueue<Card> cardQueue) {
         HBox handPane = new HBox();
@@ -290,6 +299,11 @@ public final class GraphicalPlayerView {
     // Graphics :
     private final Scene scene;
     private final String ownName;
+    private final BooleanProperty mustChooseProperty;
+    public void setMustChooseToTrue() {
+        mustChooseProperty.set(true);
+    }
+
 
     /**
      * Construit un nouveau GraphicalPlayerView
@@ -306,8 +320,8 @@ public final class GraphicalPlayerView {
     public GraphicalPlayerView(PlayerId ownId, Map<PlayerId, String> nameMap,
             ScoreBean sb, TrickBean tb, HandBean hb,
             ArrayBlockingQueue<Card> cardQueue, ArrayBlockingQueue<Card.Color> trumpQueue) {
-        
-        HBox chooseTrump = createChooseTrumpPane(trumpQueue, tb);
+        mustChooseProperty = new SimpleBooleanProperty();
+        HBox chooseTrump = createChooseTrumpPane(trumpQueue, hb);
         GridPane score = createScorePane(nameMap, sb);
         GridPane trick = createTrickPane(ownId, nameMap, tb);
         HBox hand = createHandPane(hb, cardQueue);
@@ -325,11 +339,11 @@ public final class GraphicalPlayerView {
         this.scene = new Scene(principalPane);
         this.ownName = nameMap.get(ownId);
     }
-    
+
     public Scene getScene() {
         return scene;
     }
-    
+
     /**
      * Crée un nouveau Stage et le retourne après lui avoir appliqué la Scene du
      * GraphicalPlayerView

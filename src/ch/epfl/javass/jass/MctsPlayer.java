@@ -249,6 +249,7 @@ public final class MctsPlayer implements Player {
                 futureTrump = c;
             }
         }
+        System.out.println("Trump choisi !");
         return futureTrump;
     }
 }

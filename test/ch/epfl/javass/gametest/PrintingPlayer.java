@@ -29,6 +29,12 @@ public final class PrintingPlayer implements Player {
     }
 
     @Override
+    public Color chooseTrump(CardSet hand) {
+        Card.Color trump = underlyingPlayer.chooseTrump(hand);
+        System.out.println("Je choisis l'atout : " + trump);
+        return trump;
+    }
+    @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> mapNames) {
         mName = mapNames.get(ownId);
         System.out.println("Les joueurs sont : ");
@@ -64,4 +70,5 @@ public final class PrintingPlayer implements Player {
         System.out.println("EQUIPE GAGNANTE : " + winningTeam);
         underlyingPlayer.setWinningTeam(winningTeam);
     }
+
 }

@@ -304,6 +304,11 @@ public class JassGameTest {
         }
 
         @Override
+        public Color chooseTrump(CardSet hand) {
+            return Card.Color.CLUB;
+        }
+        
+        @Override
         public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
             this.setPlayersCallCount += 1;
             this.setPlayersOwnId = ownId;

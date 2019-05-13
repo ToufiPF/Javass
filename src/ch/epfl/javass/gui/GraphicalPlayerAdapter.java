@@ -46,7 +46,7 @@ public final class GraphicalPlayerAdapter implements Player {
     @Override
     public Color chooseTrump(CardSet hand) {
         Color trump;
-        Platform.runLater(() -> hb.setHand(hand));    
+        Platform.runLater(() -> graphicalInterface.setMustChooseToTrue());
         do { trump = trumpQueue.poll(); } while (trump == null); 
         return trump;
     }
