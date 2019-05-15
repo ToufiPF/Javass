@@ -78,7 +78,7 @@ public class FullGame extends Application {
         joinGameBtn.setOnMouseClicked(e -> {
             mainMenu.setVisible(false);
             joinGameMenu.setVisible(true);
-            //TODO : lancer le serveur
+            RemoteMain.startGame();
         });
 
         Button quitBtn = new Button("Quitter");
@@ -176,7 +176,6 @@ public class FullGame extends Application {
 
         Label lbl = new Label("La partie commencera quand un client se connectera à votre serveur.");
         menu.getChildren().add(lbl);
-        RemoteMain.startGame();
         return menu;
     }
 
