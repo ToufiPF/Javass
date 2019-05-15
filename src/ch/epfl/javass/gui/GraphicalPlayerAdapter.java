@@ -24,7 +24,7 @@ public final class GraphicalPlayerAdapter implements Player {
     private final ScoreBean sb = new ScoreBean();
     private final TrickBean tb = new TrickBean();
     private final ArrayBlockingQueue<Card> cardQueue = new ArrayBlockingQueue<>(1);
-    private GraphicalPlayerView graphicalInterface;
+    private GraphicalPlayerView graphicalInterface = null;
 
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {

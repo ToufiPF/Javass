@@ -29,9 +29,11 @@ public final class LocalMain extends Application {
     }
 
     @Override
-    public void start(Stage arg0) throws Exception {
-        List<String> args = getParameters().getRaw();
-        
+    public void start(Stage arg0) {
+        createGameFromArguments(getParameters().getRaw());
+    }
+    
+    public static void createGameFromArguments(List<String> args) {
         // On commence par générer (ou récupérer, si elle a été fournie) la graine
         Random SEED_GENERATOR = null;
         if (args.size() == PlayerId.COUNT) {
@@ -112,6 +114,10 @@ public final class LocalMain extends Application {
             mapPlayers.put(PlayerId.ALL.get(i), player);
         }
         
+        createGameThread(gameSeed, mapPlayers, mapNames);
+    }
+    
+    private static void createGameThread(long gameSeed, Map<PlayerId, Player> mapPlayers, Map<PlayerId, String> mapNames) {
         Thread gameThread = new Thread(() -> {
             JassGame g = new JassGame(gameSeed, mapPlayers, mapNames);
             while (!g.isGameOver()) {
