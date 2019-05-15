@@ -1,13 +1,13 @@
 package ch.epfl.javass;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import ch.epfl.javass.gui.GraphicalPlayerAdapter;
+import ch.epfl.javass.jass.Jass;
 import ch.epfl.javass.jass.JassGame;
 import ch.epfl.javass.jass.MctsPlayer;
 import ch.epfl.javass.jass.PacedPlayer;
@@ -22,47 +22,7 @@ import javafx.stage.Stage;
  * @author Amaury Pierre (296498)
  * @author Aurélien Clergeot (302592)
  */
-public final class LocalMain extends Application {
-
-    private static enum PlayerType {
-        HUMAN("h", 1, 2), SIMULATED("s", 1, 3), REMOTE("r", 1, 3);
-
-        public static final List<PlayerType> ALL = Arrays.asList(values());
-
-        private final String spec;
-        private final int minFields;
-        private final int maxFields;
-
-        private PlayerType(String specificator, int minFields, int maxFields) {
-            this.spec = specificator;
-            this.minFields = minFields;
-            this.maxFields = maxFields;
-        }
-
-        public String specificator() {
-            return spec;
-        }
-        public int minNbFields() {
-            return minFields;
-        }
-        public int maxNbFields() {
-            return maxFields;
-        }
-    }
-    /** Temps d'attente minimum pour les joueurs simulés */
-    public static final double WAIT_TIME_MCTS_PLAYER = 2.; // default:2.0
-    
-    /** Temps d'attente à la fin d'un pli */
-    public static final long WAIT_TIME_TRICK_END = 1000;
-    
-    /** Nom par défault des joueurs */
-    public static final String[] DEFAULT_NAMES = {"Aline", "Bastien", "Colette", "David" };
-    
-    /** Nombre d'itérations par défault pour l'algorithme des joueurs simulés */
-    public static final int DEFAULT_ITERATIONS = 10_000;
-    
-    /** Adresse IP par défault des joueurs distants */
-    public static final String DEFAULT_IP = "localhost";
+public final class LocalMain extends Application {    
 
     public static void main(String[] args) {
         launch(args);
@@ -99,8 +59,8 @@ public final class LocalMain extends Application {
             String[] fields = args.get(i).split(":");
             
             // On détermine le type de joueur spécifié (premier "champ")
-            PlayerType type = null;
-            for (PlayerType t : PlayerType.ALL)
+            PlayerSpecificator type = null;
+            for (PlayerSpecificator t : PlayerSpecificator.ALL)
                 if (fields[0].equals(t.specificator()))
                     type = t;
 
@@ -112,14 +72,15 @@ public final class LocalMain extends Application {
             
             
             // On récupère le nom fourni (deuxieme "champ")
-            String name = fields.length <= 1 || fields[1].isEmpty() ? DEFAULT_NAMES[i] : fields[1];
-            Player player = null;
-            long playerSeed = SEED_GENERATOR.nextLong();
+            String name = fields.length <= 1 || fields[1].isEmpty() ? Jass.DEFAULT_NAMES[i] : fields[1];
+
             
             // On analyse le troisième champ, qui dépend du type de joueur :
+            Player player = null;
+            long playerSeed = SEED_GENERATOR.nextLong();
             switch (type) {
             case SIMULATED:
-                int iterations = DEFAULT_ITERATIONS;
+                int iterations = Jass.DEFAULT_ITERATIONS;
                 if (fields.length > 2 && !fields[2].isEmpty()) {
                     try {
                         iterations = Integer.parseInt(fields[2]);
@@ -128,11 +89,11 @@ public final class LocalMain extends Application {
                         displayErrorAndExit(1, "Erreur : nb d'iterations erroné : " + fields[2], e.toString());
                     }
                 }
-                player = new PacedPlayer(new MctsPlayer(PlayerId.ALL.get(i), playerSeed, iterations), WAIT_TIME_MCTS_PLAYER);
+                player = new PacedPlayer(new MctsPlayer(PlayerId.ALL.get(i), playerSeed, iterations), Jass.WAIT_TIME_MCTS_PLAYER);
                 break;
                 
             case REMOTE:
-                String hostName = fields.length <= 2 || fields[2].isEmpty() ? DEFAULT_IP : fields[2];
+                String hostName = fields.length <= 2 || fields[2].isEmpty() ? Jass.DEFAULT_IP : fields[2];
                 
                 try {
                     player = new RemotePlayerClient(hostName);
@@ -156,7 +117,7 @@ public final class LocalMain extends Application {
             while (!g.isGameOver()) {
                 g.advanceToEndOfNextTrick();
                 try { 
-                    Thread.sleep(WAIT_TIME_TRICK_END); 
+                    Thread.sleep(Jass.WAIT_TIME_TRICK_END); 
                 } catch (InterruptedException e) {
                     // ignore
                 }

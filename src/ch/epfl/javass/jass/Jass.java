@@ -12,12 +12,22 @@ public interface Jass {
     public final static int HAND_SIZE = 9;
     /** Nombre de plis dans un tour */
     public final static int TRICKS_PER_TURN = 9;
-    /** Nombre de points requis pour gagner */
+    /** Points requis pour gagner */
     public final static int WINNING_POINTS = 1000;
-    /**
-     * Nombre de points bonus quand une équipe remporte tous les plis d'un tour
-     */
+    /** Points bonus quand une équipe remporte tous les plis d'un tour */
     public final static int MATCH_ADDITIONAL_POINTS = 100;
-    /** Nombre de points bonus pour le dernier pli */
+    /** Points bonus pour le dernier pli */
     public final static int LAST_TRICK_ADDITIONAL_POINTS = 5;
+
+    /** Temps d'attente à la fin d'un pli */
+    public static final long WAIT_TIME_TRICK_END = 1000;
+
+    /** Nom par défault des joueurs */
+    public static final String[] DEFAULT_NAMES = {"Aline", "Bastien", "Colette", "David" };
+    /** Temps d'attente minimum pour les joueurs simulés */
+    public static final double WAIT_TIME_MCTS_PLAYER = 2.;
+    /** Nombre d'itérations par défault pour l'algorithme des joueurs simulés */
+    public static final int DEFAULT_ITERATIONS = 10_000;
+    /** Adresse IP par défault des joueurs distants */
+    public static final String DEFAULT_IP = "localhost";
 }
