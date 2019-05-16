@@ -70,9 +70,9 @@ public final class JassGame {
             dealCardsToPlayers();
             updateHandForAll(mHands);
             mFirstPlayer = getPlayerWith7Diamond();
-
-            mTurnState = TurnState.initial(generateTrump(), Score.INITIAL,
-                    mFirstPlayer);
+            
+            mTurnState = TurnState.initial(mMapPlayers.get(mFirstPlayer)
+                    .chooseTrump(mHands[mFirstPlayer.ordinal()]), Score.INITIAL, mFirstPlayer);
             setTrumpForAll(mTurnState.trick().trump());
         }
         // Sinon, on peut le ramasser
@@ -96,7 +96,7 @@ public final class JassGame {
             mFirstPlayer = PlayerId.ALL
                     .get((mFirstPlayer.ordinal() + 1) % PlayerId.COUNT);
 
-            mTurnState = TurnState.initial(generateTrump(),
+            mTurnState = TurnState.initial(mMapPlayers.get(mFirstPlayer).chooseTrump(mHands[mFirstPlayer.ordinal()]),
                     mTurnState.score().nextTurn(), mFirstPlayer);
             updateScoreForAll(mTurnState.score());
             setTrumpForAll(mTurnState.trick().trump());
@@ -128,7 +128,7 @@ public final class JassGame {
 
     private void dealCardsToPlayers() {
         List<Card> shuffled = getShuffledCards();
-
+        
         for (int i = 0; i < mHands.length; ++i)
             mHands[i] = CardSet.of(shuffled.subList(i * Jass.HAND_SIZE,
                     (i + 1) * Jass.HAND_SIZE));

@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import ch.epfl.javass.jass.Card;
+import ch.epfl.javass.jass.Card.Color;
 import ch.epfl.javass.jass.CardSet;
 import ch.epfl.javass.jass.Player;
 import ch.epfl.javass.jass.PlayerId;
@@ -82,6 +83,22 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
     }
 
     @Override
+    public Color chooseTrump(CardSet hand) {
+        String toSend = StringSerializer.join(" ",
+                JassCommand.CHOOSE_TRUMP.command(), StringSerializer.serializeLong(hand.packed()));
+        sendString(toSend);
+        
+        try {
+            String trumpString = r.readLine().trim();
+            Color trump = Color.ALL.get(StringSerializer.deserializeInt(trumpString));
+            return trump;
+        }
+        catch(IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+    
+    @Override
     public void close() throws IOException {
         w.close();
         r.close();
@@ -146,5 +163,4 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
             throw new UncheckedIOException(e);
         }
     }
-
 }

@@ -2,6 +2,8 @@ package ch.epfl.javass.jass;
 
 import java.util.Map;
 
+import ch.epfl.javass.jass.Card.Color;
+
 /**
  * Player, l'interface chargée de représenter un joueur Doit être implémentée
  * par les differents types de joueurs que l'on créera plus tard (humain,
@@ -22,6 +24,7 @@ public interface Player {
      */
     public Card cardToPlay(TurnState state, CardSet hand);
 
+    public Color chooseTrump(CardSet hand);
     /**
      * Informe le joueur de son Id, et de ce nom ainsi que celui de ses
      * adversaires. A appeler une fois, en début de partie

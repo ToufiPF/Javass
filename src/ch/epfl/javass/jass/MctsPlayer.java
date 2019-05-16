@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.SplittableRandom;
 
 import ch.epfl.javass.Preconditions;
+import ch.epfl.javass.jass.Card.Color;
+import ch.epfl.javass.jass.Card.Rank;
 
 /**
  * MctsPlayer Une classe publique et finale représentant un joueur simulé au
@@ -228,5 +230,26 @@ public final class MctsPlayer implements Player {
             otherCards = PackedCardSet.remove(otherCards, pkCard);
         }
         return state.packedScore();
+    }
+
+    @Override
+    public Color chooseTrump(CardSet hand) {
+        Color futureTrump = Color.SPADE;
+        int maxPoints = 0;
+        for(Color c : Color.ALL) {
+            int totalPoints = 0;
+            for(Rank r : Rank.ALL) {
+                Card carte = Card.of(c, r);
+                if (hand.contains(carte)){
+                    totalPoints += r.trumpOrdinal();
+                }
+            }
+            if(totalPoints > maxPoints) {
+                maxPoints = totalPoints;
+                futureTrump = c;
+            }
+        }
+        System.out.println("Trump choisi !");
+        return futureTrump;
     }
 }

@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import com.sun.javafx.stage.StageHelper;
+
 import ch.epfl.javass.jass.Card;
 import ch.epfl.javass.jass.Card.Color;
 import ch.epfl.javass.jass.Jass;
@@ -11,6 +13,8 @@ import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.TeamId;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.geometry.HPos;
@@ -88,6 +92,41 @@ public final class GraphicalPlayerView {
         }
         return FXCollections
                 .unmodifiableObservableMap(FXCollections.observableMap(map));
+    }
+
+    private static ObservableMap<Color, Image> computeMapImagesTrumps() {
+        Map<Card.Color, Image> map = new HashMap<>();
+        for (Card.Color c : Card.Color.ALL)
+            map.put(c, new Image(pathToTrump(c)));
+
+        return FXCollections
+                .unmodifiableObservableMap(FXCollections.observableMap(map));
+    }
+
+
+
+    private HBox createChooseTrumpPane(ArrayBlockingQueue<Color> trumpQueue, HandBean hb) {
+        HBox trumpPane = new HBox();
+        trumpPane.setMaxHeight(SIZE_TRUMP_IMAGE);
+        trumpPane.setAlignment(Pos.CENTER);
+        trumpPane.setStyle("-fx-background-color: lightgray; "
+                + "-fx-spacing: 5px; -fx-padding: 5px;");
+        
+        trumpPane.visibleProperty().bind(mustChooseProperty);
+        trumpPane.disableProperty().bind(mustChooseProperty.not());
+        for(int i = 0; i < Color.COUNT; ++i) {
+            final int indexTrump = i;
+            ImageView trumpImg = new ImageView();
+            trumpImg.setFitWidth(SIZE_TRUMP_IMAGE /2);
+            trumpImg.setFitHeight(SIZE_TRUMP_IMAGE/2);
+            trumpImg.imageProperty().bind(Bindings.valueAt(mapImagesTrumps, Card.Color.ALL.get(indexTrump)));
+            trumpImg.setOnMouseClicked(e -> {
+                trumpQueue.add(Color.ALL.get(indexTrump));
+                mustChooseProperty.set(false);
+            });
+            trumpPane.getChildren().add(trumpImg);
+        }
+        return trumpPane;
     }
 
     private static HBox createHandPane(HandBean hb,
@@ -275,6 +314,11 @@ public final class GraphicalPlayerView {
     // Graphics :
     private final Scene scene;
     private final String ownName;
+    private final BooleanProperty mustChooseProperty;
+    public void setMustChooseToTrue() {
+        mustChooseProperty.set(true);
+    }
+
 
     /**
      * Construit un nouveau GraphicalPlayerView
@@ -290,8 +334,9 @@ public final class GraphicalPlayerView {
      */
     public GraphicalPlayerView(PlayerId ownId, Map<PlayerId, String> nameMap,
             ScoreBean sb, TrickBean tb, HandBean hb,
-            ArrayBlockingQueue<Card> cardQueue) {
-
+            ArrayBlockingQueue<Card> cardQueue, ArrayBlockingQueue<Card.Color> trumpQueue) {
+        mustChooseProperty = new SimpleBooleanProperty();
+        HBox chooseTrump = createChooseTrumpPane(trumpQueue, hb);
         GridPane score = createScorePane(nameMap, sb);
         GridPane trick = createTrickPane(ownId, nameMap, tb);
         HBox hand = createHandPane(hb, cardQueue);
@@ -303,10 +348,15 @@ public final class GraphicalPlayerView {
         gamePane.setBottom(hand);
 
         StackPane principalPane = new StackPane(gamePane);
+        principalPane.getChildren().add(chooseTrump);
         principalPane.getChildren().add(winT1);
         principalPane.getChildren().add(winT2);
         this.scene = new Scene(principalPane);
         this.ownName = nameMap.get(ownId);
+    }
+
+    public Scene getScene() {
+        return scene;
     }
 
     /**
@@ -323,6 +373,10 @@ public final class GraphicalPlayerView {
         Stage st = new Stage();
         st.setScene(scene);
         st.setTitle("Javass - " + ownName);
+        st.setOnCloseRequest(e -> {
+            if (StageHelper.getStages().size() == 1)
+                System.exit(0);
+        });
         return st;
     }
 }

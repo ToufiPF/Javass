@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import ch.epfl.javass.jass.Card;
+import ch.epfl.javass.jass.Card.Color;
 import ch.epfl.javass.jass.CardSet;
 import ch.epfl.javass.jass.Player;
 import ch.epfl.javass.jass.PlayerId;
@@ -24,8 +25,8 @@ public final class GraphicalPlayerAdapter implements Player {
     private final HandBean hb = new HandBean();
     private final ScoreBean sb = new ScoreBean();
     private final TrickBean tb = new TrickBean();
-    private final ArrayBlockingQueue<Card> cardQueue = new ArrayBlockingQueue<>(
-            1);
+    private final ArrayBlockingQueue<Card> cardQueue = new ArrayBlockingQueue<>(1);
+    private final ArrayBlockingQueue<Color> trumpQueue = new ArrayBlockingQueue<>(1);
     private GraphicalPlayerView graphicalInterface = null;
 
     @Override
@@ -47,12 +48,18 @@ public final class GraphicalPlayerAdapter implements Player {
     }
 
     @Override
-    public void setPlayers(PlayerId ownId, Map<PlayerId, String> mapNames) {
-        graphicalInterface = new GraphicalPlayerView(ownId, mapNames, sb, tb,
-                hb, cardQueue);
-        Platform.runLater(() -> {
-            graphicalInterface.createStage().show();
-        });
+    public Color chooseTrump(CardSet hand) {
+        Color trump;
+        Platform.runLater(() -> graphicalInterface.setMustChooseToTrue());
+        do { trump = trumpQueue.poll(); } while (trump == null); 
+        return trump;
+    }
+    
+    @Override
+    public void setPlayers(PlayerId ownId,
+            Map<PlayerId, String> mapNames) {
+        graphicalInterface = new GraphicalPlayerView(ownId, mapNames, sb, tb, hb, cardQueue, trumpQueue);
+        Platform.runLater(() -> { graphicalInterface.createStage().show(); });
     }
 
     @Override

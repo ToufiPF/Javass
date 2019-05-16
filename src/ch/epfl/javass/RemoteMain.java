@@ -18,9 +18,12 @@ public final class RemoteMain extends Application {
 
     @Override
     public void start(Stage arg0) throws Exception {
-        // RemotePlayerServer implémente Runnable
-        Thread remoteThread = new Thread(
-                new RemotePlayerServer(new GraphicalPlayerAdapter()));
+        startGame();
+    }
+    
+    public static void startGame() {
+      //RemotePlayerServer implémente Runnable
+        Thread remoteThread = new Thread(new RemotePlayerServer(new GraphicalPlayerAdapter()));
         remoteThread.setDaemon(true);
         remoteThread.start();
         System.out.println("La partie commencera à la connexion du client...");
