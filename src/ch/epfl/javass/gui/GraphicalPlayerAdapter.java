@@ -29,14 +29,14 @@ public final class GraphicalPlayerAdapter implements Player {
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
         Card c;
-        
+
         // Les observables doivent être modifiés dans le thread JavaFX 
         // pour éviter les problèmes de compétition entre les thread
         Platform.runLater(() -> hb.setPlayableCards(state.trick().playableCards(hand)));
-        
+
         // Plus pratique que cardQueue.take() : pas de try/catch à gérer
         do { c = cardQueue.poll(); } while (c == null);
-        
+
         Platform.runLater(() -> hb.setPlayableCards(CardSet.EMPTY));
         return c;
     }
@@ -50,31 +50,32 @@ public final class GraphicalPlayerAdapter implements Player {
 
     @Override
     public void setTrump(Card.Color trump) {
-        Platform.runLater(() -> { tb.setTrump(trump); });
+        Platform.runLater(() -> tb.setTrump(trump));
     }
 
     @Override
     public void setWinningTeam(TeamId winningTeam) {
-        Platform.runLater(() -> { sb.setWinningTeam(winningTeam); });
+        Platform.runLater(() -> sb.setWinningTeam(winningTeam));
     }
 
     @Override
     public void updateHand(CardSet newHand) {
-        Platform.runLater(() -> { hb.setHand(newHand); });
+        Platform.runLater(() -> hb.setHand(newHand));
     }
 
     @Override
     public void updateScore(Score newScore) {
-        for(TeamId t : TeamId.ALL) {
-            Platform.runLater(() -> {
+        Platform.runLater(() -> {
+            for(TeamId t : TeamId.ALL) {
                 sb.setGamePoints(t, newScore.gamePoints(t)); 
                 sb.setTotalPoints(t, newScore.totalPoints(t)); 
-                sb.setTurnPoints(t, newScore.turnPoints(t)); });
-        }
+                sb.setTurnPoints(t, newScore.turnPoints(t)); 
+            }
+        });
     }
 
     @Override
     public void updateTrick(Trick newTrick) {
-        Platform.runLater(() -> {tb.setTrick(newTrick); });
+        Platform.runLater(() -> tb.setTrick(newTrick));
     }
 }

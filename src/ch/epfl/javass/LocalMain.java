@@ -33,6 +33,10 @@ public final class LocalMain extends Application {
         createGameFromArguments(getParameters().getRaw());
     }
     
+    /**
+     * Crée une partie et le Thread la faisant tourner à partir de la liste d'arguments donnée
+     * @param args (List<String>) la liste d'arguments pour lancer la partie
+     */
     public static void createGameFromArguments(List<String> args) {
         // On commence par générer (ou récupérer, si elle a été fournie) la graine
         Random SEED_GENERATOR = null;
@@ -51,6 +55,7 @@ public final class LocalMain extends Application {
         else {
             displayErrorAndExit(1, "Erreur : nombre d'arguments invalide.", getHelpMessage());
         }
+        
         
         Map<PlayerId, String> mapNames = new HashMap<>();
         Map<PlayerId, Player> mapPlayers = new HashMap<>();
@@ -136,7 +141,7 @@ public final class LocalMain extends Application {
     /**
      * Affiche les erreurs fournies puis quitte le programme avec le statut exitStatus
      * @param exitStatus (int) le statut de l'erreur
-     * @param errs (String...) les erreurs à afficher, une String par ligne
+     * @param errs (String...) les erreurs à afficher, un String par ligne
      */
     private static void displayErrorAndExit(int exitStatus, String... errs) {
         for (String s : errs)
