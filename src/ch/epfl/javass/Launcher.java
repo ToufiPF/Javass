@@ -2,8 +2,11 @@ package ch.epfl.javass;
 
 import java.util.ArrayList;
 
+import com.sun.javafx.stage.StageHelper;
+
 import ch.epfl.javass.jass.Jass;
 import ch.epfl.javass.jass.PlayerId;
+import ch.epfl.javass.net.RemotePlayerServer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -32,6 +35,8 @@ public class Launcher extends Application {
     private final VBox joinGameMenu;
 
     public Launcher() {
+        Platform.setImplicitExit(false);
+        
         mainMenu = createMainMenu();
         mainMenu.setVisible(true);
 
@@ -54,9 +59,12 @@ public class Launcher extends Application {
     @Override
     public void start(Stage arg0) throws Exception {
         stage = new Stage();
-        Platform.setImplicitExit(false);
-        stage.setTitle("Javass - FullGame");
+        stage.setTitle("Javass - Launcher");
         stage.setScene(scene);
+        stage.setOnCloseRequest(e -> {
+            if (StageHelper.getStages().size() == 1)
+                System.exit(0);
+        });
         stage.show();
     }
 
@@ -79,7 +87,11 @@ public class Launcher extends Application {
         joinGameBtn.setOnMouseClicked(e -> {
             mainMenu.setVisible(false);
             joinGameMenu.setVisible(true);
-            RemoteMain.startGame();
+            RemotePlayerServer serv = RemoteMain.startGame();
+            serv.connectionEstablishedProperty().addListener((ev, oldV, newV) -> {
+                if (newV)
+                    stage.close();
+            });
         });
 
         Button quitBtn = new Button("Quitter");
@@ -163,7 +175,7 @@ public class Launcher extends Application {
                 args.add(seedField.getText());
             
             LocalMain.createGameFromArguments(args);
-            stage.hide();
+            stage.close();
         });
         menu.getChildren().add(launchGameBtn);
 

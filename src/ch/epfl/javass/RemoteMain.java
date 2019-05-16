@@ -21,11 +21,13 @@ public final class RemoteMain extends Application {
         startGame();
     }
     
-    public static void startGame() {
-      //RemotePlayerServer implémente Runnable
-        Thread remoteThread = new Thread(new RemotePlayerServer(new GraphicalPlayerAdapter()));
+    public static RemotePlayerServer startGame() {
+        //RemotePlayerServer implémente Runnable
+        RemotePlayerServer server = new RemotePlayerServer(new GraphicalPlayerAdapter());
+        Thread remoteThread = new Thread(server);
         remoteThread.setDaemon(true);
         remoteThread.start();
         System.out.println("La partie commencera à la connexion du client...");
+        return server;
     }
 }
