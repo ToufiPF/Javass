@@ -19,7 +19,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class FullGame extends Application {
+public class Launcher extends Application {
 
     public static void main(String[] args) {
         launch(args);
@@ -31,7 +31,7 @@ public class FullGame extends Application {
     private final VBox createGameMenu;
     private final VBox joinGameMenu;
 
-    public FullGame() {
+    public Launcher() {
         mainMenu = createMainMenu();
         mainMenu.setVisible(true);
 

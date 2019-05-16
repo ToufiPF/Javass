@@ -139,6 +139,7 @@ public final class JassGame {
      *
      * @return (Card.Color) la nouvelle couleur pour les atouts
      */
+    @SuppressWarnings("unused")
     private Card.Color generateTrump() {
         return Card.Color.ALL.get(mTrumpRng.nextInt(Card.Color.COUNT));
     }

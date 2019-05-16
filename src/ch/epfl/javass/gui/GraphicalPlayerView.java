@@ -305,10 +305,6 @@ public final class GraphicalPlayerView {
     private final Scene scene;
     private final String ownName;
     private final BooleanProperty mustChooseProperty;
-    public void setMustChooseToTrue() {
-        mustChooseProperty.set(true);
-    }
-
 
     /**
      * Construit un nouveau GraphicalPlayerView
@@ -326,6 +322,7 @@ public final class GraphicalPlayerView {
             ScoreBean sb, TrickBean tb, HandBean hb,
             ArrayBlockingQueue<Card> cardQueue, ArrayBlockingQueue<Card.Color> trumpQueue) {
         mustChooseProperty = new SimpleBooleanProperty();
+        
         HBox chooseTrump = createChooseTrumpPane(trumpQueue, hb);
         GridPane score = createScorePane(nameMap, sb);
         GridPane trick = createTrickPane(ownId, nameMap, tb);
@@ -347,6 +344,10 @@ public final class GraphicalPlayerView {
 
     public Scene getScene() {
         return scene;
+    }
+    
+    public void setMustChooseToTrue() {
+        mustChooseProperty.set(true);
     }
 
     /**
