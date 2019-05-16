@@ -2,6 +2,7 @@ package ch.epfl.javass;
 
 import java.util.ArrayList;
 
+import ch.epfl.javass.jass.Jass;
 import ch.epfl.javass.jass.PlayerId;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -112,14 +113,14 @@ public class FullGame extends Application {
             typeChoices.get(i).setValue("Simulé");
 
             nameFields[i] = new TextField();
-            nameFields[i].setText(LocalMain.DEFAULT_NAMES[i]);
+            nameFields[i].setText(Jass.DEFAULT_NAMES[i]);
 
             StackPane lastField = new StackPane();
 
             IADifficultySpinners.add(new Spinner<>(1, 10, 4));
             IADifficultySpinners.get(i).visibleProperty().bind(Bindings.equal("Simulé", typeChoices.get(i).valueProperty()));
 
-            ipFields[i] = new TextField(LocalMain.DEFAULT_IP);
+            ipFields[i] = new TextField(Jass.DEFAULT_IP);
             ipFields[i].visibleProperty().bind(Bindings.equal("Distant", typeChoices.get(i).valueProperty()));
 
             lastField.getChildren().add(IADifficultySpinners.get(i));
@@ -147,7 +148,7 @@ public class FullGame extends Application {
             for (int i = 0 ; i < PlayerId.COUNT ; ++i) {
                 String name = nameFields[i].getText().trim();
                 if (name.isEmpty())
-                    name = LocalMain.DEFAULT_NAMES[i];
+                    name = Jass.DEFAULT_NAMES[i];
                 if (typeChoices.get(i).getValue().equals("Humain")) {
                     args.add("h:" + name);
                 }
@@ -161,7 +162,7 @@ public class FullGame extends Application {
             if (!seedField.getText().isEmpty())
                 args.add(seedField.getText());
             
-            LocalMain.startGameWithArguments(args);
+            LocalMain.createGameFromArguments(args);
             stage.hide();
         });
         menu.getChildren().add(launchGameBtn);

@@ -49,6 +49,11 @@ public class PacedPlayerTest {
         }
 
         @Override
+        public Color chooseTrump(CardSet hand) {
+            return hand.get(0).color();
+        }
+        
+        @Override
         public void setPlayers(PlayerId ownId,
                 Map<PlayerId, String> playerNames) {
             this.setPlayersCallCount += 1;
@@ -189,83 +194,5 @@ public class PacedPlayerTest {
             assertEquals(1, tp.updateTrickCallCount);
             assertEquals(trick, tp.updateTrickNewTrick);
         });
-    }
-
-    private static class TestPlayer implements Player {
-        private final int indexOfCardToPlay;
-
-        int setPlayersCallCount = 0;
-        PlayerId setPlayersOwnId = null;
-        Map<PlayerId, String> setPlayersPlayerNames = null;
-
-        int updateHandCallCount = 0;
-        CardSet updateHandNewHand = null;
-
-        int setTrumpCallCount = 0;
-        Color setTrumpTrump = null;
-
-        int updateTrickCallCount = 0;
-        Trick updateTrickNewTrick = null;
-
-        int updateScoreCallCount = 0;
-        Score updateScoreScore = null;
-
-        int setWinningTeamCallCount = 0;
-        TeamId setWinningTeamWinningTeam = null;
-
-        public TestPlayer(int indexOfCardToPlay) {
-            this.indexOfCardToPlay = indexOfCardToPlay;
-        }
-
-        public TestPlayer() {
-            this(0);
-        }
-
-        @Override
-        public Card cardToPlay(TurnState state, CardSet hand) {
-            return hand.get(indexOfCardToPlay);
-        }
-
-        @Override
-        public Color chooseTrump(CardSet hand) {
-            return null;
-        }
-        
-        @Override
-        public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
-            this.setPlayersCallCount += 1;
-            this.setPlayersOwnId = ownId;
-            this.setPlayersPlayerNames = playerNames;
-        }
-
-        @Override
-        public void updateHand(CardSet newHand) {
-            updateHandCallCount += 1;
-            updateHandNewHand = newHand;
-        }
-
-        @Override
-        public void setTrump(Color trump) {
-            setTrumpCallCount += 1;
-            setTrumpTrump = trump;
-        }
-
-        @Override
-        public void updateTrick(Trick newTrick) {
-            updateTrickCallCount += 1;
-            updateTrickNewTrick = newTrick;
-        }
-
-        @Override
-        public void updateScore(Score score) {
-            updateScoreCallCount += 1;
-            updateScoreScore = score;
-        }
-
-        @Override
-        public void setWinningTeam(TeamId winningTeam) {
-            setWinningTeamCallCount += 1;
-            setWinningTeamWinningTeam = winningTeam;
-        }
     }
 }

@@ -74,11 +74,4 @@ public final class PrintingPlayer implements Player {
         System.out.println("Pli " + newTrick.toString());
         underlyingPlayer.updateTrick(newTrick);
     }
-    
-    @Override
-    public void setWinningTeam(TeamId winningTeam) {
-        System.out.println("EQUIPE GAGNANTE : " + winningTeam);
-        underlyingPlayer.setWinningTeam(winningTeam);
-    }
-
 }

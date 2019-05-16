@@ -94,16 +94,6 @@ public final class GraphicalPlayerView {
                 .unmodifiableObservableMap(FXCollections.observableMap(map));
     }
 
-    private static ObservableMap<Color, Image> computeMapImagesTrumps() {
-        Map<Card.Color, Image> map = new HashMap<>();
-        for (Card.Color c : Card.Color.ALL)
-            map.put(c, new Image(pathToTrump(c)));
-
-        return FXCollections
-                .unmodifiableObservableMap(FXCollections.observableMap(map));
-    }
-
-
 
     private HBox createChooseTrumpPane(ArrayBlockingQueue<Color> trumpQueue, HandBean hb) {
         HBox trumpPane = new HBox();

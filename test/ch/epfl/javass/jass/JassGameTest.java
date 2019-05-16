@@ -67,6 +67,11 @@ public class JassGameTest {
         }
 
         @Override
+        public Color chooseTrump(CardSet hand) {
+            return hand.get(0).color();
+        }
+        
+        @Override
         public void setPlayers(PlayerId ownId,
                 Map<PlayerId, String> playerNames) {
             this.setPlayersCallCount += 1;
@@ -369,97 +374,5 @@ public class JassGameTest {
                 }
             }
         });
-    }
-
-    @SuppressWarnings("unused")
-    private static class TestPlayer implements Player {
-        final PlayerId ownId;
-        final List<PlayerId> playingOrderLog;
-
-        int cardToPlayCallCount = 0;
-        TurnState cardToPlayState = null;
-        CardSet cardToPlayHand = null;
-        Card cardToPlayReturnedCard = null;
-
-        int setPlayersCallCount = 0;
-        PlayerId setPlayersOwnId = null;
-        Map<PlayerId, String> setPlayersPlayerNames = null;
-
-        int updateHandCallCount = 0;
-        CardSet updateHandNewHand = null;
-        CardSet updateHandInitialHand = null;
-
-        int setTrumpCallCount = 0;
-        Color setTrumpTrump = null;
-
-        int updateTrickCallCount = 0;
-        Trick updateTrickNewTrick = null;
-
-        int updateScoreCallCount = 0;
-        Score updateScoreScore = null;
-
-        int setWinningTeamCallCount = 0;
-        TeamId setWinningTeamWinningTeam = null;
-
-        TestPlayer(PlayerId ownId, List<PlayerId> playingOrderLog) {
-            this.ownId = ownId;
-            this.playingOrderLog = playingOrderLog;
-        }
-
-        @Override
-        public Card cardToPlay(TurnState state, CardSet hand) {
-            if (playingOrderLog != null)
-                playingOrderLog.add(ownId);
-
-            cardToPlayCallCount += 1;
-            cardToPlayState = state;
-            cardToPlayHand = hand;
-            cardToPlayReturnedCard = state.trick().playableCards(hand).get(0);
-            return cardToPlayReturnedCard;
-        }
-
-        @Override
-        public Color chooseTrump(CardSet hand) {
-            return Card.Color.CLUB;
-        }
-        
-        @Override
-        public void setPlayers(PlayerId ownId, Map<PlayerId, String> playerNames) {
-            this.setPlayersCallCount += 1;
-            this.setPlayersOwnId = ownId;
-            this.setPlayersPlayerNames = playerNames;
-        }
-
-        @Override
-        public void updateHand(CardSet newHand) {
-            updateHandCallCount += 1;
-            updateHandNewHand = newHand;
-            if (updateHandInitialHand == null)
-                updateHandInitialHand = newHand;
-        }
-
-        @Override
-        public void setTrump(Color trump) {
-            setTrumpCallCount += 1;
-            setTrumpTrump = trump;
-        }
-
-        @Override
-        public void updateTrick(Trick newTrick) {
-            updateTrickCallCount += 1;
-            updateTrickNewTrick = newTrick;
-        }
-
-        @Override
-        public void updateScore(Score score) {
-            updateScoreCallCount += 1;
-            updateScoreScore = score;
-        }
-
-        @Override
-        public void setWinningTeam(TeamId winningTeam) {
-            setWinningTeamCallCount += 1;
-            setWinningTeamWinningTeam = winningTeam;
-        }
     }
 }
