@@ -103,7 +103,6 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
                 JassCommand.SET_TRUMP.command(),
                 StringSerializer.serializeInt(trump.ordinal()));
         sendString(toSend);
-
     }
 
     @Override

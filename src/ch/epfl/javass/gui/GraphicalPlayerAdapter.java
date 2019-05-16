@@ -14,8 +14,9 @@ import ch.epfl.javass.jass.TurnState;
 import javafx.application.Platform;
 
 /**
- * GraphicalPlayerAdapter Une classe permettant d'adapter 
- *      l'interface graphique pour en faire un joueur
+ * GraphicalPlayerAdapter Une classe permettant d'adapter l'interface graphique
+ * pour en faire un joueur
+ * 
  * @author Amaury Pierre (296498)
  * @author Aurélien Clergeot (302592)
  */
@@ -23,29 +24,35 @@ public final class GraphicalPlayerAdapter implements Player {
     private final HandBean hb = new HandBean();
     private final ScoreBean sb = new ScoreBean();
     private final TrickBean tb = new TrickBean();
-    private final ArrayBlockingQueue<Card> cardQueue = new ArrayBlockingQueue<>(1);
+    private final ArrayBlockingQueue<Card> cardQueue = new ArrayBlockingQueue<>(
+            1);
     private GraphicalPlayerView graphicalInterface = null;
 
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
         Card c;
 
-        // Les observables doivent être modifiés dans le thread JavaFX 
+        // Les observables doivent être modifiés dans le thread JavaFX
         // pour éviter les problèmes de compétition entre les thread
-        Platform.runLater(() -> hb.setPlayableCards(state.trick().playableCards(hand)));
+        Platform.runLater(
+                () -> hb.setPlayableCards(state.trick().playableCards(hand)));
 
         // Plus pratique que cardQueue.take() : pas de try/catch à gérer
-        do { c = cardQueue.poll(); } while (c == null);
+        do {
+            c = cardQueue.poll();
+        } while (c == null);
 
         Platform.runLater(() -> hb.setPlayableCards(CardSet.EMPTY));
         return c;
     }
 
     @Override
-    public void setPlayers(PlayerId ownId,
-            Map<PlayerId, String> mapNames) {
-        graphicalInterface = new GraphicalPlayerView(ownId, mapNames, sb, tb, hb, cardQueue);
-        Platform.runLater(() -> { graphicalInterface.createStage().show(); });
+    public void setPlayers(PlayerId ownId, Map<PlayerId, String> mapNames) {
+        graphicalInterface = new GraphicalPlayerView(ownId, mapNames, sb, tb,
+                hb, cardQueue);
+        Platform.runLater(() -> {
+            graphicalInterface.createStage().show();
+        });
     }
 
     @Override
@@ -66,10 +73,10 @@ public final class GraphicalPlayerAdapter implements Player {
     @Override
     public void updateScore(Score newScore) {
         Platform.runLater(() -> {
-            for(TeamId t : TeamId.ALL) {
-                sb.setGamePoints(t, newScore.gamePoints(t)); 
-                sb.setTotalPoints(t, newScore.totalPoints(t)); 
-                sb.setTurnPoints(t, newScore.turnPoints(t)); 
+            for (TeamId t : TeamId.ALL) {
+                sb.setGamePoints(t, newScore.gamePoints(t));
+                sb.setTotalPoints(t, newScore.totalPoints(t));
+                sb.setTurnPoints(t, newScore.turnPoints(t));
             }
         });
     }

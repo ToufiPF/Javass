@@ -23,7 +23,8 @@ public interface Jass {
     public static final long WAIT_TIME_TRICK_END = 1000;
 
     /** Nom par défault des joueurs */
-    public static final String[] DEFAULT_NAMES = {"Aline", "Bastien", "Colette", "David" };
+    public static final String[] DEFAULT_NAMES = 
+        { "Aline", "Bastien", "Colette", "David" };
     /** Temps d'attente minimum pour les joueurs simulés */
     public static final double WAIT_TIME_MCTS_PLAYER = 2.;
     /** Nombre d'itérations par défault pour l'algorithme des joueurs simulés */

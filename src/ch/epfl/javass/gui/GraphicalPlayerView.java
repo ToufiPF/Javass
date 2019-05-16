@@ -55,23 +55,11 @@ public final class GraphicalPlayerView {
     private static final int SPACING_PLAYER_CARD = 10;
     private static final int TRUMP_MARGIN = 25;
 
-    private static String pathToCard(Card c, int width) {
-        return "/card_" + c.color().ordinal() + "_" + c.rank().ordinal() + "_"
-                + width + ".png";
-    }
+    private static ObservableMap<Color, Image> computeMapImagesTrumps() {
+        Map<Card.Color, Image> map = new HashMap<>();
+        for (Card.Color c : Card.Color.ALL)
+            map.put(c, new Image(pathToTrump(c)));
 
-    private static String pathToTrump(Card.Color trump) {
-        return "/trump_" + trump.ordinal() + ".png";
-    }
-
-    private static ObservableMap<Card, Image> computeMapSmallCardsImages() {
-        Map<Card, Image> map = new HashMap<>();
-        for (Card.Color c : Card.Color.ALL) {
-            for (Card.Rank r : Card.Rank.ALL) {
-                Card card = Card.of(c, r);
-                map.put(card, new Image(pathToCard(card, WIDTH_SMALL_CARD_IMAGE)));
-            }
-        }
         return FXCollections
                 .unmodifiableObservableMap(FXCollections.observableMap(map));
     }
@@ -81,23 +69,27 @@ public final class GraphicalPlayerView {
         for (Card.Color c : Card.Color.ALL) {
             for (Card.Rank r : Card.Rank.ALL) {
                 Card card = Card.of(c, r);
-                map.put(card, new Image(pathToCard(card, WIDTH_LARGE_CARD_IMAGE)));
+                map.put(card,
+                        new Image(pathToCard(card, WIDTH_LARGE_CARD_IMAGE)));
             }
         }
         return FXCollections
                 .unmodifiableObservableMap(FXCollections.observableMap(map));
     }
 
-    private static ObservableMap<Color, Image> computeMapImagesTrumps() {
-        Map<Card.Color, Image> map = new HashMap<>();
-        for (Card.Color c : Card.Color.ALL)
-            map.put(c, new Image(pathToTrump(c)));
-
+    private static ObservableMap<Card, Image> computeMapSmallCardsImages() {
+        Map<Card, Image> map = new HashMap<>();
+        for (Card.Color c : Card.Color.ALL) {
+            for (Card.Rank r : Card.Rank.ALL) {
+                Card card = Card.of(c, r);
+                map.put(card,
+                        new Image(pathToCard(card, WIDTH_SMALL_CARD_IMAGE)));
+            }
+        }
         return FXCollections
                 .unmodifiableObservableMap(FXCollections.observableMap(map));
     }
-    
-    
+
     private static HBox createHandPane(HandBean hb,
             ArrayBlockingQueue<Card> cardQueue) {
         HBox handPane = new HBox();
@@ -114,9 +106,11 @@ public final class GraphicalPlayerView {
                     Bindings.valueAt(hb.handProperty(), idCard)));
 
             BooleanBinding isPlayable = Bindings.createBooleanBinding(
-                    () -> hb.playableCardsProperty().contains(hb.handProperty().get(idCard)),
+                    () -> hb.playableCardsProperty()
+                            .contains(hb.handProperty().get(idCard)),
                     hb.playableCardsProperty(), hb.handProperty());
-            img.opacityProperty().bind(Bindings.when(isPlayable).then(1.0).otherwise(0.2));
+            img.opacityProperty()
+                    .bind(Bindings.when(isPlayable).then(1.0).otherwise(0.2));
             img.disableProperty().bind(Bindings.not(isPlayable));
             img.setOnMouseClicked(e -> {
                 if (e.getButton().equals(MouseButton.PRIMARY))
@@ -147,13 +141,13 @@ public final class GraphicalPlayerView {
 
             Text lastTrickScore = new Text();
             sb.turnPointsProperty(TeamId.ALL.get(i))
-            .addListener((e, oldVal, newVal) -> {
-                int deltaScore = newVal.intValue() - oldVal.intValue();
-                // Dans le cas où on change de tour
-                if (deltaScore < 0)
-                    deltaScore = 0;
-                lastTrickScore.setText("(+" + deltaScore + ")");
-            });
+                    .addListener((e, oldVal, newVal) -> {
+                        int deltaScore = newVal.intValue() - oldVal.intValue();
+                        // Dans le cas où on change de tour
+                        if (deltaScore < 0)
+                            deltaScore = 0;
+                        lastTrickScore.setText("(+" + deltaScore + ")");
+                    });
             scorePane.add(lastTrickScore, 2, i);
 
             Text totalTxt = new Text(" / Total : ");
@@ -172,9 +166,9 @@ public final class GraphicalPlayerView {
             Map<PlayerId, String> nameMap, TrickBean tb) {
         GridPane trickPane = new GridPane();
         trickPane
-        .setStyle("-fx-background-color: whitesmoke; -fx-padding: 5px; "
-                + "-fx-border-width: 3px 0px; -fx-border-style: solid; "
-                + "-fx-border-color: gray; -fx-alignment: center;");
+                .setStyle("-fx-background-color: whitesmoke; -fx-padding: 5px; "
+                        + "-fx-border-width: 3px 0px; -fx-border-style: solid; "
+                        + "-fx-border-color: gray; -fx-alignment: center;");
 
         final int ownIndex = ownId.ordinal();
 
@@ -182,7 +176,7 @@ public final class GraphicalPlayerView {
         trumpImage.setFitWidth(SIZE_TRUMP_IMAGE / 2);
         trumpImage.setFitHeight(SIZE_TRUMP_IMAGE / 2);
         trumpImage.imageProperty()
-        .bind(Bindings.valueAt(mapImagesTrumps, tb.trumpProperty()));
+                .bind(Bindings.valueAt(mapImagesTrumps, tb.trumpProperty()));
 
         // Création des cartes
         StackPane[] imagesPanes = new StackPane[PlayerId.COUNT];
@@ -258,13 +252,24 @@ public final class GraphicalPlayerView {
 
         Text txt = new Text();
         txt.setTextAlignment(TextAlignment.CENTER);
-        txt.textProperty().bind(Bindings.format(
-                nameMap.get(pA) + " et " + nameMap.get(pB)
-                + " ont gagné\navec %d points contre %d.",
-                sb.totalPointsProperty(id), sb.totalPointsProperty(id.other())));
+        txt.textProperty()
+                .bind(Bindings.format(
+                        nameMap.get(pA) + " et " + nameMap.get(pB)
+                                + " ont gagné\navec %d points contre %d.",
+                        sb.totalPointsProperty(id),
+                        sb.totalPointsProperty(id.other())));
 
         winPane.setCenter(txt);
         return winPane;
+    }
+
+    private static String pathToCard(Card c, int width) {
+        return "/card_" + c.color().ordinal() + "_" + c.rank().ordinal() + "_"
+                + width + ".png";
+    }
+
+    private static String pathToTrump(Card.Color trump) {
+        return "/trump_" + trump.ordinal() + ".png";
     }
 
     // Graphics :

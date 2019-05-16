@@ -61,7 +61,7 @@ public final class Card {
         private Rank(String rank) {
             this.rank = rank;
         }
-        
+
         @Override
         public String toString() {
             return rank;
@@ -134,6 +134,20 @@ public final class Card {
         return PackedCard.color(pkCard);
     }
 
+    @Override
+    public boolean equals(Object that0) {
+        if (that0 instanceof Card) {
+            Card that0Card = (Card) that0;
+            return pkCard == that0Card.packed();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return packed();
+    }
+
     /**
      * Méthode renvoyant true si et seulement si la carte that est meilleure que
      * le récepteur
@@ -175,20 +189,6 @@ public final class Card {
      */
     public Rank rank() {
         return PackedCard.rank(pkCard);
-    }
-
-    @Override
-    public boolean equals(Object that0) {
-        if (that0 instanceof Card) {
-            Card that0Card = (Card) that0;
-            return pkCard == that0Card.packed();
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return packed();
     }
 
     @Override

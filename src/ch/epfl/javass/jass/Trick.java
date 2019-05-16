@@ -14,12 +14,6 @@ public final class Trick {
     /** Représente un pli invalide (non unique) */
     public final static Trick INVALID = new Trick(PackedTrick.INVALID);
 
-    private final int pkTrick;
-
-    private Trick(int pkTrick) {
-        this.pkTrick = pkTrick;
-    }
-    
     /**
      * Méthode publique statique retournant le pli vide d'index 0, d'atout et de
      * premier joueur donnés
@@ -48,6 +42,11 @@ public final class Trick {
         return new Trick(packed);
     }
 
+    private final int pkTrick;
+
+    private Trick(int pkTrick) {
+        this.pkTrick = pkTrick;
+    }
 
     /**
      * Méthode publique retournant la couleur de base du pli
@@ -70,6 +69,20 @@ public final class Trick {
     public Card card(int index) {
         Preconditions.checkIndex(index, size());
         return Card.ofPacked(PackedTrick.card(pkTrick, index));
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Trick) {
+            Trick otherTrick = (Trick) obj;
+            return this.packed() == otherTrick.packed();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.packed();
     }
 
     /**
@@ -175,6 +188,11 @@ public final class Trick {
         return PackedTrick.size(pkTrick);
     }
 
+    @Override
+    public String toString() {
+        return PackedTrick.toString(pkTrick);
+    }
+
     /**
      * Méthode publique retournant la couleur d'atout
      *
@@ -219,25 +237,6 @@ public final class Trick {
     private void exceptionIfNotFull() throws IllegalStateException {
         if (!isFull())
             throw new IllegalStateException();
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Trick) {
-            Trick otherTrick = (Trick) obj;
-            return this.packed() == otherTrick.packed();
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return this.packed();
-    }
-    
-    @Override
-    public String toString() {
-        return PackedTrick.toString(pkTrick);
     }
 
 }

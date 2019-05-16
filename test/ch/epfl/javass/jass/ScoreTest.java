@@ -23,8 +23,44 @@ public class ScoreTest {
     }
 
     @Test
+    void equalsIsFalseForUnequalScores() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long pkScore1 = randomPkScore(rng);
+            long pkScore2 = randomPkScore(rng);
+            if (pkScore1 == pkScore2)
+                continue; // very unlikely, but...
+            Score s1 = Score.ofPacked(pkScore1);
+            Score s2 = Score.ofPacked(pkScore2);
+            assertFalse(s1.equals(s2));
+        }
+    }
+
+    @Test
+    void equalsIsTrueOnEqualButDifferentInstances() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            long pkScore = randomPkScore(rng);
+            Score s1 = Score.ofPacked(pkScore);
+            Score s2 = Score.ofPacked(pkScore);
+            assertTrue(s1.equals(s2));
+        }
+    }
+
+    @Test
     void initialIsCorrect() {
         assertEquals(PackedScore.INITIAL, Score.INITIAL.packed());
+    }
+
+    @Test
+    void nextTurnDoesNotChangeReceiver() {
+        Score s0 = Score.INITIAL;
+        for (int i = 0; i < 9; ++i)
+            s0 = s0.withAdditionalTrick(TeamId.TEAM_1, i == 0 ? 21 : 17);
+
+        Score s1 = s0.nextTurn();
+
+        assertNotEquals(s0.packed(), s1.packed());
     }
 
     @Test
@@ -50,41 +86,5 @@ public class ScoreTest {
 
         long pkS2 = s2.packed();
         assertNotEquals(pkS1, pkS2);
-    }
-
-    @Test
-    void nextTurnDoesNotChangeReceiver() {
-        Score s0 = Score.INITIAL;
-        for (int i = 0; i < 9; ++i)
-            s0 = s0.withAdditionalTrick(TeamId.TEAM_1, i == 0 ? 21 : 17);
-
-        Score s1 = s0.nextTurn();
-
-        assertNotEquals(s0.packed(), s1.packed());
-    }
-
-    @Test
-    void equalsIsFalseForUnequalScores() {
-        SplittableRandom rng = newRandom();
-        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
-            long pkScore1 = randomPkScore(rng);
-            long pkScore2 = randomPkScore(rng);
-            if (pkScore1 == pkScore2)
-                continue; // very unlikely, but...
-            Score s1 = Score.ofPacked(pkScore1);
-            Score s2 = Score.ofPacked(pkScore2);
-            assertFalse(s1.equals(s2));
-        }
-    }
-
-    @Test
-    void equalsIsTrueOnEqualButDifferentInstances() {
-        SplittableRandom rng = newRandom();
-        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
-            long pkScore = randomPkScore(rng);
-            Score s1 = Score.ofPacked(pkScore);
-            Score s2 = Score.ofPacked(pkScore);
-            assertTrue(s1.equals(s2));
-        }
     }
 }

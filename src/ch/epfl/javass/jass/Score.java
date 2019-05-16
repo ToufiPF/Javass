@@ -36,6 +36,15 @@ public final class Score {
         mPackedScore = packed;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Score) {
+            Score objScore = (Score) obj;
+            return objScore.packed() == this.packed();
+        }
+        return false;
+    }
+
     /**
      * Donne le nombre de points de la team donnée pour cette partie (SANS
      * compter le tour courant)
@@ -46,6 +55,11 @@ public final class Score {
      */
     public int gamePoints(TeamId t) {
         return PackedScore.gamePoints(mPackedScore, t);
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(mPackedScore);
     }
 
     /**
@@ -66,6 +80,11 @@ public final class Score {
      */
     public long packed() {
         return mPackedScore;
+    }
+
+    @Override
+    public String toString() {
+        return PackedScore.toString(mPackedScore);
     }
 
     /**
@@ -117,25 +136,6 @@ public final class Score {
         Preconditions.checkArgument(trickPoints >= 0);
         return new Score(PackedScore.withAdditionalTrick(mPackedScore, winner,
                 trickPoints));
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Score) {
-            Score objScore = (Score) obj;
-            return objScore.packed() == this.packed();
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return Long.hashCode(mPackedScore);
-    }
-    
-    @Override
-    public String toString() {
-        return PackedScore.toString(mPackedScore);
     }
 
 }

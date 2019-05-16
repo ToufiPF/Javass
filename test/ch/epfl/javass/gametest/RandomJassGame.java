@@ -13,15 +13,15 @@ public final class RandomJassGame {
         Map<PlayerId, Player> players = new HashMap<>();
         Map<PlayerId, String> playerNames = new HashMap<>();
 
-        for (PlayerId pId: PlayerId.ALL) {
+        for (PlayerId pId : PlayerId.ALL) {
             Player player = new RandomPlayer(2019);
             if (pId == PlayerId.PLAYER_1)
                 player = new PrintingPlayer(new PacedPlayer(player, 0));
             players.put(pId, player);
             playerNames.put(pId, pId.name());
         }
-        
-        //Original seed : 2019
+
+        // Original seed : 2019
         JassGame g = new JassGame(2019, players, playerNames);
         while (!g.isGameOver()) {
             g.advanceToEndOfNextTrick();

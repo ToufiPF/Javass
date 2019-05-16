@@ -12,13 +12,6 @@ import ch.epfl.javass.jass.Card.Color;
  */
 public final class TurnState {
 
-
-    private final long actualScore;
-
-    private final long unplayedCards;
-
-    private final int actualTrick;
-
     /**
      * Méthode publique et statique retournant l'état initial du tour d'atout,
      * score et premier joueur donnés
@@ -61,6 +54,12 @@ public final class TurnState {
 
         return new TurnState(pkScore, pkUnplayedCards, pkTrick);
     }
+
+    private final long actualScore;
+
+    private final long unplayedCards;
+
+    private final int actualTrick;
 
     private TurnState(long actualScore, long unplayedCards, int actualTrick) {
         this.actualScore = actualScore;
@@ -155,9 +154,9 @@ public final class TurnState {
      *             si le pli est plein
      */
     public TurnState withNewCardPlayed(Card card) throws IllegalStateException {
-        assert(PackedCardSet.contains(unplayedCards, card.packed()));
+        assert (PackedCardSet.contains(unplayedCards, card.packed()));
         exceptionIfTrickFull();
-        
+
         // On ajoute la carte card au pli actuel
         int newActualTrick = PackedTrick.withAddedCard(actualTrick,
                 card.packed());

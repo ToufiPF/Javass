@@ -7,7 +7,8 @@ import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.Trick;
 
 public final class SignatureChecks_4 {
-    private SignatureChecks_4() {}
+    private SignatureChecks_4() {
+    }
 
     @SuppressWarnings("unused")
     void checkPackedTrick() {

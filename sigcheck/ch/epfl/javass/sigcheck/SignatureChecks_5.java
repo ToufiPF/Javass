@@ -15,7 +15,46 @@ import ch.epfl.javass.jass.Trick;
 import ch.epfl.javass.jass.TurnState;
 
 public final class SignatureChecks_5 {
-    private SignatureChecks_5() {}
+    private SignatureChecks_5() {
+    }
+
+    @SuppressWarnings("unused")
+    void checkJassGame() {
+        JassGame g;
+        long l = 0;
+        Map<PlayerId, Player> ps = null;
+        Map<PlayerId, String> pn = null;
+        boolean b;
+        g = new JassGame(l, ps, pn);
+        b = g.isGameOver();
+        g.advanceToEndOfNextTrick();
+    }
+
+    void checkPacedPlayer() {
+        Player p = null;
+        double d = 0;
+        p = new PacedPlayer(p, d);
+    }
+
+    @SuppressWarnings("unused")
+    void checkPlayer(Player p) {
+        TurnState s = null;
+        CardSet cs = null;
+        Card c;
+        Color co = null;
+        PlayerId pi = null;
+        Trick t = null;
+        TeamId ti = null;
+        Score sc = null;
+        Map<PlayerId, String> pn = null;
+        c = p.cardToPlay(s, cs);
+        p.setPlayers(pi, pn);
+        p.updateHand(cs);
+        p.setTrump(co);
+        p.updateTrick(t);
+        p.updateScore(sc);
+        p.setWinningTeam(ti);
+    }
 
     @SuppressWarnings("unused")
     void checkTurnState() {
@@ -42,43 +81,5 @@ public final class SignatureChecks_5 {
         s = s.withNewCardPlayed(cd);
         s = s.withTrickCollected();
         s = s.withNewCardPlayedAndTrickCollected(cd);
-    }
-
-    @SuppressWarnings("unused")
-    void checkPlayer(Player p) {
-        TurnState s = null;
-        CardSet cs = null;
-        Card c;
-        Color co = null;
-        PlayerId pi = null;
-        Trick t = null;
-        TeamId ti = null;
-        Score sc = null;
-        Map<PlayerId, String> pn = null;
-        c = p.cardToPlay(s, cs);
-        p.setPlayers(pi, pn);
-        p.updateHand(cs);
-        p.setTrump(co);
-        p.updateTrick(t);
-        p.updateScore(sc);
-        p.setWinningTeam(ti);
-    }
-
-    void checkPacedPlayer() {
-        Player p = null;
-        double d = 0;
-        p = new PacedPlayer(p, d);
-    }
-
-    @SuppressWarnings("unused")
-    void checkJassGame() {
-        JassGame g;
-        long l = 0;
-        Map<PlayerId, Player> ps = null;
-        Map<PlayerId, String> pn = null;
-        boolean b;
-        g = new JassGame(l, ps, pn);
-        b = g.isGameOver();
-        g.advanceToEndOfNextTrick();
     }
 }

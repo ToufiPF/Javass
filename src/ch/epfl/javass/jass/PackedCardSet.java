@@ -249,7 +249,7 @@ public final class PackedCardSet {
     public static long trumpAbove(int pkCard) {
         assert PackedCard.isValid(pkCard);
         return TRUMP_ABOVE_TAB[PackedCard.color(pkCard).ordinal()][PackedCard
-                                                                   .rank(pkCard).ordinal()];
+                .rank(pkCard).ordinal()];
     }
 
     /**
@@ -273,8 +273,9 @@ public final class PackedCardSet {
 
         for (Card.Color c : Card.Color.ALL) {
             long allCardsOfOneColor = 0L;
-            for(Card.Rank r : Card.Rank.ALL) {
-                allCardsOfOneColor = add(allCardsOfOneColor, PackedCard.pack(c, r));
+            for (Card.Rank r : Card.Rank.ALL) {
+                allCardsOfOneColor = add(allCardsOfOneColor,
+                        PackedCard.pack(c, r));
             }
             subsetOfColorTab[c.ordinal()] = allCardsOfOneColor;
         }
@@ -288,10 +289,12 @@ public final class PackedCardSet {
             for (Card.Rank rankL : Card.Rank.ALL) {
                 for (Card.Rank rankR : Card.Rank.ALL) {
 
-                    if (PackedCard.isBetter(color, PackedCard.pack(color, rankR), PackedCard.pack(color, rankL))) {
+                    if (PackedCard.isBetter(color,
+                            PackedCard.pack(color, rankR),
+                            PackedCard.pack(color, rankL))) {
                         trumpAboveRank[color.ordinal()][rankL
-                                                        .ordinal()] |= singleton(
-                                                                PackedCard.pack(color, rankR));
+                                .ordinal()] |= singleton(
+                                        PackedCard.pack(color, rankR));
                     }
                 }
             }

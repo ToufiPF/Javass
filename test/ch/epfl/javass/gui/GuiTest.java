@@ -17,7 +17,9 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 public final class GuiTest extends Application {
-    public static void main(String[] args) { launch(args); }
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -27,14 +29,13 @@ public final class GuiTest extends Application {
         TrickBean tB = new TrickBean();
         HandBean hB = new HandBean();
         ArrayBlockingQueue<Card> cardQueue = new ArrayBlockingQueue<>(1);
-        GraphicalPlayerView g =
-                new GraphicalPlayerView(PlayerId.PLAYER_2, ns, sB, tB, hB, cardQueue);
+        GraphicalPlayerView g = new GraphicalPlayerView(PlayerId.PLAYER_2, ns,
+                sB, tB, hB, cardQueue);
         g.createStage().show();
 
         new AnimationTimer() {
             long now0 = 0;
-            TurnState s = TurnState.initial(Color.SPADE,
-                    Score.INITIAL,
+            TurnState s = TurnState.initial(Color.SPADE, Score.INITIAL,
                     PlayerId.PLAYER_3);
             CardSet d = CardSet.ALL_CARDS;
 
@@ -46,17 +47,18 @@ public final class GuiTest extends Application {
                 for (TeamId t : TeamId.ALL)
                     if (s.score().totalPoints(t) >= Jass.WINNING_POINTS)
                         sB.setWinningTeam(t);
-                
+
                 if (sB.winningTeamProperty().get() != null)
                     return;
 
                 now0 = now;
-                if (s.isTerminal()) {                    
-                    s = TurnState.initial(Card.Color.ALL.get((int) (now % 4)), 
-                            s.score().nextTurn(), PlayerId.ALL.get((int) (now % 4)));
+                if (s.isTerminal()) {
+                    s = TurnState.initial(Card.Color.ALL.get((int) (now % 4)),
+                            s.score().nextTurn(),
+                            PlayerId.ALL.get((int) (now % 4)));
                     d = CardSet.ALL_CARDS;
 
-                    for (TeamId t: TeamId.ALL) 
+                    for (TeamId t : TeamId.ALL)
                         sB.setGamePoints(t, s.score().gamePoints(t));
                 }
 
@@ -67,7 +69,7 @@ public final class GuiTest extends Application {
 
                 if (s.trick().isFull()) {
                     s = s.withTrickCollected();
-                    for (TeamId t: TeamId.ALL) {
+                    for (TeamId t : TeamId.ALL) {
                         sB.setTurnPoints(t, s.score().turnPoints(t));
                         sB.setTotalPoints(t, s.score().totalPoints(t));
                     }

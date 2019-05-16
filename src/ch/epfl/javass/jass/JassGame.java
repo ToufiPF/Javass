@@ -65,7 +65,6 @@ public final class JassGame {
             return;
         }
 
-
         // On est au 1er pli du 1er tour de la partie
         if (mTurnState == null) {
             dealCardsToPlayers();

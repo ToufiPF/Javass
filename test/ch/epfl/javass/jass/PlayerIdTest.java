@@ -10,17 +10,8 @@ import org.junit.jupiter.api.Test;
 
 public class PlayerIdTest {
     private static PlayerId[] getAllPlayerIds() {
-        return new PlayerId[] {
-                PlayerId.PLAYER_1,
-                PlayerId.PLAYER_2,
-                PlayerId.PLAYER_3,
-                PlayerId.PLAYER_4,
-        };
-    }
-
-    @Test
-    void playerIdsAreInRightOrder() {
-        assertArrayEquals(getAllPlayerIds(), PlayerId.values());
+        return new PlayerId[] { PlayerId.PLAYER_1, PlayerId.PLAYER_2,
+                PlayerId.PLAYER_3, PlayerId.PLAYER_4, };
     }
 
     @Test
@@ -41,10 +32,14 @@ public class PlayerIdTest {
     }
 
     @Test
+    void playerIdsAreInRightOrder() {
+        assertArrayEquals(getAllPlayerIds(), PlayerId.values());
+    }
+
+    @Test
     void playerIdTeamIsCorrect() {
-        TeamId[] expectedTeams = new TeamId[] {
-                TeamId.TEAM_1, TeamId.TEAM_2, TeamId.TEAM_1, TeamId.TEAM_2
-        };
+        TeamId[] expectedTeams = new TeamId[] { TeamId.TEAM_1, TeamId.TEAM_2,
+                TeamId.TEAM_1, TeamId.TEAM_2 };
         PlayerId[] playerIds = getAllPlayerIds();
         for (int i = 0; i < expectedTeams.length; ++i)
             assertEquals(expectedTeams[i], playerIds[i].team());

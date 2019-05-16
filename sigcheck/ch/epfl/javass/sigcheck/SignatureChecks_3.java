@@ -7,33 +7,7 @@ import ch.epfl.javass.jass.CardSet;
 import ch.epfl.javass.jass.PackedCardSet;
 
 public final class SignatureChecks_3 {
-    private SignatureChecks_3() {}
-
-    @SuppressWarnings("unused")
-    void checkPackedCardSet() {
-        Card.Color c = null;
-        Card.Rank r = null;
-        int i = 0;
-        long l;
-        boolean b;
-        String s;
-        l = PackedCardSet.EMPTY;
-        l = PackedCardSet.ALL_CARDS;
-        b = PackedCardSet.isValid(l);
-        l = PackedCardSet.trumpAbove(i);
-        l = PackedCardSet.singleton(i);
-        b = PackedCardSet.isEmpty(l);
-        i = PackedCardSet.size(l);
-        i = PackedCardSet.get(l, i);
-        l = PackedCardSet.add(l, i);
-        l = PackedCardSet.remove(l, i);
-        b = PackedCardSet.contains(l, i);
-        l = PackedCardSet.complement(l);
-        l = PackedCardSet.union(l, l);
-        l = PackedCardSet.intersection(l, l);
-        l = PackedCardSet.difference(l, l);
-        l = PackedCardSet.subsetOfColor(l, c);
-        s = PackedCardSet.toString(l);
+    private SignatureChecks_3() {
     }
 
     @SuppressWarnings("unused")
@@ -61,5 +35,32 @@ public final class SignatureChecks_3 {
         s = s.intersection(s);
         s = s.difference(s);
         s = s.subsetOfColor(c2);
+    }
+
+    @SuppressWarnings("unused")
+    void checkPackedCardSet() {
+        Card.Color c = null;
+        Card.Rank r = null;
+        int i = 0;
+        long l;
+        boolean b;
+        String s;
+        l = PackedCardSet.EMPTY;
+        l = PackedCardSet.ALL_CARDS;
+        b = PackedCardSet.isValid(l);
+        l = PackedCardSet.trumpAbove(i);
+        l = PackedCardSet.singleton(i);
+        b = PackedCardSet.isEmpty(l);
+        i = PackedCardSet.size(l);
+        i = PackedCardSet.get(l, i);
+        l = PackedCardSet.add(l, i);
+        l = PackedCardSet.remove(l, i);
+        b = PackedCardSet.contains(l, i);
+        l = PackedCardSet.complement(l);
+        l = PackedCardSet.union(l, l);
+        l = PackedCardSet.intersection(l, l);
+        l = PackedCardSet.difference(l, l);
+        l = PackedCardSet.subsetOfColor(l, c);
+        s = PackedCardSet.toString(l);
     }
 }

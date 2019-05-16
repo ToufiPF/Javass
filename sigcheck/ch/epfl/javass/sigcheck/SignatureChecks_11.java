@@ -4,7 +4,8 @@ import ch.epfl.javass.LocalMain;
 import ch.epfl.javass.RemoteMain;
 
 public final class SignatureChecks_11 {
-    private SignatureChecks_11() {}
+    private SignatureChecks_11() {
+    }
 
     void checkLocalMain() throws Exception {
         String[] a = null;

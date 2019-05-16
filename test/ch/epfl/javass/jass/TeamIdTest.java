@@ -10,15 +10,13 @@ import org.junit.jupiter.api.Test;
 
 public class TeamIdTest {
     private static TeamId[] getAllTeamIds() {
-        return new TeamId[] {
-                TeamId.TEAM_1,
-                TeamId.TEAM_2,
-        };
+        return new TeamId[] { TeamId.TEAM_1, TeamId.TEAM_2, };
     }
 
     @Test
-    void teamIdsAreInRightOrder() {
-        assertArrayEquals(getAllTeamIds(), TeamId.values());
+    void otherIsCorrect() {
+        assertEquals(TeamId.TEAM_2, TeamId.TEAM_1.other());
+        assertEquals(TeamId.TEAM_1, TeamId.TEAM_2.other());
     }
 
     @Test
@@ -39,8 +37,7 @@ public class TeamIdTest {
     }
 
     @Test
-    void otherIsCorrect() {
-        assertEquals(TeamId.TEAM_2, TeamId.TEAM_1.other());
-        assertEquals(TeamId.TEAM_1, TeamId.TEAM_2.other());
+    void teamIdsAreInRightOrder() {
+        assertArrayEquals(getAllTeamIds(), TeamId.values());
     }
 }

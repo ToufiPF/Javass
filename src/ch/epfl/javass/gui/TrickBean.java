@@ -19,17 +19,17 @@ public final class TrickBean {
     private final ObjectProperty<Card.Color> trumpProp;
     private final ObservableMap<PlayerId, Card> trickProp;
     private final ObjectProperty<PlayerId> winningPlayer;
-    
+
     public TrickBean() {
         trumpProp = new SimpleObjectProperty<Card.Color>();
-        
+
         trickProp = FXCollections.observableHashMap();
         for (PlayerId p : PlayerId.ALL)
             trickProp.put(p, null);
-        
+
         winningPlayer = new SimpleObjectProperty<PlayerId>();
     }
-    
+
     /**
      * Change l'état du Trick observé, càd les cartes en jeu
      *
@@ -40,7 +40,7 @@ public final class TrickBean {
         final int trickSize = trick.size();
         for (int i = 0; i < trickSize; ++i)
             trickProp.put(trick.player(i), trick.card(i));
-        for (int i = trickSize ; i < PlayerId.COUNT ; ++i)
+        for (int i = trickSize; i < PlayerId.COUNT; ++i)
             trickProp.put(trick.player(i), null);
 
         if (trick.isEmpty())

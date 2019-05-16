@@ -85,8 +85,10 @@ public final class PackedCard {
         // - que l'id du rang soit inferieur ou égal à 8
         // (ie. Bits32.extract(packedCard, 0, 4) <= 8)
 
-        return Bits32.extract(packedCard, RANK_SIZE + COLOR_SIZE, Integer.SIZE - (RANK_SIZE + COLOR_SIZE)) == 0 && Bits32
-                .extract(packedCard, RANK_START, RANK_SIZE) < Rank.COUNT;
+        return Bits32.extract(packedCard, RANK_SIZE + COLOR_SIZE,
+                Integer.SIZE - (RANK_SIZE + COLOR_SIZE)) == 0
+                && Bits32.extract(packedCard, RANK_START,
+                        RANK_SIZE) < Rank.COUNT;
     }
 
     /**

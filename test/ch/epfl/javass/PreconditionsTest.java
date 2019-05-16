@@ -10,11 +10,6 @@ import org.junit.jupiter.api.Test;
 
 public final class PreconditionsTest {
     @Test
-    void checkArgumentSucceedsForTrue() {
-        Preconditions.checkArgument(true);
-    }
-
-    @Test
     void checkArgumentFailsForFalse() {
         assertThrows(IllegalArgumentException.class, () -> {
             Preconditions.checkArgument(false);
@@ -22,25 +17,8 @@ public final class PreconditionsTest {
     }
 
     @Test
-    void checkIndexSucceedsForValidIndices() {
-        SplittableRandom rng = newRandom();
-        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
-            int size = rng.nextInt(1000);
-            int index = rng.nextInt(size);
-            Preconditions.checkIndex(index, size);
-        }
-    }
-
-    @Test
-    void checkIndexFailsForTooBigIndex() {
-        SplittableRandom rng = newRandom();
-        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
-            int size = rng.nextInt(1000);
-            int index = size + rng.nextInt(5);
-            assertThrows(IndexOutOfBoundsException.class, () -> {
-                Preconditions.checkIndex(index, size);
-            });
-        }
+    void checkArgumentSucceedsForTrue() {
+        Preconditions.checkArgument(true);
     }
 
     @Test
@@ -64,6 +42,28 @@ public final class PreconditionsTest {
             assertThrows(IndexOutOfBoundsException.class, () -> {
                 Preconditions.checkIndex(index, -size);
             });
+        }
+    }
+
+    @Test
+    void checkIndexFailsForTooBigIndex() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            int size = rng.nextInt(1000);
+            int index = size + rng.nextInt(5);
+            assertThrows(IndexOutOfBoundsException.class, () -> {
+                Preconditions.checkIndex(index, size);
+            });
+        }
+    }
+
+    @Test
+    void checkIndexSucceedsForValidIndices() {
+        SplittableRandom rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            int size = rng.nextInt(1000);
+            int index = rng.nextInt(size);
+            Preconditions.checkIndex(index, size);
         }
     }
 }

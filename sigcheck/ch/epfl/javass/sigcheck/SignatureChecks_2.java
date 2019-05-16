@@ -9,7 +9,8 @@ import ch.epfl.javass.jass.Score;
 import ch.epfl.javass.jass.TeamId;
 
 public final class SignatureChecks_2 {
-    private SignatureChecks_2() {}
+    private SignatureChecks_2() {
+    }
 
     void checkBits64() {
         long l;
@@ -17,33 +18,6 @@ public final class SignatureChecks_2 {
         l = Bits64.mask(i, i);
         l = Bits64.extract(l, i, i);
         l = Bits64.pack(l, i, l, i);
-    }
-
-    @SuppressWarnings("unused")
-    void checkTeamId() {
-        TeamId t;
-        List<TeamId> l;
-        int i;
-        t = TeamId.TEAM_1;
-        t = TeamId.TEAM_2;
-        t = t.other();
-        l = TeamId.ALL;
-        i = TeamId.COUNT;
-    }
-
-    @SuppressWarnings("unused")
-    void checkPlayerId() {
-        PlayerId p;
-        List<PlayerId> l;
-        int i;
-        TeamId t;
-        p = PlayerId.PLAYER_1;
-        p = PlayerId.PLAYER_2;
-        p = PlayerId.PLAYER_3;
-        p = PlayerId.PLAYER_4;
-        l = PlayerId.ALL;
-        i = PlayerId.COUNT;
-        t = p.team();
     }
 
     @SuppressWarnings("unused")
@@ -66,6 +40,21 @@ public final class SignatureChecks_2 {
     }
 
     @SuppressWarnings("unused")
+    void checkPlayerId() {
+        PlayerId p;
+        List<PlayerId> l;
+        int i;
+        TeamId t;
+        p = PlayerId.PLAYER_1;
+        p = PlayerId.PLAYER_2;
+        p = PlayerId.PLAYER_3;
+        p = PlayerId.PLAYER_4;
+        l = PlayerId.ALL;
+        i = PlayerId.COUNT;
+        t = p.team();
+    }
+
+    @SuppressWarnings("unused")
     void checkScore() {
         Score s;
         String s2 = null;
@@ -81,6 +70,18 @@ public final class SignatureChecks_2 {
         i = s.totalPoints(t);
         s = s.withAdditionalTrick(t, i);
         s = s.nextTurn();
+    }
+
+    @SuppressWarnings("unused")
+    void checkTeamId() {
+        TeamId t;
+        List<TeamId> l;
+        int i;
+        t = TeamId.TEAM_1;
+        t = TeamId.TEAM_2;
+        t = t.other();
+        l = TeamId.ALL;
+        i = TeamId.COUNT;
     }
 
 }
