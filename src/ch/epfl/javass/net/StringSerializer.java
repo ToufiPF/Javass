@@ -1,10 +1,9 @@
 package ch.epfl.javass.net;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.TurnState;
@@ -18,7 +17,10 @@ import ch.epfl.javass.jass.TurnState;
  * @author Aurélien Clergeot (302592)
  */
 public final class StringSerializer {
-
+    
+    private final static Base64.Decoder decoder = Base64.getDecoder();
+    private final static Base64.Encoder encoder = Base64.getEncoder();
+    
     /**
      * Méthode publique et statique permettant de convertir une chaine de
      * caractères en l'entier en base 10 qu'elle représente en base 16
@@ -71,7 +73,7 @@ public final class StringSerializer {
      * @return (String) la version désérialisée de s
      */
     public static String deserializeString(String s) {
-        return new String(Base64.decode(s), StandardCharsets.UTF_8);
+        return new String(decoder.decode(s), StandardCharsets.UTF_8);
     }
 
     /**
@@ -149,7 +151,7 @@ public final class StringSerializer {
      * @return (String) la chaîne s en base64
      */
     public static String serializeString(String s) {
-        return Base64.encode(s.getBytes(StandardCharsets.UTF_8));
+        return encoder.encodeToString(s.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
