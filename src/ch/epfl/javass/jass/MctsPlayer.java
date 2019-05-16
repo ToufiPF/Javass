@@ -6,7 +6,6 @@ import java.util.SplittableRandom;
 
 import ch.epfl.javass.Preconditions;
 import ch.epfl.javass.jass.Card.Color;
-import ch.epfl.javass.jass.Card.Rank;
 
 /**
  * MctsPlayer Une classe publique et finale représentant un joueur simulé au
@@ -234,15 +233,15 @@ public final class MctsPlayer implements Player {
 
     @Override
     public Color chooseTrump(CardSet hand) {
-        Color futureTrump = Color.SPADE;
+        Color futureTrump = null;
         int maxPoints = 0;
+
         for(Color c : Color.ALL) {
             int totalPoints = 0;
-            for(Rank r : Rank.ALL) {
-                Card carte = Card.of(c, r);
-                if (hand.contains(carte)){
-                    totalPoints += r.trumpOrdinal();
-                }
+            for (int i = 0 ; i < hand.size() ; ++i) {
+                Card card = hand.get(i);
+                if (c.equals(card.color()))
+                    totalPoints += card.rank().trumpOrdinal();
             }
             if(totalPoints > maxPoints) {
                 maxPoints = totalPoints;
