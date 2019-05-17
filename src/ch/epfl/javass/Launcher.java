@@ -9,6 +9,8 @@ import ch.epfl.javass.jass.PlayerId;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -22,12 +24,17 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class Launcher extends Application {
+public final class Launcher extends Application {
 
     public static void main(String[] args) {
         launch(args);
     }
     
+    public static void requestTryAgain() {
+        tryAgainProperty.set(true);
+    }
+    
+    private final static BooleanProperty tryAgainProperty = new SimpleBooleanProperty(false);
     private Stage primaryStage;
     private final Scene scene;
     private final VBox mainMenu;
@@ -38,13 +45,9 @@ public class Launcher extends Application {
         Platform.setImplicitExit(false);
         
         mainMenu = createMainMenu();
-        mainMenu.setVisible(true);
-
         createGameMenu = createCreateGameMenu();
-        createGameMenu.setVisible(false);
-
         joinGameMenu = createJoinGameMenu();
-        joinGameMenu.setVisible(false);
+        displayMainMenu();
 
         StackPane principal = new StackPane();
         principal.setMinSize(400, 600);
@@ -54,6 +57,20 @@ public class Launcher extends Application {
 
         scene = new Scene(principal);
         primaryStage = null;
+        
+        tryAgainProperty.addListener((e, oldV, newV) -> {
+            if (newV) {
+                for (Stage st : StageHelper.getStages())
+                    if (!primaryStage.equals(st))
+                        st.close();
+                
+                displayMainMenu();
+                
+                tryAgainProperty.set(false);
+                primaryStage.setTitle("Javass - Launcher");
+                primaryStage.setScene(scene);
+            }
+        });
     }
 
     @Override
@@ -79,14 +96,12 @@ public class Launcher extends Application {
 
         Button createGameBtn = new Button("Créer une partie");
         createGameBtn.setOnMouseClicked(e -> {
-            mainMenu.setVisible(false);
-            createGameMenu.setVisible(true);
+            displayCreateGameMenu();
         });
 
         Button joinGameBtn = new Button("Rejoindre une partie");
         joinGameBtn.setOnMouseClicked(e -> {
-            mainMenu.setVisible(false);
-            joinGameMenu.setVisible(true);
+            displayJoinGameMenu();
             RemoteMain.startGame(primaryStage);
         });
 
@@ -191,5 +206,20 @@ public class Launcher extends Application {
         menu.getChildren().add(lbl);
         return menu;
     }
-
+    
+    private void displayMainMenu() {
+        mainMenu.setVisible(true);
+        createGameMenu.setVisible(false);
+        joinGameMenu.setVisible(false);
+    }
+    private void displayCreateGameMenu() {
+        mainMenu.setVisible(false);
+        createGameMenu.setVisible(true);
+        joinGameMenu.setVisible(false);
+    }
+    private void displayJoinGameMenu() {
+        mainMenu.setVisible(false);
+        createGameMenu.setVisible(false);
+        joinGameMenu.setVisible(true);
+    }
 }

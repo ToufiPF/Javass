@@ -6,6 +6,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import com.sun.javafx.stage.StageHelper;
 
+import ch.epfl.javass.Launcher;
 import ch.epfl.javass.jass.Card;
 import ch.epfl.javass.jass.Card.Color;
 import ch.epfl.javass.jass.Jass;
@@ -296,7 +297,7 @@ public final class GraphicalPlayerView {
         quitGameBtn.setOnMouseClicked(e -> System.exit(0));
         
         Button newGameBtn = new Button("Nouvelle Partie");
-        //newGameBtn.setOnMouseClicked(e ->);
+        newGameBtn.setOnMouseClicked(e -> Launcher.requestTryAgain());
         buttons.getChildren().add(newGameBtn);
         buttons.getChildren().add(quitGameBtn);
         winPane.setCenter(txt);
