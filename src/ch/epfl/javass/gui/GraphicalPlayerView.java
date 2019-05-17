@@ -22,6 +22,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -288,7 +289,18 @@ public final class GraphicalPlayerView {
                         sb.totalPointsProperty(id),
                         sb.totalPointsProperty(id.other())));
 
+        VBox buttons = new VBox();
+        buttons.setStyle("-fx-font: 16 Optima;" + 
+                " -fx-spacing: 15px; -fx-padding: 5px; -fx-alignment: center;");
+        Button quitGameBtn = new Button("Quitter");
+        quitGameBtn.setOnMouseClicked(e -> System.exit(0));
+        
+        Button newGameBtn = new Button("Nouvelle Partie");
+        //newGameBtn.setOnMouseClicked(e ->);
+        buttons.getChildren().add(newGameBtn);
+        buttons.getChildren().add(quitGameBtn);
         winPane.setCenter(txt);
+        winPane.setBottom(buttons);
         return winPane;
     }
 
