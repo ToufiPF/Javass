@@ -129,6 +129,7 @@ public final class LocalMain extends Application {
                 }
                 else {
                     gui = new Stage();
+                    gui.show();
                 }
                 gui.setOnCloseRequest(e -> {
                     if (StageHelper.getStages().size() == 1)

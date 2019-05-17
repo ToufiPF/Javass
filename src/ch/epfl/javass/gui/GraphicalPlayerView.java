@@ -345,7 +345,7 @@ public final class GraphicalPlayerView {
         BorderPane gamePane = new BorderPane(trick);
         gamePane.setTop(score);
         gamePane.setBottom(hand);
-
+        
         StackPane principalPane = new StackPane(gamePane);
         principalPane.getChildren().add(chooseTrump);
         principalPane.getChildren().add(winT1);
