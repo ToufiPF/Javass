@@ -6,11 +6,11 @@ import com.sun.javafx.stage.StageHelper;
 
 import ch.epfl.javass.jass.Jass;
 import ch.epfl.javass.jass.PlayerId;
-import ch.epfl.javass.net.RemotePlayerServer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -28,7 +28,7 @@ public class Launcher extends Application {
         launch(args);
     }
     
-    private Stage stage;
+    private Stage primaryStage;
     private final Scene scene;
     private final VBox mainMenu;
     private final VBox createGameMenu;
@@ -53,19 +53,19 @@ public class Launcher extends Application {
         principal.getChildren().add(joinGameMenu);
 
         scene = new Scene(principal);
-        stage = null;
+        primaryStage = null;
     }
 
     @Override
     public void start(Stage arg0) throws Exception {
-        stage = new Stage();
-        stage.setTitle("Javass - Launcher");
-        stage.setScene(scene);
-        stage.setOnCloseRequest(e -> {
+        primaryStage = arg0;
+        primaryStage.setTitle("Javass - Launcher");
+        primaryStage.setScene(scene);
+        primaryStage.setOnCloseRequest(e -> {
             if (StageHelper.getStages().size() == 1)
                 System.exit(0);
         });
-        stage.show();
+        primaryStage.show();
     }
 
     private VBox createMainMenu() {
@@ -87,11 +87,7 @@ public class Launcher extends Application {
         joinGameBtn.setOnMouseClicked(e -> {
             mainMenu.setVisible(false);
             joinGameMenu.setVisible(true);
-            RemotePlayerServer serv = RemoteMain.startGame();
-            serv.connectionEstablishedProperty().addListener((ev, oldV, newV) -> {
-                if (newV)
-                    stage.close();
-            });
+            RemoteMain.startGame(primaryStage);
         });
 
         Button quitBtn = new Button("Quitter");
@@ -150,6 +146,7 @@ public class Launcher extends Application {
         }
 
         HBox seedBox = new HBox();
+        seedBox.setAlignment(Pos.CENTER);
         Label seedLbl = new Label("Entrez la graîne de la partie : (laisser vide pour aléatoire) : ");
         TextField seedField = new TextField();
         seedBox.getChildren().add(seedLbl);
@@ -178,8 +175,7 @@ public class Launcher extends Application {
             if (!seedField.getText().isEmpty())
                 args.add(seedField.getText());
             
-            LocalMain.createGameFromArguments(args);
-            stage.close();
+            LocalMain.createGameFromArguments(args, primaryStage);
         });
         menu.getChildren().add(launchGameBtn);
 

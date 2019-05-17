@@ -19,7 +19,7 @@ public class Etape10Test extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Map<PlayerId, Player> ps = new EnumMap<>(PlayerId.class);
-        ps.put(PlayerId.PLAYER_1, new GraphicalPlayerAdapter());
+        ps.put(PlayerId.PLAYER_1, new GraphicalPlayerAdapter(primaryStage));
         ps.put(PlayerId.PLAYER_2, new PacedPlayer(
                 new MctsPlayer(PlayerId.PLAYER_2, 123, 10_000), 0.5));
         ps.put(PlayerId.PLAYER_3, new PacedPlayer(

@@ -13,6 +13,7 @@ import ch.epfl.javass.jass.TeamId;
 import ch.epfl.javass.jass.Trick;
 import ch.epfl.javass.jass.TurnState;
 import javafx.application.Platform;
+import javafx.stage.Stage;
 
 /**
  * GraphicalPlayerAdapter Une classe permettant d'adapter l'interface graphique
@@ -28,7 +29,12 @@ public final class GraphicalPlayerAdapter implements Player {
     private final ArrayBlockingQueue<Card> cardQueue = new ArrayBlockingQueue<>(1);
     private final ArrayBlockingQueue<Color> trumpQueue = new ArrayBlockingQueue<>(1);
     private GraphicalPlayerView graphicalInterface = null;
-
+    private final Stage guiStage;
+    
+    public GraphicalPlayerAdapter(Stage gui) {
+        guiStage = gui;
+    }
+    
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
         Card c;
@@ -59,7 +65,10 @@ public final class GraphicalPlayerAdapter implements Player {
     public void setPlayers(PlayerId ownId,
             Map<PlayerId, String> mapNames) {
         graphicalInterface = new GraphicalPlayerView(ownId, mapNames, sb, tb, hb, cardQueue, trumpQueue);
-        Platform.runLater(() -> { graphicalInterface.createStage().show(); });
+        Platform.runLater(() -> { 
+            guiStage.setTitle("Javass - " + mapNames.get(ownId));
+            guiStage.setScene(graphicalInterface.getScene());
+        });
     }
 
     @Override

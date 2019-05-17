@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.sun.javafx.stage.StageHelper;
+
 import ch.epfl.javass.gui.GraphicalPlayerAdapter;
 import ch.epfl.javass.jass.Jass;
 import ch.epfl.javass.jass.JassGame;
@@ -32,7 +34,7 @@ public final class LocalMain extends Application {
      * @param args
      *            (List<String>) la liste d'arguments pour lancer la partie
      */
-    public static void createGameFromArguments(List<String> args) {
+    public static void createGameFromArguments(List<String> args, Stage firstStage) {
         // On commence par générer (ou récupérer, si elle a été fournie) la
         // graine
         Random SEED_GENERATOR = null;
@@ -56,7 +58,9 @@ public final class LocalMain extends Application {
         Map<PlayerId, String> mapNames = new HashMap<>();
         Map<PlayerId, Player> mapPlayers = new HashMap<>();
         final long gameSeed = SEED_GENERATOR.nextLong();
-
+        
+        boolean firstStageAlreadyUsed = false;
+        
         // On initialise chaque joueur :
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             String[] fields = args.get(i).split(":");
@@ -118,7 +122,19 @@ public final class LocalMain extends Application {
                 break;
 
             default: // assumed HUMAN
-                player = new GraphicalPlayerAdapter();
+                Stage gui;
+                if (!firstStageAlreadyUsed) {
+                    gui = firstStage;
+                    firstStageAlreadyUsed = true;
+                }
+                else {
+                    gui = new Stage();
+                }
+                gui.setOnCloseRequest(e -> {
+                    if (StageHelper.getStages().size() == 1)
+                        System.exit(0);
+                });
+                player = new GraphicalPlayerAdapter(gui);
                 break;
             }
 
@@ -179,6 +195,6 @@ public final class LocalMain extends Application {
 
     @Override
     public void start(Stage arg0) {
-        createGameFromArguments(getParameters().getRaw());
+        createGameFromArguments(getParameters().getRaw(), arg0);
     }
 }
