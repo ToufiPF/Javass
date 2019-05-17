@@ -121,8 +121,10 @@ public class Launcher extends Application {
         for (int i = 0 ; i < PlayerId.COUNT ; ++i) {
             HBox box = new HBox();
 
-            typeChoices.add(new ChoiceBox<>(FXCollections.observableArrayList("Humain", "Simulé", "Distant")));
-            typeChoices.get(i).setValue("Simulé");
+            typeChoices.add(new ChoiceBox<>(
+                    FXCollections.observableArrayList(PlayerSpecificator.HUMAN.frenchName(), 
+                            PlayerSpecificator.SIMULATED.frenchName(), PlayerSpecificator.REMOTE.frenchName())));
+            typeChoices.get(i).getSelectionModel().select(1);
 
             nameFields[i] = new TextField();
             nameFields[i].setText(Jass.DEFAULT_NAMES[i]);
@@ -130,10 +132,12 @@ public class Launcher extends Application {
             StackPane lastField = new StackPane();
 
             IADifficultySpinners.add(new Spinner<>(1, 10, 4));
-            IADifficultySpinners.get(i).visibleProperty().bind(Bindings.equal("Simulé", typeChoices.get(i).valueProperty()));
+            IADifficultySpinners.get(i).visibleProperty().bind(
+                    Bindings.equal(PlayerSpecificator.SIMULATED.frenchName(), typeChoices.get(i).valueProperty()));
 
             ipFields[i] = new TextField(Jass.DEFAULT_IP);
-            ipFields[i].visibleProperty().bind(Bindings.equal("Distant", typeChoices.get(i).valueProperty()));
+            ipFields[i].visibleProperty().bind(
+                    Bindings.equal(PlayerSpecificator.REMOTE.frenchName(), typeChoices.get(i).valueProperty()));
 
             lastField.getChildren().add(IADifficultySpinners.get(i));
             lastField.getChildren().add(ipFields[i]);
@@ -161,10 +165,10 @@ public class Launcher extends Application {
                 String name = nameFields[i].getText().trim();
                 if (name.isEmpty())
                     name = Jass.DEFAULT_NAMES[i];
-                if (typeChoices.get(i).getValue().equals("Humain")) {
+                if (typeChoices.get(i).getValue().equals(PlayerSpecificator.HUMAN.frenchName())) {
                     args.add("h:" + name);
                 }
-                else if (typeChoices.get(i).getValue().equals("Simulé")) {
+                else if (typeChoices.get(i).getValue().equals(PlayerSpecificator.SIMULATED.frenchName())) {
                     args.add("s:" + name + ":" + IADifficultySpinners.get(i).getValue() * 10_000);
                 }
                 else {
