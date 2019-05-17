@@ -62,7 +62,7 @@ public final class Launcher extends Application {
             if (newV) {
                 for (Stage st : StageHelper.getStages())
                     if (!primaryStage.equals(st))
-                        st.close();
+                        Platform.runLater(() -> st.close());
                 
                 displayMainMenu();
                 
