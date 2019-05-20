@@ -103,6 +103,10 @@ public final class LocalMain extends Application {
                                         + fields[2],
                                 e.toString());
                     }
+                    if(iterations < 10) {
+                        displayErrorAndExit(1, "Erreur : nb d'iterations erroné : "
+                                + "le nombre d'itérations du joueur simulé doit être supérieur ou égal à 10.");
+                    }
                 }
                 player = new PacedPlayer(new MctsPlayer(PlayerId.ALL.get(i),
                         playerSeed, iterations), Jass.WAIT_TIME_MCTS_PLAYER);

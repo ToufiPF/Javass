@@ -102,7 +102,8 @@ public final class GraphicalPlayerView {
         trumpPane.setMaxHeight(SIZE_TRUMP_IMAGE);
         trumpPane.setAlignment(Pos.CENTER);
         trumpPane.setStyle("-fx-background-color: lightgray; "
-                + "-fx-spacing: 5px; -fx-padding: 5px;");
+                + "-fx-spacing: 5px; -fx-padding: 5px; -fx-border-width: 3px 0px;"
+                + " -fx-border-style: solid; -fx-border-color: gray;");
         
         trumpPane.visibleProperty().bind(mustChooseProperty);
         trumpPane.disableProperty().bind(mustChooseProperty.not());
