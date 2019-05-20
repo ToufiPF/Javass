@@ -42,7 +42,6 @@ public final class Launcher extends Application {
     private final VBox joinGameMenu;
 
     public Launcher() {
-        Platform.setImplicitExit(false);
         
         mainMenu = createMainMenu();
         createGameMenu = createCreateGameMenu();
@@ -78,10 +77,6 @@ public final class Launcher extends Application {
         primaryStage = arg0;
         primaryStage.setTitle("Javass - Launcher");
         primaryStage.setScene(scene);
-        primaryStage.setOnCloseRequest(e -> {
-            if (StageHelper.getStages().size() == 1)
-                System.exit(0);
-        });
         primaryStage.show();
     }
 
