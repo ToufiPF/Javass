@@ -97,7 +97,6 @@ public final class JassGame {
                     .get((mFirstPlayer.ordinal() + 1) % PlayerId.COUNT);
             mTurnState = TurnState.initial(mMapPlayers.get(mFirstPlayer).chooseTrump(mHands[mFirstPlayer.ordinal()]),
                     mTurnState.score().nextTurn(), mFirstPlayer);
-            updateTrickForAll(mTurnState.trick());
             updateScoreForAll(mTurnState.score());
             setTrumpForAll(mTurnState.trick().trump());
         }
