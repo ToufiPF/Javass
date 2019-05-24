@@ -162,8 +162,9 @@ public final class LocalMain extends Application {
             }
             try {
                 for (Player p : mapPlayers.values())
-                    p.close();
-            } catch (IOException e) {
+                    if (p instanceof AutoCloseable)
+                        ((AutoCloseable)p).close();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });

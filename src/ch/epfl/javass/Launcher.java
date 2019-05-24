@@ -34,6 +34,27 @@ public final class Launcher extends Application {
     public static void requestTryAgain() {
         tryAgainProperty.set(true);
     }
+
+    private static boolean isIpv4Valid(String text) {
+        if (text.equals("localhost"))
+            return true;
+
+        StringTokenizer st = new StringTokenizer(text,".");
+        try {
+            for(int i = 0; i < 4; ++i){ 
+                if(!st.hasMoreTokens())
+                    return false;
+                
+                int num = Integer.parseInt(st.nextToken());
+                if(num < 0 || num > 255)
+                    return false;
+            }
+        }
+        catch (NumberFormatException e) {
+            return false;
+        }
+        return !st.hasMoreTokens();
+    }
     
     public final static int ITERATIONS_BY_IA_LEVEL = 10_000;
     
@@ -202,29 +223,6 @@ public final class Launcher extends Application {
         menu.getChildren().add(launchGameBtn);
 
         return menu;
-    }
-
-    private static boolean isIpv4Valid(String text){
-
-        if (text.equals("localhost"))
-            return true;
-
-        StringTokenizer st = new StringTokenizer(text,".");
-
-        try {
-            for(int i = 0; i < 4; ++i){ 
-                if(!st.hasMoreTokens())
-                    return false;
-                
-                int num = Integer.parseInt(st.nextToken());
-                if(num < 0 || num > 255)
-                    return false;
-            }
-        }
-        catch (NumberFormatException e) {
-            return false;
-        }
-        return !st.hasMoreTokens();
     }
 
     private VBox createJoinGameMenu() {

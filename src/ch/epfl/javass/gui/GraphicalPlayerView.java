@@ -4,14 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 
-import com.sun.javafx.stage.StageHelper;
-
 import ch.epfl.javass.Launcher;
 import ch.epfl.javass.jass.Card;
 import ch.epfl.javass.jass.Card.Color;
 import ch.epfl.javass.jass.Jass;
 import ch.epfl.javass.jass.PlayerId;
 import ch.epfl.javass.jass.TeamId;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
@@ -293,12 +292,13 @@ public final class GraphicalPlayerView {
 
         VBox buttons = new VBox();
         buttons.setStyle("-fx-font: 16 Optima;" + 
-                " -fx-spacing: 15px; -fx-padding: 5px; -fx-alignment: center;");
+                " -fx-spacing: 15px; -fx-padding: 50px; -fx-alignment: center;");
+        
+        Button newGameBtn = new Button("Nouvelle Partie");
+        newGameBtn.setOnMouseClicked(e -> Platform.runLater(() -> Launcher.requestTryAgain()));
         Button quitGameBtn = new Button("Quitter");
         quitGameBtn.setOnMouseClicked(e -> System.exit(0));
         
-        Button newGameBtn = new Button("Nouvelle Partie");
-        newGameBtn.setOnMouseClicked(e -> Launcher.requestTryAgain());
         buttons.getChildren().add(newGameBtn);
         buttons.getChildren().add(quitGameBtn);
         winPane.setCenter(txt);
@@ -378,10 +378,6 @@ public final class GraphicalPlayerView {
         Stage st = new Stage();
         st.setScene(scene);
         st.setTitle("Javass - " + ownName);
-        st.setOnCloseRequest(e -> {
-            if (StageHelper.getStages().size() == 1)
-                System.exit(0);
-        });
         return st;
     }
 }
