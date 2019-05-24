@@ -13,14 +13,14 @@ public interface Jass {
     /** Nombre de plis dans un tour */
     public final static int TRICKS_PER_TURN = 9;
     /** Points requis pour gagner */
-    public final static int WINNING_POINTS = 1000;
+    public final static int WINNING_POINTS = 10;
     /** Points bonus quand une équipe remporte tous les plis d'un tour */
     public final static int MATCH_ADDITIONAL_POINTS = 100;
     /** Points bonus pour le dernier pli */
     public final static int LAST_TRICK_ADDITIONAL_POINTS = 5;
 
     /** Temps d'attente à la fin d'un pli */
-    public static final long WAIT_TIME_TRICK_END = 10;
+    public static final long WAIT_TIME_TRICK_END = 1000;
 
     /** Nom par défault des joueurs */
     public static final String[] DEFAULT_NAMES = 
