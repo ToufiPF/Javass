@@ -228,14 +228,10 @@ public final class Launcher extends Application {
     private VBox createJoinGameMenu() {
         VBox menu = new VBox();
         menu.setStyle("-fx-font: 16 Optima; -fx-background-color: lightgray;" + 
-                " -fx-spacing: 25px; -fx-padding: 5px; -fx-alignment: center;");
+                " -fx-spacing: 15px; -fx-padding: 5px; -fx-alignment: center;");
 
         Label lbl = new Label("La partie commencera quand un client se connectera à votre serveur.");
-        Button cancel = new Button("Retour");
-        cancel.setOnMouseClicked(e -> displayMainMenu());
-        
         menu.getChildren().add(lbl);
-        menu.getChildren().add(cancel);
         return menu;
     }
 
