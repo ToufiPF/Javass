@@ -1,6 +1,7 @@
 package ch.epfl.javass;
 
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import com.sun.javafx.stage.StageHelper;
 
@@ -29,10 +30,12 @@ public final class Launcher extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
+
     public static void requestTryAgain() {
         tryAgainProperty.set(true);
     }
+    
+    public final static int ITERATIONS_BY_IA_LEVEL = 10_000;
     
     private final static BooleanProperty tryAgainProperty = new SimpleBooleanProperty(false);
     private Stage primaryStage;
@@ -42,7 +45,7 @@ public final class Launcher extends Application {
     private final VBox joinGameMenu;
 
     public Launcher() {
-        
+
         mainMenu = createMainMenu();
         createGameMenu = createCreateGameMenu();
         joinGameMenu = createJoinGameMenu();
@@ -56,15 +59,15 @@ public final class Launcher extends Application {
 
         scene = new Scene(principal);
         primaryStage = null;
-        
+
         tryAgainProperty.addListener((e, oldV, newV) -> {
             if (newV) {
                 for (Stage st : StageHelper.getStages())
                     if (!primaryStage.equals(st))
                         Platform.runLater(() -> st.close());
-                
+
                 displayMainMenu();
-                
+
                 tryAgainProperty.set(false);
                 primaryStage.setTitle("Javass - Launcher");
                 primaryStage.setScene(scene);
@@ -125,31 +128,38 @@ public final class Launcher extends Application {
         TextField[] ipFields = new TextField[PlayerId.COUNT];
 
         for (int i = 0 ; i < PlayerId.COUNT ; ++i) {
+            final int index = i;
             HBox box = new HBox();
 
             typeChoices.add(new ChoiceBox<>(
                     FXCollections.observableArrayList(PlayerSpecificator.HUMAN.frenchName(), 
                             PlayerSpecificator.SIMULATED.frenchName(), PlayerSpecificator.REMOTE.frenchName())));
-            typeChoices.get(i).getSelectionModel().select(1);
+            typeChoices.get(index).getSelectionModel().select(1);
 
-            nameFields[i] = new TextField();
-            nameFields[i].setText(Jass.DEFAULT_NAMES[i]);
+            nameFields[index] = new TextField();
+            nameFields[index].setText(Jass.DEFAULT_NAMES[index]);
 
             StackPane lastField = new StackPane();
 
             IADifficultySpinners.add(new Spinner<>(1, 10, 4));
-            IADifficultySpinners.get(i).visibleProperty().bind(
-                    Bindings.equal(PlayerSpecificator.SIMULATED.frenchName(), typeChoices.get(i).valueProperty()));
+            IADifficultySpinners.get(index).visibleProperty().bind(
+                    Bindings.equal(PlayerSpecificator.SIMULATED.frenchName(), typeChoices.get(index).valueProperty()));
 
-            ipFields[i] = new TextField(Jass.DEFAULT_IP);
-            ipFields[i].visibleProperty().bind(
-                    Bindings.equal(PlayerSpecificator.REMOTE.frenchName(), typeChoices.get(i).valueProperty()));
+            ipFields[index] = new TextField(Jass.DEFAULT_IP);
+            ipFields[index].textProperty().addListener((observ, oldV, newV) -> {
+                if (isIpv4Valid(newV))
+                    ipFields[index].setStyle("-fx-text-fill: black;");
+                else
+                    ipFields[index].setStyle("-fx-text-fill: red;");
+            });
+            ipFields[index].visibleProperty().bind(
+                    Bindings.equal(PlayerSpecificator.REMOTE.frenchName(), typeChoices.get(index).valueProperty()));
 
-            lastField.getChildren().add(IADifficultySpinners.get(i));
-            lastField.getChildren().add(ipFields[i]);
+            lastField.getChildren().add(IADifficultySpinners.get(index));
+            lastField.getChildren().add(ipFields[index]);
 
-            box.getChildren().add(typeChoices.get(i));
-            box.getChildren().add(nameFields[i]);
+            box.getChildren().add(typeChoices.get(index));
+            box.getChildren().add(nameFields[index]);
             box.getChildren().add(lastField);
 
             menu.getChildren().add(box);
@@ -161,7 +171,7 @@ public final class Launcher extends Application {
         TextField seedField = new TextField();
         seedBox.getChildren().add(seedLbl);
         seedBox.getChildren().add(seedField);
-        
+
         menu.getChildren().add(seedBox);
 
         Button launchGameBtn = new Button("Lancer la partie");
@@ -176,20 +186,45 @@ public final class Launcher extends Application {
                     args.add("h:" + name);
                 }
                 else if (typeChoices.get(i).getValue().equals(PlayerSpecificator.SIMULATED.frenchName())) {
-                    args.add("s:" + name + ":" + IADifficultySpinners.get(i).getValue() * 10_000);
+                    args.add("s:" + name + ":" + IADifficultySpinners.get(i).getValue() * ITERATIONS_BY_IA_LEVEL);
                 }
                 else {
+                    if (!isIpv4Valid(ipFields[i].getText()))
+                        return;
                     args.add("r:" + name + ":" + ipFields[i].getText());
                 }
             }
             if (!seedField.getText().isEmpty())
                 args.add(seedField.getText());
-            
+
             LocalMain.createGameFromArguments(args, primaryStage);
         });
         menu.getChildren().add(launchGameBtn);
 
         return menu;
+    }
+
+    private static boolean isIpv4Valid(String text){
+
+        if (text.equals("localhost"))
+            return true;
+
+        StringTokenizer st = new StringTokenizer(text,".");
+
+        try {
+            for(int i = 0; i < 4; ++i){ 
+                if(!st.hasMoreTokens())
+                    return false;
+                
+                int num = Integer.parseInt(st.nextToken());
+                if(num < 0 || num > 255)
+                    return false;
+            }
+        }
+        catch (NumberFormatException e) {
+            return false;
+        }
+        return !st.hasMoreTokens();
     }
 
     private VBox createJoinGameMenu() {
@@ -201,7 +236,7 @@ public final class Launcher extends Application {
         menu.getChildren().add(lbl);
         return menu;
     }
-    
+
     private void displayMainMenu() {
         mainMenu.setVisible(true);
         createGameMenu.setVisible(false);

@@ -1,7 +1,5 @@
 package ch.epfl.javass;
 
-import com.sun.javafx.stage.StageHelper;
-
 import ch.epfl.javass.gui.GraphicalPlayerAdapter;
 import ch.epfl.javass.net.RemotePlayerServer;
 import javafx.application.Application;
@@ -23,17 +21,12 @@ public final class RemoteMain extends Application {
         startGame(arg0);
     }
     
-    public static RemotePlayerServer startGame(Stage stage) {
+    public static void startGame(Stage stage) {
         //RemotePlayerServer implémente Runnable
         RemotePlayerServer server = new RemotePlayerServer(new GraphicalPlayerAdapter(stage));
-        stage.setOnCloseRequest(e -> {
-            if (StageHelper.getStages().size() == 1)
-                System.exit(0);
-        });
         Thread remoteThread = new Thread(server);
         remoteThread.setDaemon(true);
         remoteThread.start();
         System.out.println("La partie commencera à la connexion du client...");
-        return server;
     }
 }

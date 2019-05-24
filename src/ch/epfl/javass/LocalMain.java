@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import com.sun.javafx.stage.StageHelper;
-
 import ch.epfl.javass.gui.GraphicalPlayerAdapter;
 import ch.epfl.javass.jass.Jass;
 import ch.epfl.javass.jass.JassGame;
@@ -135,10 +133,6 @@ public final class LocalMain extends Application {
                     gui = new Stage();
                     gui.show();
                 }
-                gui.setOnCloseRequest(e -> {
-                    if (StageHelper.getStages().size() == 1)
-                        System.exit(0);
-                });
                 player = new GraphicalPlayerAdapter(gui);
                 break;
             }

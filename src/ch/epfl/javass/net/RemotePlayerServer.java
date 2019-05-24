@@ -20,9 +20,6 @@ import ch.epfl.javass.jass.Score;
 import ch.epfl.javass.jass.TeamId;
 import ch.epfl.javass.jass.Trick;
 import ch.epfl.javass.jass.TurnState;
-import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  * RemotePlayerServer Une classe qui prend en argument un joueur, et le fait
@@ -39,7 +36,6 @@ public final class RemotePlayerServer implements Runnable {
 
     private final Player subPlayer;
     private final int effectivePort;
-    private BooleanProperty connectionEstablished;
 
     /**
      * Construit un RemotePlayerServer, avec le joueur donné, et connecté au
@@ -64,7 +60,6 @@ public final class RemotePlayerServer implements Runnable {
     public RemotePlayerServer(Player p, int port) {
         subPlayer = p;
         effectivePort = port;
-        connectionEstablished = new SimpleBooleanProperty(false);
     }
 
     /**
@@ -74,10 +69,6 @@ public final class RemotePlayerServer implements Runnable {
      */
     public int getPort() {
         return effectivePort;
-    }
-    
-    public BooleanProperty connectionEstablishedProperty() {
-        return connectionEstablished;
     }
 
     @Override
@@ -91,7 +82,6 @@ public final class RemotePlayerServer implements Runnable {
             
             while (true) {
                 String msg = input.readLine().trim();
-                Platform.runLater(() -> connectionEstablished.set(true));
                 
                 JassCommand cmd = JassCommand
                         .valueOfByCommand(msg.substring(0, msg.indexOf(' ')));
