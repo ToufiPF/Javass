@@ -79,9 +79,8 @@ public final class RemotePlayerServer implements Runnable {
                         new InputStreamReader(s.getInputStream()));
                 BufferedWriter output = new BufferedWriter(
                         new OutputStreamWriter(s.getOutputStream()))) {
-            
-            while (true) {
-                String msg = input.readLine().trim();
+            String msg;
+            while ((msg = input.readLine()) != null) {
                 
                 JassCommand cmd = JassCommand
                         .valueOfByCommand(msg.substring(0, msg.indexOf(' ')));
@@ -120,11 +119,13 @@ public final class RemotePlayerServer implements Runnable {
             }
         } catch (SocketException e) {
             System.err.println("Connexion lost with client.");
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            System.err.println(e.toString());
         } catch (IllegalArgumentException e) {
             System.err.println("Commande reçue inconnue : Fermeture du serveur.");
-        }
+            System.err.println(e.toString());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        } 
     }
 
     private void onCardToPlay(String args, BufferedWriter output)

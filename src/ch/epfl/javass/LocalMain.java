@@ -32,7 +32,7 @@ public final class LocalMain extends Application {
      * @param args
      *            (List<String>) la liste d'arguments pour lancer la partie
      */
-    public static void createGameFromArguments(List<String> args, Stage firstStage) {
+    public static Thread createGameFromArguments(List<String> args, Stage firstStage) {
         // On commence par générer (ou récupérer, si elle a été fournie) la
         // graine
         Random SEED_GENERATOR = null;
@@ -141,14 +141,14 @@ public final class LocalMain extends Application {
             mapPlayers.put(PlayerId.ALL.get(i), player);
         }
 
-        createGameThread(gameSeed, mapPlayers, mapNames);
+        return createGameThread(gameSeed, mapPlayers, mapNames);
     }
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    private static void createGameThread(long gameSeed,
+    private static Thread createGameThread(long gameSeed,
             Map<PlayerId, Player> mapPlayers, Map<PlayerId, String> mapNames) {
         Thread gameThread = new Thread(() -> {
             JassGame g = new JassGame(gameSeed, mapPlayers, mapNames);
@@ -160,9 +160,17 @@ public final class LocalMain extends Application {
                     // ignore
                 }
             }
+            for (Player p : mapPlayers.values())
+                if (p instanceof AutoCloseable)
+                    try {
+                        ((AutoCloseable)p).close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
         });
         gameThread.setDaemon(true);
         gameThread.start();
+        return gameThread;
     }
 
     /**

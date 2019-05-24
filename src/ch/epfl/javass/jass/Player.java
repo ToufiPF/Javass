@@ -25,6 +25,7 @@ public interface Player {
     public Card cardToPlay(TurnState state, CardSet hand);
 
     public Color chooseTrump(CardSet hand);
+   
     /**
      * Informe le joueur de son Id, et de ce nom ainsi que celui de ses
      * adversaires. A appeler une fois, en début de partie

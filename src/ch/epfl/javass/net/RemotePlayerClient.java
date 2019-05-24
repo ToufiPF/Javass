@@ -106,11 +106,6 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
         r.close();
         s.close();
     }
-    @Override
-    protected void finalize() throws Throwable {
-        close();
-        super.finalize();
-    }
 
     @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> mapNames) {
