@@ -46,7 +46,7 @@ public final class LocalMain extends Application {
                 displayErrorAndExit(1,
                         "Erreur : la graine fournie n'est pas valide : "
                                 + args.get(PlayerId.COUNT),
-                        e.toString());
+                                e.toString());
             }
         } else {
             displayErrorAndExit(1, "Erreur : nombre d'arguments invalide.",
@@ -56,9 +56,9 @@ public final class LocalMain extends Application {
         Map<PlayerId, String> mapNames = new HashMap<>();
         Map<PlayerId, Player> mapPlayers = new HashMap<>();
         final long gameSeed = SEED_GENERATOR.nextLong();
-        
+
         boolean firstStageAlreadyUsed = false;
-        
+
         // On initialise chaque joueur :
         for (int i = 0; i < PlayerId.COUNT; ++i) {
             String[] fields = args.get(i).split(":");
@@ -78,67 +78,67 @@ public final class LocalMain extends Application {
                     || fields.length > type.maxNbFields())
                 displayErrorAndExit(1,
                         "Erreur : nombre de champs entrés (" + fields.length
-                                + ") invalide pour le spécificateur "
-                                + fields[0] + ".");
+                        + ") invalide pour le spécificateur "
+                        + fields[0] + ".");
 
             // On récupère le nom fourni (deuxieme "champ")
             String name = fields.length <= 1 || fields[1].isEmpty()
                     ? Jass.DEFAULT_NAMES[i]
-                    : fields[1];
+                            : fields[1];
 
-            // On analyse le troisième champ, qui dépend du type de joueur :
-            Player player = null;
-            long playerSeed = SEED_GENERATOR.nextLong();
-            switch (type) {
-            case SIMULATED:
-                int iterations = Jass.DEFAULT_ITERATIONS;
-                if (fields.length > 2 && !fields[2].isEmpty()) {
-                    try {
-                        iterations = Integer.parseInt(fields[2]);
-                    } catch (NumberFormatException e) {
-                        displayErrorAndExit(1,
-                                "Erreur : nb d'iterations erroné : "
-                                        + fields[2],
-                                e.toString());
-                    }
-                    if(iterations < 10) {
-                        displayErrorAndExit(1, "Erreur : nb d'iterations erroné : "
-                                + "le nombre d'itérations du joueur simulé doit être supérieur ou égal à 10.");
-                    }
-                }
-                player = new PacedPlayer(new MctsPlayer(PlayerId.ALL.get(i),
-                        playerSeed, iterations), Jass.WAIT_TIME_MCTS_PLAYER);
-                break;
+                    // On analyse le troisième champ, qui dépend du type de joueur :
+                    Player player = null;
+                    long playerSeed = SEED_GENERATOR.nextLong();
+                    switch (type) {
+                    case SIMULATED:
+                        int iterations = Jass.DEFAULT_ITERATIONS;
+                        if (fields.length > 2 && !fields[2].isEmpty()) {
+                            try {
+                                iterations = Integer.parseInt(fields[2]);
+                            } catch (NumberFormatException e) {
+                                displayErrorAndExit(1,
+                                        "Erreur : nb d'iterations erroné : "
+                                                + fields[2],
+                                                e.toString());
+                            }
+                            if(iterations < 10) {
+                                displayErrorAndExit(1, "Erreur : nb d'iterations erroné : "
+                                        + "le nombre d'itérations du joueur simulé doit être supérieur ou égal à 10.");
+                            }
+                        }
+                        player = new PacedPlayer(new MctsPlayer(PlayerId.ALL.get(i),
+                                playerSeed, iterations), Jass.WAIT_TIME_MCTS_PLAYER);
+                        break;
 
-            case REMOTE:
-                String hostName = fields.length <= 2 || fields[2].isEmpty()
+                    case REMOTE:
+                        String hostName = fields.length <= 2 || fields[2].isEmpty()
                         ? Jass.DEFAULT_IP
-                        : fields[2];
+                                : fields[2];
 
-                try {
-                    player = new RemotePlayerClient(hostName);
-                } catch (IOException e) {
-                    displayErrorAndExit(1, "Erreur : connexion au serveur "
-                            + hostName + " impossible.", e.toString());
-                }
-                break;
+                        try {
+                            player = new RemotePlayerClient(hostName);
+                        } catch (IOException e) {
+                            displayErrorAndExit(1, "Erreur : connexion au serveur "
+                                    + hostName + " impossible.", e.toString());
+                        }
+                        break;
 
-            default: // assumed HUMAN
-                Stage gui;
-                if (!firstStageAlreadyUsed) {
-                    gui = firstStage;
-                    firstStageAlreadyUsed = true;
-                }
-                else {
-                    gui = new Stage();
-                    gui.show();
-                }
-                player = new GraphicalPlayerAdapter(gui);
-                break;
-            }
+                    default: // assumed HUMAN
+                        Stage gui;
+                        if (!firstStageAlreadyUsed) {
+                            gui = firstStage;
+                            firstStageAlreadyUsed = true;
+                        }
+                        else {
+                            gui = new Stage();
+                            gui.show();
+                        }
+                        player = new GraphicalPlayerAdapter(gui);
+                        break;
+                    }
 
-            mapNames.put(PlayerId.ALL.get(i), name);
-            mapPlayers.put(PlayerId.ALL.get(i), player);
+                    mapNames.put(PlayerId.ALL.get(i), name);
+                    mapPlayers.put(PlayerId.ALL.get(i), player);
         }
 
         return createGameThread(gameSeed, mapPlayers, mapNames);
@@ -160,13 +160,12 @@ public final class LocalMain extends Application {
                     // ignore
                 }
             }
-            for (Player p : mapPlayers.values())
-                if (p instanceof AutoCloseable)
-                    try {
-                        ((AutoCloseable)p).close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            try {
+                for (Player p : mapPlayers.values())
+                    p.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
         gameThread.setDaemon(true);
         gameThread.start();

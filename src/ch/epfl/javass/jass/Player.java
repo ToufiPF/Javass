@@ -1,5 +1,6 @@
 package ch.epfl.javass.jass;
 
+import java.io.IOException;
 import java.util.Map;
 
 import ch.epfl.javass.jass.Card.Color;
@@ -12,7 +13,7 @@ import ch.epfl.javass.jass.Card.Color;
  * @author Amaury Pierre (296498)
  * @author Aurélien Clergeot (302592)
  */
-public interface Player {
+public interface Player extends AutoCloseable {
     /**
      * Donne la carte que le joueur souhaite jouer
      *
@@ -25,6 +26,10 @@ public interface Player {
     public Card cardToPlay(TurnState state, CardSet hand);
 
     public Color chooseTrump(CardSet hand);
+    
+    @Override
+    public default void close() throws IOException {
+    }
    
     /**
      * Informe le joueur de son Id, et de ce nom ainsi que celui de ses
