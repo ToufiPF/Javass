@@ -111,7 +111,8 @@ public final class RemotePlayerServer implements Runnable {
                 case UPDATE_TRICK:
                     onUpdateTrick(args);
                     break;
-
+                case CLOSE:
+                    return;
                 default:
                     throw new IllegalArgumentException(
                             "Unsupported Command : " + cmd);
