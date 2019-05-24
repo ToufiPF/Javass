@@ -56,6 +56,13 @@ public final class Launcher extends Application {
         return !st.hasMoreTokens();
     }
     
+    private static boolean isSeedValid(String txt) {
+        for (int i = 0 ; i < txt.length() ; ++i)
+            if (!Character.isDigit(txt.charAt(i)))
+                return false;
+        return true;
+    }
+    
     public final static int ITERATIONS_BY_IA_LEVEL = 10_000;
     
     private final static BooleanProperty tryAgainProperty = new SimpleBooleanProperty(false);
@@ -66,7 +73,6 @@ public final class Launcher extends Application {
     private final VBox joinGameMenu;
 
     public Launcher() {
-
         mainMenu = createMainMenu();
         createGameMenu = createCreateGameMenu();
         joinGameMenu = createJoinGameMenu();
@@ -114,9 +120,7 @@ public final class Launcher extends Application {
                 + "-fx-font: 54 Cambria; -fx-underline: true; -fx-text-fill: forestgreen;");
 
         Button createGameBtn = new Button("Créer une partie");
-        createGameBtn.setOnMouseClicked(e -> {
-            displayCreateGameMenu();
-        });
+        createGameBtn.setOnMouseClicked(e -> displayCreateGameMenu());
 
         Button joinGameBtn = new Button("Rejoindre une partie");
         joinGameBtn.setOnMouseClicked(e -> {
@@ -190,6 +194,12 @@ public final class Launcher extends Application {
         seedBox.setAlignment(Pos.CENTER);
         Label seedLbl = new Label("Entrez la graîne de la partie : (laisser vide pour aléatoire) : ");
         TextField seedField = new TextField();
+        seedField.textProperty().addListener((e, oldV, newV) -> {
+            if (isSeedValid(newV))
+                seedField.setStyle("-fx-text-fill: black;");
+            else
+                seedField.setStyle("-fx-text-fill: red;");
+        }); 
         seedBox.getChildren().add(seedLbl);
         seedBox.getChildren().add(seedField);
 
@@ -215,6 +225,9 @@ public final class Launcher extends Application {
                     args.add("r:" + name + ":" + ipFields[i].getText());
                 }
             }
+            if (!isSeedValid(seedField.getText()))
+                return;
+            
             if (!seedField.getText().isEmpty())
                 args.add(seedField.getText());
 
