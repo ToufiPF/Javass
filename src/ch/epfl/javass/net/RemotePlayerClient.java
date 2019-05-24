@@ -100,7 +100,7 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
     
     @Override
     public void close() throws IOException {
-        sendString(JassCommand.CLOSE.command());
+        sendString(JassCommand.CLOSE.command() + " ");
         
         w.close();
         r.close();
