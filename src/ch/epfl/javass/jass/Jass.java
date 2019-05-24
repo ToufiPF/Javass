@@ -20,7 +20,7 @@ public interface Jass {
     public final static int LAST_TRICK_ADDITIONAL_POINTS = 5;
 
     /** Temps d'attente à la fin d'un pli */
-    public static final long WAIT_TIME_TRICK_END = 1000;
+    public static final long WAIT_TIME_TRICK_END = 10;
 
     /** Nom par défault des joueurs */
     public static final String[] DEFAULT_NAMES = 

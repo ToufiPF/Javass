@@ -122,6 +122,8 @@ public final class RemotePlayerServer implements Runnable {
             System.err.println("Connexion lost with client.");
         } catch (IOException e) {
             throw new UncheckedIOException(e);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Commande reçue inconnue : Fermeture du serveur.");
         }
     }
 
