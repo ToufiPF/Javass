@@ -57,10 +57,18 @@ public final class Launcher extends Application {
     }
     
     private static boolean isSeedValid(String txt) {
-        for (int i = 0 ; i < txt.length() ; ++i)
-            if (!Character.isDigit(txt.charAt(i)))
+        if (txt.length() == 0) {
+            return true;
+        } else if (txt.length() == 1) {
+            return Character.isDigit(txt.charAt(0));
+        } else {
+            if (!(Character.isDigit(txt.charAt(0)) || txt.charAt(0) == '+' || txt.charAt(0) == '-'))
                 return false;
-        return true;
+            for (int i = 1 ; i < txt.length() ; ++i)
+                if (!Character.isDigit(txt.charAt(i)))
+                    return false;
+            return true;
+        }
     }
     
     public final static int ITERATIONS_BY_IA_LEVEL = 10_000;
