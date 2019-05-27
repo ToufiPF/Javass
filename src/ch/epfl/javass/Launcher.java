@@ -151,7 +151,6 @@ public final class Launcher extends Application {
         VBox menu = new VBox();
         menu.setStyle("-fx-font: 16 Optima; -fx-background-color: lightgray;" + 
                 " -fx-spacing: 15px; -fx-padding: 5px; -fx-alignment: center;");
-
         Label lbl = new Label("Créer une partie : ");
         menu.getChildren().add(lbl);
 
@@ -163,7 +162,7 @@ public final class Launcher extends Application {
         for (int i = 0 ; i < PlayerId.COUNT ; ++i) {
             final int index = i;
             HBox box = new HBox();
-
+            box.setAlignment(Pos.CENTER);
             typeChoices.add(new ChoiceBox<>(
                     FXCollections.observableArrayList(PlayerSpecificator.HUMAN.frenchName(), 
                             PlayerSpecificator.SIMULATED.frenchName(), PlayerSpecificator.REMOTE.frenchName())));
