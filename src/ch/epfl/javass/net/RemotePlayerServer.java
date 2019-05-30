@@ -32,6 +32,9 @@ import ch.epfl.javass.jass.TurnState;
  */
 public final class RemotePlayerServer implements Runnable {
 
+    /**
+     * Le numéro de port par défaut
+     */
     public static final int DEFAULT_PORT = 5108;
 
     private final Player subPlayer;

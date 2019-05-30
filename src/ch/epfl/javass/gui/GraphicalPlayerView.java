@@ -356,10 +356,18 @@ public final class GraphicalPlayerView {
         this.ownName = nameMap.get(ownId);
     }
 
+    /**
+     * Accesseur à la scène
+     * @return (Scene) la scene utilisée
+     */
     public Scene getScene() {
         return scene;
     }
     
+    /**
+     * Accesseur à la propriété disant si le 
+     *   joueur principal doit choisir l'atout
+     */
     public void setMustChooseToTrue() {
         mustChooseProperty.set(true);
     }
