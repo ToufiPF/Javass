@@ -35,6 +35,7 @@ public final class PrintingPlayer implements Player {
         System.out.println("Je choisis l'atout : " + trump);
         return trump;
     }
+
     @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> mapNames) {
         mName = mapNames.get(ownId);

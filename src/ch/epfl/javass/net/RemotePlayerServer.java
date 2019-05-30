@@ -84,7 +84,7 @@ public final class RemotePlayerServer implements Runnable {
                         new OutputStreamWriter(s.getOutputStream()))) {
             String msg;
             while ((msg = input.readLine()) != null) {
-                
+
                 JassCommand cmd = JassCommand
                         .valueOfByCommand(msg.substring(0, msg.indexOf(' ')));
                 String args = msg.substring(msg.indexOf(' ') + 1);
@@ -125,11 +125,12 @@ public final class RemotePlayerServer implements Runnable {
             System.err.println("Connexion lost with client.");
             System.err.println(e.toString());
         } catch (IllegalArgumentException e) {
-            System.err.println("Commande reçue inconnue : Fermeture du serveur.");
+            System.err
+                    .println("Commande reçue inconnue : Fermeture du serveur.");
             System.err.println(e.toString());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
-        } 
+        }
     }
 
     private void onCardToPlay(String args, BufferedWriter output)
@@ -145,14 +146,15 @@ public final class RemotePlayerServer implements Runnable {
         output.flush();
     }
 
-    private void onChooseTrump(String args, BufferedWriter output) throws IOException {
+    private void onChooseTrump(String args, BufferedWriter output)
+            throws IOException {
         final long pkHand = StringSerializer.deserializeLong(args);
         Color trump = subPlayer.chooseTrump(CardSet.ofPacked(pkHand));
         output.write(StringSerializer.serializeInt(trump.ordinal()));
         output.write('\n');
         output.flush();
     }
-    
+
     private void onSetPlayer(String args) {
         int id = StringSerializer
                 .deserializeInt(args.substring(0, args.indexOf(' ')));

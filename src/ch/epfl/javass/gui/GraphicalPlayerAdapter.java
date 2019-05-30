@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 /**
  * GraphicalPlayerAdapter Une classe permettant d'adapter l'interface graphique
  * pour en faire un joueur
- * 
+ *
  * @author Amaury Pierre (296498)
  * @author Aurélien Clergeot (302592)
  */
@@ -26,15 +26,17 @@ public final class GraphicalPlayerAdapter implements Player {
     private final HandBean hb = new HandBean();
     private final ScoreBean sb = new ScoreBean();
     private final TrickBean tb = new TrickBean();
-    private final ArrayBlockingQueue<Card> cardQueue = new ArrayBlockingQueue<>(1);
-    private final ArrayBlockingQueue<Color> trumpQueue = new ArrayBlockingQueue<>(1);
+    private final ArrayBlockingQueue<Card> cardQueue = new ArrayBlockingQueue<>(
+            1);
+    private final ArrayBlockingQueue<Color> trumpQueue = new ArrayBlockingQueue<>(
+            1);
     private GraphicalPlayerView graphicalInterface = null;
     private final Stage guiStage;
-    
+
     public GraphicalPlayerAdapter(Stage gui) {
         guiStage = gui;
     }
-    
+
     @Override
     public Card cardToPlay(TurnState state, CardSet hand) {
         Card c;
@@ -57,15 +59,17 @@ public final class GraphicalPlayerAdapter implements Player {
     public Color chooseTrump(CardSet hand) {
         Color trump;
         Platform.runLater(() -> graphicalInterface.setMustChooseToTrue());
-        do { trump = trumpQueue.poll(); } while (trump == null); 
+        do {
+            trump = trumpQueue.poll();
+        } while (trump == null);
         return trump;
     }
-    
+
     @Override
-    public void setPlayers(PlayerId ownId,
-            Map<PlayerId, String> mapNames) {
-        graphicalInterface = new GraphicalPlayerView(ownId, mapNames, sb, tb, hb, cardQueue, trumpQueue);
-        Platform.runLater(() -> { 
+    public void setPlayers(PlayerId ownId, Map<PlayerId, String> mapNames) {
+        graphicalInterface = new GraphicalPlayerView(ownId, mapNames, sb, tb,
+                hb, cardQueue, trumpQueue);
+        Platform.runLater(() -> {
             guiStage.setTitle("Javass - " + mapNames.get(ownId));
             guiStage.setScene(graphicalInterface.getScene());
         });

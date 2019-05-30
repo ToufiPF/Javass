@@ -55,6 +55,11 @@ public final class PacedPlayer implements Player {
     }
 
     @Override
+    public Color chooseTrump(CardSet hand) {
+        return mUnderPlayer.chooseTrump(hand);
+    }
+
+    @Override
     public void setPlayers(PlayerId ownId, Map<PlayerId, String> mapNames) {
         mUnderPlayer.setPlayers(ownId, mapNames);
     }
@@ -82,10 +87,5 @@ public final class PacedPlayer implements Player {
     @Override
     public void updateTrick(Trick newTrick) {
         mUnderPlayer.updateTrick(newTrick);
-    }
-
-    @Override
-    public Color chooseTrump(CardSet hand) {
-        return mUnderPlayer.chooseTrump(hand);
     }
 }

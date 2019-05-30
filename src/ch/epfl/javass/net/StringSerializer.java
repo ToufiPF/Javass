@@ -17,10 +17,10 @@ import ch.epfl.javass.jass.TurnState;
  * @author Aurélien Clergeot (302592)
  */
 public final class StringSerializer {
-    
+
     private final static Base64.Decoder decoder = Base64.getDecoder();
     private final static Base64.Encoder encoder = Base64.getEncoder();
-    
+
     /**
      * Méthode publique et statique permettant de convertir une chaine de
      * caractères en l'entier en base 10 qu'elle représente en base 16

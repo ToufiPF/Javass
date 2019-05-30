@@ -210,6 +210,26 @@ public final class MctsPlayer implements Player {
         return playable.get(root.bestChildIndex(0));
     }
 
+    @Override
+    public Color chooseTrump(CardSet hand) {
+        Color futureTrump = null;
+        int maxPoints = 0;
+
+        for (Color c : Color.ALL) {
+            int totalPoints = 0;
+            for (int i = 0; i < hand.size(); ++i) {
+                Card card = hand.get(i);
+                if (c.equals(card.color()))
+                    totalPoints += card.rank().trumpOrdinal();
+            }
+            if (totalPoints > maxPoints) {
+                maxPoints = totalPoints;
+                futureTrump = c;
+            }
+        }
+        return futureTrump;
+    }
+
     private long computeEndOfTurnScore(TurnState state, long handOfMctsplayer) {
         long mctsCards = unplayedCardsInHand(state, handOfMctsplayer);
         long otherCards = unplayedCardsForOther(state, handOfMctsplayer);
@@ -229,25 +249,5 @@ public final class MctsPlayer implements Player {
             otherCards = PackedCardSet.remove(otherCards, pkCard);
         }
         return state.packedScore();
-    }
-
-    @Override
-    public Color chooseTrump(CardSet hand) {
-        Color futureTrump = null;
-        int maxPoints = 0;
-
-        for(Color c : Color.ALL) {
-            int totalPoints = 0;
-            for (int i = 0 ; i < hand.size() ; ++i) {
-                Card card = hand.get(i);
-                if (c.equals(card.color()))
-                    totalPoints += card.rank().trumpOrdinal();
-            }
-            if(totalPoints > maxPoints) {
-                maxPoints = totalPoints;
-                futureTrump = c;
-            }
-        }
-        return futureTrump;
     }
 }

@@ -26,13 +26,14 @@ public interface Player {
 
     /**
      * Donne la couleur de l'atout choisie par le joueur
-     * 
-     * @param hand (CardSet) la main du joueur, afin qu'il puisse choisir
-     *   l'atout en fonction de ses cartes
+     *
+     * @param hand
+     *            (CardSet) la main du joueur, afin qu'il puisse choisir l'atout
+     *            en fonction de ses cartes
      * @return (Color) la couleur d'atout choisie par le joueur
      */
     public Color chooseTrump(CardSet hand);
-   
+
     /**
      * Informe le joueur de son Id, et de ce nom ainsi que celui de ses
      * adversaires. A appeler une fois, en début de partie

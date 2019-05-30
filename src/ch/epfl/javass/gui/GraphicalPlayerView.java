@@ -95,32 +95,6 @@ public final class GraphicalPlayerView {
                 .unmodifiableObservableMap(FXCollections.observableMap(map));
     }
 
-
-    private HBox createChooseTrumpPane(ArrayBlockingQueue<Color> trumpQueue, HandBean hb) {
-        HBox trumpPane = new HBox();
-        trumpPane.setMaxHeight(SIZE_TRUMP_IMAGE);
-        trumpPane.setAlignment(Pos.CENTER);
-        trumpPane.setStyle("-fx-background-color: lightgray; "
-                + "-fx-spacing: 5px; -fx-padding: 5px; -fx-border-width: 3px 0px;"
-                + " -fx-border-style: solid; -fx-border-color: gray;");
-        
-        trumpPane.visibleProperty().bind(mustChooseProperty);
-        trumpPane.disableProperty().bind(mustChooseProperty.not());
-        for(int i = 0; i < Color.COUNT; ++i) {
-            final int indexTrump = i;
-            ImageView trumpImg = new ImageView();
-            trumpImg.setFitWidth(SIZE_TRUMP_IMAGE /2);
-            trumpImg.setFitHeight(SIZE_TRUMP_IMAGE/2);
-            trumpImg.imageProperty().bind(Bindings.valueAt(mapImagesTrumps, Card.Color.ALL.get(indexTrump)));
-            trumpImg.setOnMouseClicked(e -> {
-                trumpQueue.add(Color.ALL.get(indexTrump));
-                mustChooseProperty.set(false);
-            });
-            trumpPane.getChildren().add(trumpImg);
-        }
-        return trumpPane;
-    }
-
     private static HBox createHandPane(HandBean hb,
             ArrayBlockingQueue<Card> cardQueue) {
         HBox handPane = new HBox();
@@ -291,14 +265,15 @@ public final class GraphicalPlayerView {
                         sb.totalPointsProperty(id.other())));
 
         VBox buttons = new VBox();
-        buttons.setStyle("-fx-font: 16 Optima;" + 
-                " -fx-spacing: 15px; -fx-padding: 50px; -fx-alignment: center;");
-        
+        buttons.setStyle("-fx-font: 16 Optima;"
+                + " -fx-spacing: 15px; -fx-padding: 50px; -fx-alignment: center;");
+
         Button newGameBtn = new Button("Nouvelle Partie");
-        newGameBtn.setOnMouseClicked(e -> Platform.runLater(() -> Launcher.requestTryAgain()));
+        newGameBtn.setOnMouseClicked(
+                e -> Platform.runLater(() -> Launcher.requestTryAgain()));
         Button quitGameBtn = new Button("Quitter");
         quitGameBtn.setOnMouseClicked(e -> System.exit(0));
-        
+
         buttons.getChildren().add(newGameBtn);
         buttons.getChildren().add(quitGameBtn);
         winPane.setCenter(txt);
@@ -317,6 +292,7 @@ public final class GraphicalPlayerView {
 
     // Graphics :
     private final Scene scene;
+
     private final String ownName;
     private final BooleanProperty mustChooseProperty;
 
@@ -334,9 +310,10 @@ public final class GraphicalPlayerView {
      */
     public GraphicalPlayerView(PlayerId ownId, Map<PlayerId, String> nameMap,
             ScoreBean sb, TrickBean tb, HandBean hb,
-            ArrayBlockingQueue<Card> cardQueue, ArrayBlockingQueue<Card.Color> trumpQueue) {
+            ArrayBlockingQueue<Card> cardQueue,
+            ArrayBlockingQueue<Card.Color> trumpQueue) {
         mustChooseProperty = new SimpleBooleanProperty();
-        
+
         HBox chooseTrump = createChooseTrumpPane(trumpQueue, hb);
         GridPane score = createScorePane(nameMap, sb);
         GridPane trick = createTrickPane(ownId, nameMap, tb);
@@ -347,29 +324,13 @@ public final class GraphicalPlayerView {
         BorderPane gamePane = new BorderPane(trick);
         gamePane.setTop(score);
         gamePane.setBottom(hand);
-        
+
         StackPane principalPane = new StackPane(gamePane);
         principalPane.getChildren().add(chooseTrump);
         principalPane.getChildren().add(winT1);
         principalPane.getChildren().add(winT2);
         this.scene = new Scene(principalPane);
         this.ownName = nameMap.get(ownId);
-    }
-
-    /**
-     * Accesseur à la scène
-     * @return (Scene) la scene utilisée
-     */
-    public Scene getScene() {
-        return scene;
-    }
-    
-    /**
-     * Accesseur à la propriété disant si le 
-     *   joueur principal doit choisir l'atout
-     */
-    public void setMustChooseToTrue() {
-        mustChooseProperty.set(true);
     }
 
     /**
@@ -387,5 +348,49 @@ public final class GraphicalPlayerView {
         st.setScene(scene);
         st.setTitle("Javass - " + ownName);
         return st;
+    }
+
+    /**
+     * Accesseur à la scène
+     * 
+     * @return (Scene) la scene utilisée
+     */
+    public Scene getScene() {
+        return scene;
+    }
+
+    /**
+     * Accesseur à la propriété disant si le joueur principal doit choisir
+     * l'atout
+     */
+    public void setMustChooseToTrue() {
+        mustChooseProperty.set(true);
+    }
+
+    private HBox createChooseTrumpPane(ArrayBlockingQueue<Color> trumpQueue,
+            HandBean hb) {
+        HBox trumpPane = new HBox();
+        trumpPane.setMaxHeight(SIZE_TRUMP_IMAGE);
+        trumpPane.setAlignment(Pos.CENTER);
+        trumpPane.setStyle("-fx-background-color: lightgray; "
+                + "-fx-spacing: 5px; -fx-padding: 5px; -fx-border-width: 3px 0px;"
+                + " -fx-border-style: solid; -fx-border-color: gray;");
+
+        trumpPane.visibleProperty().bind(mustChooseProperty);
+        trumpPane.disableProperty().bind(mustChooseProperty.not());
+        for (int i = 0; i < Color.COUNT; ++i) {
+            final int indexTrump = i;
+            ImageView trumpImg = new ImageView();
+            trumpImg.setFitWidth(SIZE_TRUMP_IMAGE / 2);
+            trumpImg.setFitHeight(SIZE_TRUMP_IMAGE / 2);
+            trumpImg.imageProperty().bind(Bindings.valueAt(mapImagesTrumps,
+                    Card.Color.ALL.get(indexTrump)));
+            trumpImg.setOnMouseClicked(e -> {
+                trumpQueue.add(Color.ALL.get(indexTrump));
+                mustChooseProperty.set(false);
+            });
+            trumpPane.getChildren().add(trumpImg);
+        }
+        return trumpPane;
     }
 }

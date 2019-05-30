@@ -63,25 +63,25 @@ class MctsPlayerTest {
     }
     /*
      * @Disabled
-     * 
+     *
      * @Test void test2000Games() { int winsT1 = 0; int winsT2 = 0;
-     * 
+     *
      * Map<PlayerId, Player> players = createMapMctsPlayers(2019, 1000);
-     * 
+     *
      * final long start = System.currentTimeMillis(); for (int i = 1000 ; i <
      * 3000 ; ++i) { System.out.println("RunningGame " + (i - 1000 + 1) + "/" +
      * 2000);
-     * 
+     *
      * JassGame g = new JassGame(i, players, playerNames); while
      * (!g.isGameOver()) g.advanceToEndOfNextTrick();
-     * 
+     *
      * if (g.getTeamWithMostPoints() == TeamId.TEAM_1) ++winsT1; else ++winsT2;
      * } final float tempsEcoule = (System.currentTimeMillis() - start) /
      * 1000.f;
-     * 
+     *
      * System.out.println(" - Wins of team 1 : " + winsT1);
      * System.out.println(" - Wins of team 2 : " + winsT2);
-     * 
+     *
      * System.out.println("Temps écoulé : " + tempsEcoule); }
      */
 

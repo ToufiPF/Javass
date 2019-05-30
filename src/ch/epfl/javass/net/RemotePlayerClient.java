@@ -85,23 +85,24 @@ public final class RemotePlayerClient implements Player, AutoCloseable {
     @Override
     public Color chooseTrump(CardSet hand) {
         String toSend = StringSerializer.join(" ",
-                JassCommand.CHOOSE_TRUMP.command(), StringSerializer.serializeLong(hand.packed()));
+                JassCommand.CHOOSE_TRUMP.command(),
+                StringSerializer.serializeLong(hand.packed()));
         sendString(toSend);
-        
+
         try {
             String trumpString = r.readLine().trim();
-            Color trump = Color.ALL.get(StringSerializer.deserializeInt(trumpString));
+            Color trump = Color.ALL
+                    .get(StringSerializer.deserializeInt(trumpString));
             return trump;
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
-    
+
     @Override
     public void close() throws IOException {
         sendString(JassCommand.CLOSE.command() + " ");
-        
+
         w.close();
         r.close();
         s.close();

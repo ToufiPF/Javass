@@ -52,7 +52,7 @@ public class PacedPlayerTest {
         public Color chooseTrump(CardSet hand) {
             return hand.get(0).color();
         }
-        
+
         @Override
         public void setPlayers(PlayerId ownId,
                 Map<PlayerId, String> playerNames) {

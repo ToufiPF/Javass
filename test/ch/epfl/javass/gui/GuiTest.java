@@ -30,8 +30,8 @@ public final class GuiTest extends Application {
         HandBean hB = new HandBean();
         ArrayBlockingQueue<Card> cardQueue = new ArrayBlockingQueue<>(1);
         ArrayBlockingQueue<Card.Color> trumpQueue = new ArrayBlockingQueue<>(1);
-        GraphicalPlayerView g =
-                new GraphicalPlayerView(PlayerId.PLAYER_2, ns, sB, tB, hB, cardQueue, trumpQueue);
+        GraphicalPlayerView g = new GraphicalPlayerView(PlayerId.PLAYER_2, ns,
+                sB, tB, hB, cardQueue, trumpQueue);
         g.createStage().show();
 
         new AnimationTimer() {

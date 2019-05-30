@@ -19,7 +19,7 @@ import javafx.stage.Stage;
 
 /**
  * LocalMain Une classe permettant de lancer une partie locale
- * 
+ *
  * @author Amaury Pierre (296498)
  * @author Aurélien Clergeot (302592)
  */
@@ -28,11 +28,12 @@ public final class LocalMain extends Application {
     /**
      * Crée une partie et le Thread la faisant tourner à partir de la liste
      * d'arguments donnée
-     * 
+     *
      * @param args
      *            (List<String>) la liste d'arguments pour lancer la partie
      */
-    public static Thread createGameFromArguments(List<String> args, Stage firstStage) {
+    public static Thread createGameFromArguments(List<String> args,
+            Stage firstStage) {
         // On commence par générer (ou récupérer, si elle a été fournie) la
         // graine
         Random SEED_GENERATOR = null;
@@ -46,7 +47,7 @@ public final class LocalMain extends Application {
                 displayErrorAndExit(1,
                         "Erreur : la graine fournie n'est pas valide : "
                                 + args.get(PlayerId.COUNT),
-                                e.toString());
+                        e.toString());
             }
         } else {
             displayErrorAndExit(1, "Erreur : nombre d'arguments invalide.",
@@ -78,67 +79,67 @@ public final class LocalMain extends Application {
                     || fields.length > type.maxNbFields())
                 displayErrorAndExit(1,
                         "Erreur : nombre de champs entrés (" + fields.length
-                        + ") invalide pour le spécificateur "
-                        + fields[0] + ".");
+                                + ") invalide pour le spécificateur "
+                                + fields[0] + ".");
 
             // On récupère le nom fourni (deuxieme "champ")
             String name = fields.length <= 1 || fields[1].isEmpty()
                     ? Jass.DEFAULT_NAMES[i]
-                            : fields[1];
+                    : fields[1];
 
-                    // On analyse le troisième champ, qui dépend du type de joueur :
-                    Player player = null;
-                    long playerSeed = SEED_GENERATOR.nextLong();
-                    switch (type) {
-                    case SIMULATED:
-                        int iterations = Jass.DEFAULT_ITERATIONS;
-                        if (fields.length > 2 && !fields[2].isEmpty()) {
-                            try {
-                                iterations = Integer.parseInt(fields[2]);
-                            } catch (NumberFormatException e) {
-                                displayErrorAndExit(1,
-                                        "Erreur : nb d'iterations erroné : "
-                                                + fields[2],
-                                                e.toString());
-                            }
-                            if(iterations < 10) {
-                                displayErrorAndExit(1, "Erreur : nb d'iterations erroné : "
-                                        + "le nombre d'itérations du joueur simulé doit être supérieur ou égal à 10.");
-                            }
-                        }
-                        player = new PacedPlayer(new MctsPlayer(PlayerId.ALL.get(i),
-                                playerSeed, iterations), Jass.WAIT_TIME_MCTS_PLAYER);
-                        break;
-
-                    case REMOTE:
-                        String hostName = fields.length <= 2 || fields[2].isEmpty()
-                        ? Jass.DEFAULT_IP
-                                : fields[2];
-
-                        try {
-                            player = new RemotePlayerClient(hostName);
-                        } catch (IOException e) {
-                            displayErrorAndExit(1, "Erreur : connexion au serveur "
-                                    + hostName + " impossible.", e.toString());
-                        }
-                        break;
-
-                    default: // assumed HUMAN
-                        Stage gui;
-                        if (!firstStageAlreadyUsed) {
-                            gui = firstStage;
-                            firstStageAlreadyUsed = true;
-                        }
-                        else {
-                            gui = new Stage();
-                            gui.show();
-                        }
-                        player = new GraphicalPlayerAdapter(gui);
-                        break;
+            // On analyse le troisième champ, qui dépend du type de joueur :
+            Player player = null;
+            long playerSeed = SEED_GENERATOR.nextLong();
+            switch (type) {
+            case SIMULATED:
+                int iterations = Jass.DEFAULT_ITERATIONS;
+                if (fields.length > 2 && !fields[2].isEmpty()) {
+                    try {
+                        iterations = Integer.parseInt(fields[2]);
+                    } catch (NumberFormatException e) {
+                        displayErrorAndExit(1,
+                                "Erreur : nb d'iterations erroné : "
+                                        + fields[2],
+                                e.toString());
                     }
+                    if (iterations < 10) {
+                        displayErrorAndExit(1,
+                                "Erreur : nb d'iterations erroné : "
+                                        + "le nombre d'itérations du joueur simulé doit être supérieur ou égal à 10.");
+                    }
+                }
+                player = new PacedPlayer(new MctsPlayer(PlayerId.ALL.get(i),
+                        playerSeed, iterations), Jass.WAIT_TIME_MCTS_PLAYER);
+                break;
 
-                    mapNames.put(PlayerId.ALL.get(i), name);
-                    mapPlayers.put(PlayerId.ALL.get(i), player);
+            case REMOTE:
+                String hostName = fields.length <= 2 || fields[2].isEmpty()
+                        ? Jass.DEFAULT_IP
+                        : fields[2];
+
+                try {
+                    player = new RemotePlayerClient(hostName);
+                } catch (IOException e) {
+                    displayErrorAndExit(1, "Erreur : connexion au serveur "
+                            + hostName + " impossible.", e.toString());
+                }
+                break;
+
+            default: // assumed HUMAN
+                Stage gui;
+                if (!firstStageAlreadyUsed) {
+                    gui = firstStage;
+                    firstStageAlreadyUsed = true;
+                } else {
+                    gui = new Stage();
+                    gui.show();
+                }
+                player = new GraphicalPlayerAdapter(gui);
+                break;
+            }
+
+            mapNames.put(PlayerId.ALL.get(i), name);
+            mapPlayers.put(PlayerId.ALL.get(i), player);
         }
 
         return createGameThread(gameSeed, mapPlayers, mapNames);
@@ -163,7 +164,7 @@ public final class LocalMain extends Application {
             try {
                 for (Player p : mapPlayers.values())
                     if (p instanceof AutoCloseable)
-                        ((AutoCloseable)p).close();
+                        ((AutoCloseable) p).close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -176,7 +177,7 @@ public final class LocalMain extends Application {
     /**
      * Affiche les erreurs fournies puis quitte le programme avec le statut
      * exitStatus
-     * 
+     *
      * @param exitStatus
      *            (int) le statut de l'erreur
      * @param errs
