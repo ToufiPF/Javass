@@ -24,6 +24,13 @@ public interface Player {
      */
     public Card cardToPlay(TurnState state, CardSet hand);
 
+    /**
+     * Donne la couleur de l'atout choisie par le joueur
+     * 
+     * @param hand (CardSet) la main du joueur, afin qu'il puisse choisir
+     *   l'atout en fonction de ses cartes
+     * @return (Color) la couleur d'atout choisie par le joueur
+     */
     public Color chooseTrump(CardSet hand);
    
     /**
