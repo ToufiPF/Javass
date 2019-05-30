@@ -25,12 +25,21 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Launcher
+ * La classe qui permet de lancer le menu principal du jeu.
+ * S'occupe de créer une partie ou de la rejoindre en réseau.
+ * 
+ * @author Amaury Pierre (296498)
+ * @author Aurélien Clergeot (302592)
+ */
 public final class Launcher extends Application {
 
     public static void main(String[] args) {
         launch(args);
     }
-
+    
+    /** Met la propriété tryAgain à true */
     public static void requestTryAgain() {
         tryAgainProperty.set(true);
     }
@@ -71,6 +80,7 @@ public final class Launcher extends Application {
         }
     }
     
+    /** Nombre d'itérations par niveau de l'IA */
     public final static int ITERATIONS_BY_IA_LEVEL = 10_000;
     
     private final static BooleanProperty tryAgainProperty = new SimpleBooleanProperty(false);
@@ -80,6 +90,9 @@ public final class Launcher extends Application {
     private final VBox createGameMenu;
     private final VBox joinGameMenu;
 
+    /**
+     * Constructeur de Launcher
+     */
     public Launcher() {
         mainMenu = createMainMenu();
         createGameMenu = createCreateGameMenu();
