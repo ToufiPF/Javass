@@ -21,6 +21,10 @@ public final class RemoteMain extends Application {
         startGame(arg0);
     }
     
+    /**
+     * Commence la partie avec le stage donné
+     * @param stage (Stage) stage sur lequel afficher l'interface du serveur
+     */
     public static void startGame(Stage stage) {
         //RemotePlayerServer implémente Runnable
         RemotePlayerServer server = new RemotePlayerServer(new GraphicalPlayerAdapter(stage));
